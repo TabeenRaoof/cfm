@@ -1,0 +1,145 @@
+# Progress log
+
+Chronological journal of what happened, newest last. Not a duplicate of `decisions.md` — this is
+the "what happened and when," `decisions.md` is the "what was decided and why." A story or fix
+usually shows up in both: here for the sequence of events, there for the reasoning worth
+protecting from being silently reversed later.
+
+Named in `tabeen_AGENTS.md`'s repo map as not yet existing until this entry created it
+(2026-09-19 session, "review the work on this project" thread). Entries before that point are
+backfilled from git history and the session transcript, as accurately as both allow; entries
+from here on are written as the work happens, per `tabeen_AGENTS.md` line 277 ("append to the
+progress log after any story completes").
+
+---
+
+## 2026-09-19 — Anthropic API integration goes live
+
+The `@cfm/ai` gateway (provider abstraction, deterministic-first resolution, token-budget
+enforcement) is wired to the real Anthropic API for the first time, using `claude-haiku-4-5` for
+classification and `claude-sonnet-5` for extraction.
+
+Two live, cost-gated smoke tests validate the whole seam end to end:
+
+- **`classify_document`** — succeeded. Confirmed the schema-narrowing plumbing, provider
+  adaptation, and cost tracking all work correctly. Cost: $0.000534.
+- **`extract_document`** — succeeded, and earned its cost by finding a real gap: the
+  deterministic date pattern in `@cfm/documents` didn't recognise "Signed on:" as an issue-date
+  label, so `issue_date` — which pattern coverage says should resolve for free — escalated to the
+  model unnecessarily on every RP-mandate document phrased that way. Fixed by adding
+  `signed on`/`signed` plus French (`signé le`) and German (`unterzeichnet am`) equivalents,
+  matching the multi-market pattern already used elsewhere. Verified the fix locally against the
+  same text with zero further API cost, then added a regression test so the gap cannot silently
+  return. Cost: $0.001205.
+
+Both smoke scripts (`npm run smoke:anthropic -- --confirm`, `npm run smoke:anthropic:extract --
+--confirm`) are kept in the repo as repeatable, deliberately-gated validation tools rather than
+one-off throwaway code — dry-run first, three-layer spend guard, confirmation flag required.
+Total spend: $0.001739, against a $1 test cap and each script's own $0.05 cap; neither limit came
+close to firing.
+
+Full suite at this point: 395/395 passing.
+
+---
+
+## 2026-09-19 (later) — Review, then version control and CI for the first time
+
+A review of the plan docs, standing rules, the new `@cfm/supplier-request` package, and the gates
+(typecheck, 432/432 tests, `npm run smoke`) surfaced one finding bigger than any code issue: the
+project had never been under version control. No `.git` directory anywhere in the tree, despite
+`.gitignore` and `.github/workflows/ci.yml` both existing — the CI workflow had never executed
+once, and `tabeen_AGENTS.md`'s definition of done ("merged to `main` through a pull request") was
+currently impossible to satisfy.
+
+Alongside that, three code findings and a documentation-drift finding were raised for the next
+session to fix (see below): the Anthropic cache-cost arithmetic, a state-machine hole in
+`@cfm/supplier-request`, and stale numbers/claims across `README.md`, `.env.example` and
+`tabeen_AGENTS.md`.
+
+**Decided:** version control and CI first, then the review fixes, then the next feature
+(`@cfm/evidence`) — see the sequencing question this session. Repo host: a private GitHub repo,
+since `.github/workflows/ci.yml` already targets GitHub Actions.
+
+**What happened, in commit order:**
+
+- `d176f13` — `git init`; verified `.env.local` and `apps/scanner/dist` were already covered by
+  `.gitignore`; first commit of the full working tree on `main`.
+- Created the private GitHub repo (`TabeenRaoof/cfm`) with `gh`, pushed `main`.
+- First-ever GitHub Actions run failed: `npm ci` requires a locked dependency tree, and
+  `package-lock.json` had gone out of sync when `@cfm/supplier-request` was added without a
+  matching `npm install`. Fixed locally, verified `npm ci` clean, committed (`4721dfb`), pushed —
+  CI went green for the first time.
+- `3227504` — Fixed the Anthropic cost-accounting bug: `costUsd` was computing
+  `(inputTokens - cachedInputTokens)` at full price plus cache reads at the cached rate, which
+  double-discounts cache reads, and never read `cache_creation_input_tokens` at all, so cache
+  writes — the premium D-029 called "half the arithmetic" — were costed at zero. Invisible until
+  now because nothing had set `cacheable: true`. Verified against current Anthropic docs rather
+  than asserted from memory, then fixed by summing the three genuinely distinct input-token
+  buckets (fresh, cached-read, cache-write) plus output, with a regression test. See D-037.
+- `c856a03` — Fixed `@cfm/supplier-request`'s state-machine hole: `fulfilItem` could move a
+  `draft` request to `partially_fulfilled`, after which `markSent` would throw forever because it
+  requires `status === "draft"` — an unsendable request. Tightened `fulfilItem` to require the
+  request to have been sent first, while still allowing fulfilment against an `expired` request
+  (a late upload should still count). Fixed `isOverdue`'s string timestamp comparison to use
+  `Date.parse()`. Added `requirementId` to `RequestedItem` — the field `@cfm/evidence` would need
+  and that `EvidenceView.hasOpenRequest` had nothing to match against before this. Also: reminders
+  now stop once the due date has passed, and email copy distinguishes a final reminder in both
+  English and Chinese. See D-038.
+- `0f197cc` — `Provider.estimateInputTokens` existed on the interface but the gateway's budget
+  check never called it, estimating tokens some other way instead; wired it in and removed the
+  now-dead `imageTokensPerPage` config field that nothing was actually using.
+- `8263c82` — Corrected documentation drift accumulated across the last two sessions:
+  `README.md`'s stale test count (378 → then-current) and missing `@cfm/supplier-request` row;
+  `.env.example`'s claim that one script, not two, was permitted to spend real money;
+  `tabeen_AGENTS.md`'s repo map, which no longer matched the actual directory structure; added
+  `decisions.md` entries for the live Anthropic adapter (D-037) and the supplier-request package
+  (D-038), following the precedent D-022/D-030/D-031 set of recording a package's design rules
+  when it ships.
+
+Full suite after this block: 441/441 passing, CI green on every push.
+
+---
+
+## 2026-09-19 (continued) — `@cfm/evidence`: the missing middle
+
+Built the package that turns an accepted extraction into something the evaluator can actually
+read — before this, `EvidenceView` and `NO_EVIDENCE` existed in `@cfm/catalog`, but nothing
+implemented a real `EvidenceView`, so no upload could ever move an assessment off `missing`.
+
+- `record.ts` — `evidenceFromVerdict` builds an `EvidenceRecord` from an accepted
+  `ExtractionVerdict` only; throws on anything else rather than half-building one.
+- `scope.ts` — `requirementMarketScope` reads a requirement's `applies_when` for
+  `market.iso_country` leaves (through `all`/`any`/`not`) and returns the country set it's scoped
+  to, or unscoped if none is named.
+- `link.ts` — `linkEvidence` matches documents to requirements by type, then — for market-scoped
+  requirements — requires the document's own `country` field to be in scope before linking.
+  Refuses rather than guesses when a document doesn't state its market, and surfaces every
+  refusal (`RefusedLink[]`) instead of dropping it silently. This is the concrete fix for the
+  false-green case named in the review: DE and FR both require `epr_certificate`, and matching on
+  type alone would let a German certificate satisfy the French row. `hasOpenRequest` is wired from
+  open, non-terminal `SupplierRequest`s using the `requirementId` field added in the previous
+  block's `@cfm/supplier-request` fix.
+- 24 new tests, including the DE-cert-for-FR-row refusal in both directions, a no-stated-country
+  refusal, and three end-to-end tests through the real `assessProduct` — missing → met via
+  upload, the wrong-market cert staying `missing`, and pending → met via a fulfilled supplier
+  request.
+
+Regenerated `package-lock.json` for the new workspace package and verified `npm ci` from a clean
+`node_modules` before committing — the exact mistake from the version-control block, not
+repeated. Added D-039. Updated `README.md`'s package table and test count.
+
+`daca078` — committed and pushed; watched the GitHub Actions run through to `success`.
+
+**Full suite at this point: 465/465 passing.** All ten to-dos from the review plan (version
+control, CI, Anthropic cost fix, supplier-request fixes and decisions, docs drift,
+`estimateInputTokens` wiring, `@cfm/evidence` package and tests) are complete.
+
+---
+
+## 2026-09-20 — This progress log created
+
+`docs/progress-log.md` (kept here at `project-setup/progress-log.md`, matching where
+`decisions.md` actually lives rather than the playbook's literal `docs/` path) had been named in
+`tabeen_AGENTS.md`'s repo map as not yet existing since the "repo map, corrected" pass above.
+Created and backfilled from git history and the session transcript, going forward from here as
+work happens rather than reconstructed after the fact.

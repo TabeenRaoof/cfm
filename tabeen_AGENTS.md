@@ -4,7 +4,7 @@ Read this before doing any work on this project. It applies to every assistant u
 and ChatGPT alike. The point is that the behaviour is the same whichever tool is driving, and that
 no tool quietly undoes a decision already made.
 
-**"CFM" is a working label, not the product name.** The name is undecided — see `docs/decisions.md`
+**"CFM" is a working label, not the product name.** The name is undecided — see `project-setup/decisions.md`
 → D-001. Do not invent one, and do not let a candidate name harden by using it in a file path, a
 package namespace or a domain.
 
@@ -21,7 +21,7 @@ manage them.
 The two planning documents are `01-business-report-product-compliance-file-manager.md` and
 `02-technical-plan-product-compliance-file-manager.md`. **They are immutable inputs.** Do not edit
 them. Corrections and deltas live in `project-setup/03-plan-review.md`; decisions taken since live
-in `docs/decisions.md`.
+in `project-setup/decisions.md`.
 
 **What the product is not**, stated as plainly as the business report states it: it is not a
 document store, it is not a Responsible Person (that role is legally EU-established and cannot be
@@ -105,7 +105,7 @@ evaluator and nothing else.
 
 ### Do not relitigate settled decisions
 
-`docs/decisions.md` records what has been decided and why, D-001 onwards. Do not reopen or quietly
+`project-setup/decisions.md` records what has been decided and why, D-001 onwards. Do not reopen or quietly
 reverse one. If you believe a decision needs revisiting, say so explicitly and stop there — do not
 build past it in either direction.
 
@@ -115,7 +115,7 @@ build past it in either direction.
 
 1. **Read the story file in full**, in `stories/` — the index is `stories/README.md`. Then read
    the stories it depends on, and any story that depends on it.
-2. **Check `docs/decisions.md`** for anything that governs this area.
+2. **Check `project-setup/decisions.md`** for anything that governs this area.
 3. **Check `project-setup/03-plan-review.md`** if the story touches sequencing, the catalog, the
    AI pipeline, privacy or retention. It carries corrections to the technical plan that the
    technical plan itself does not contain.
@@ -221,6 +221,7 @@ tabeen_AGENTS.md / tabeen_CLAUDE.md    — this file and its Claude-specific com
                                           project-setup/README.md)
 project-setup/
   decisions.md                         — settled decisions, D-001 onwards; do not relitigate
+  progress-log.md                      — chronological journal of what happened, newest last
   03-plan-review.md                    — corrections to the immutable 01-/02- plans
   04-capacity-replan.md                — the 2-3 hrs/week schedule this repo is actually built on
   playbook-addendum.md
@@ -236,12 +237,15 @@ packages/channels         — channel export templates and mappers
 packages/documents        — extraction schemas, deterministic patterns, validators, confidence gate
 packages/ai               — the provider gateway; only place permitted to import a provider SDK
 packages/supplier-request — supplier magic-link request lifecycle, reminders, EN/ZH templates
+packages/evidence          — links accepted extractions and open supplier requests to catalog
+                              requirements, market-scoped (D-039)
 apps/scanner               — the static scanner page, its waitlist and its privacy notice
 scripts/                   — smoke.ts (free) and the two smoke-anthropic*.ts scripts (spend money)
 ```
 
-**What `02-` describes and does not yet exist** — `docs/` (glossary, sprint-plan, progress-log,
-catalog-authoring, runbook, opt-relevance, incidents/, archive/), `stories/` and its
+**What `02-` describes and does not yet exist** — a fuller `docs/` (glossary, sprint-plan,
+catalog-authoring, runbook, opt-relevance, incidents/, archive/ — decisions and the progress log
+already exist, under `project-setup/` rather than `docs/`), `stories/` and its
 `stories/README.md` index, `apps/web` (the actual product UI), `packages/db` (Drizzle schema,
 RLS policies), `packages/emails`, `jobs/` (Inngest functions), `golden-set/`. Every reference to
 these elsewhere in this file describes the intended future process for when they exist, per
@@ -272,7 +276,7 @@ the product's moat, so:
 ## Recording as you go
 
 - **Record decisions as they are made.** If a conversation settles something that governs later
-  work, add it to `docs/decisions.md` with a number and the reasoning. A decision without its
+  work, add it to `project-setup/decisions.md` with a number and the reasoning. A decision without its
   reasoning gets reversed by whoever forgets it — including an assistant in a fresh session.
 - **Append to the progress log** after any story completes, any catalog version publishes, any
   design-partner session, and any gate result. Newest at the bottom, never delete an old entry.
@@ -297,7 +301,7 @@ the product's moat, so:
   documentation.
 - Committing customer documents, fixtures, secrets, or anything covered by the Xylo agreement.
 - Opening a pull request whose code has no tests, or agreeing to add tests in a follow-up.
-- Reversing a decision in `docs/decisions.md` without it being reopened explicitly.
+- Reversing a decision in `project-setup/decisions.md` without it being reopened explicitly.
 - Building past a gate whose result is not in yet, when the work would be sunk by a kill.
 - Expanding scope beyond the current slice because it "would be easy to add" — read
   `project-setup/03-plan-review.md` §S-1 before agreeing that anything is easy to add.

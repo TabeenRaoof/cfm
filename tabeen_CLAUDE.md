@@ -29,7 +29,7 @@ tempts you to `import Anthropic` in a route handler or a job, that is the wrong 
 test asserting it.
 
 **Memory and this repository disagree sometimes.** If something recalled from a previous session
-conflicts with `docs/decisions.md`, a story file, or `project-setup/03-plan-review.md`, the
+conflicts with `project-setup/decisions.md`, a story file, or `project-setup/03-plan-review.md`, the
 repository wins. Say the conflict exists rather than silently picking one.
 
 **Verify before asserting.** This project has a lot of numbers that look settled and are not:
@@ -39,7 +39,7 @@ from a third party, quote it with its retrieval date.
 
 **The two planning documents are read-only.** `01-business-report-...md` and
 `02-technical-plan-...md` are never edited, not even to fix a typo or a number known to be wrong.
-Corrections go to `project-setup/03-plan-review.md` or `docs/decisions.md`.
+Corrections go to `project-setup/03-plan-review.md` or `project-setup/decisions.md`.
 
 **Web research for the catalog needs a citation you can hand to a regulator.** When drafting a
 requirement, cite EUR-Lex, the Commission's own guidance, the national registry, or the
@@ -60,12 +60,12 @@ as absent.
 | What we are building, and the rules | `tabeen_AGENTS.md` |
 | The immutable strategy and architecture | `01-business-report-...md`, `02-technical-plan-...md` |
 | Corrections to those two, and why | `project-setup/03-plan-review.md` |
-| Why something is the way it is | `docs/decisions.md` |
+| Why something is the way it is | `project-setup/decisions.md` |
 | What a term means (GPSR, PPWR, RP, MYC, DoC…) | `docs/glossary.md` |
 | What to work on | `stories/README.md`, then `stories/<ID>.md` |
 | How to write a requirement | `docs/catalog-authoring.md` |
 | Where a requirement's facts came from | `packages/catalog/sources.md` |
 | Schedule, capacity, gates, cut list | `docs/sprint-plan.md` |
-| What happened already | `docs/progress-log.md` |
+| What happened already | `project-setup/progress-log.md` |
 | How to operate the thing | `docs/runbook.md` |
 | Method, and what went wrong last time | `project-playbook.md` + `project-setup/playbook-addendum.md` |

@@ -49,7 +49,7 @@ second is the one that should never be traded for anything.
 These files do not stay here. On repository creation:
 
 - `tabeen_AGENTS.md` → `AGENTS.md` at the repository root; `tabeen_CLAUDE.md` → `CLAUDE.md`.
-- `decisions.md` → `docs/decisions.md`.
+- `decisions.md` → `docs/decisions.md`; `progress-log.md` → `docs/progress-log.md`.
 - `03-plan-review.md` → `docs/plan-review.md`, alongside copies of `01-` and `02-` as
   `docs/archive/`.
 - `project-playbook.md` and `playbook-addendum.md` → kept outside the repository, per the
