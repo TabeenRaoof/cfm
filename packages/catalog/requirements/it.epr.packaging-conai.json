@@ -1,12 +1,12 @@
 {
   "id": "it.epr.packaging-conai",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
-  "regulation": "D.Lgs. 152/2006 (Testo Unico Ambientale) — CONAI system",
-  "article_ref": "D.Lgs. 152/2006, Art. 221 (membership duty and penalty)",
+  "regulation": "D.Lgs. 152/2006 (Testo Unico Ambientale) — CONAI system; D.Lgs. 116/2020",
+  "article_ref": "D.Lgs. 152/2006, Art. 221 (membership duty and penalty); D.Lgs. 116/2020",
   "title": "Italy: CONAI membership and environmental contribution",
-  "summary": "A business placing packaging on the Italian market generally joins the CONAI consortium and pays the environmental contribution (CAC) on the packaging it places, reporting through the material consortium for each packaging type.",
+  "summary": "A business established in Italy, or represented there by an Italian fiscal representative, that places packaging on the Italian market joins the CONAI consortium and pays the environmental contribution (CAC), reporting through the material consortium for each packaging type. A foreign business with no Italian establishment or fiscal representative cannot join CONAI as a standard member, so this row does not attach to it directly; responsibility for such cases falls elsewhere in the supply chain and is not yet modelled here.",
   "applies_when": {
     "all": [
       {
@@ -14,6 +14,16 @@
       },
       {
         "product.has_packaging": true
+      },
+      {
+        "any": [
+          {
+            "organisation.established_in_market": true
+          },
+          {
+            "organisation.has_it_fiscal_representative": true
+          }
+        ]
       }
     ]
   },
@@ -39,7 +49,7 @@
       "url": "https://www.conai.org/en/businesses/joining-conai/",
       "retrieved_at": "2026-09-20",
       "verified": true,
-      "note": "MAJOR OPEN QUESTION, not resolved this pass -- flagging rather than guessing, same discipline as the PPWR AR row held at PR #4. CONAI's own English page states in as many words: 'Foreign companies are not obliged to join CONAI, but they may do so voluntarily.' It grounds the membership duty in Art. 221 of D.Lgs. 152/2006 ('producer and user companies are responsible ... and consequently required to join'), and the €15,500-46,500 fine for non-joining applies to 'producers of packaging' -- but the foreign-company carve-out is asserted on this page without its own citation. If accurate, this row may not apply to CFM's typical customer at all (a non-Italian-established seller shipping into Italy) -- responsibility may instead fall on whichever Italian-established party imports/distributes the goods, similar in shape to the Spanish RPP row's first-distributor fallback (es.epr.authorised-representative, same batch) or a customs importer-of-record. This needs the actual text of Art. 221 (and its definition of 'produttore' / 'importatore', likely Art. 218) read before either publishing this row as-is or rescoping it -- do not assume the current applies_when (no establishment condition) is correct just because it is the safe/broad direction; it could be actively wrong for the primary customer segment this tool serves."
+      "note": "CONAI's own English page states in as many words: 'Foreign companies are not obliged to join CONAI, but they may do so voluntarily.' It grounds the membership duty in Art. 221 of D.Lgs. 152/2006 ('producer and user companies are responsible ... and consequently required to join'), and the €15,500-46,500 fine for non-joining applies to 'producers of packaging' -- but the foreign-company carve-out is asserted on this page without its own citation. DECISION (Tabeen Raoof, 2026-09-20, PR #6 review): 'Under D.Lgs 116/2020, foreign entities without an Italian establishment conducting B2C distance sales cannot even join CONAI as standard members. We must scope this strictly to entities with an Italian establishment/fiscal rep, or drop it from the baseline cross-border gate.' RESOLVED by adding an any-branch to applies_when requiring either organisation.established_in_market or the new fact organisation.has_it_fiscal_representative, so a foreign seller with neither resolves 'na' (not 'applies') rather than being falsely told it must join CONAI directly. STILL NOT MODELLED: who, if anyone, is responsible for CONAI-side EPR obligations when a foreign seller has no Italian establishment or fiscal representative -- unlike Spain's first-distributor fallback (es.epr.authorised-representative, same batch), no equivalent fallback party has been identified for Italy in this pass."
     },
     {
       "title": "Guida all'adesione e all'applicazione del Contributo Ambientale CONAI (CNA Firenze, 2023)",
@@ -49,7 +59,7 @@
       "note": "Independent secondary source corroborating the same foreign-company exemption verbatim: 'Non sono obbligate ad aderire al CONAI (ma ne hanno facoltà) le Imprese estere e le Imprese agricole' (foreign companies and agricultural businesses are not obliged to join CONAI, though they may do so voluntarily) -- same construction as agricultural businesses, whose exemption IS traceable to a specific statute (Art. 11(2), Law 154/2016). Two independent sources agreeing is reassuring but neither is the statute itself; the €200/€300 exemption thresholds this same guide describes are for the CAC environmental-contribution declaration, not registration, and are a separate, smaller question than the foreign-company one above."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

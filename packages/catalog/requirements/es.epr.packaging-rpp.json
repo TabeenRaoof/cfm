@@ -1,7 +1,7 @@
 {
   "id": "es.epr.packaging-rpp",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Real Decreto 1055/2022 de envases y residuos de envases",
   "article_ref": "Real Decreto 1055/2022, Art. 14-16",
@@ -49,7 +49,7 @@
       "note": "MITECO's own interpretive note, issued in response to registration questions. Confirms Art. 15's three-month registration window and, separately, that a producer with no Spanish-appointed authorised representative is not itself excused from the RPP -- the first Spain-based distributor picks up the obligation instead (same fallback as es.epr.authorised-representative, same batch), and must register with a simplified declaration if that is the only packaging it is handling."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

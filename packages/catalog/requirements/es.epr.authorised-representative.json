@@ -1,7 +1,7 @@
 {
   "id": "es.epr.authorised-representative",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Real Decreto 1055/2022 de envases y residuos de envases",
   "article_ref": "Real Decreto 1055/2022, Art. 17.2",
@@ -45,7 +45,7 @@
       "note": "Fetched the statute directly. Art. 17.2, verbatim: 'Los productores de productos que estén establecidos en otro Estado miembro o en terceros países y que comercialicen productos en España, deberán designar a una persona física o jurídica en territorio español como representante autorizado...' and its third paragraph: 'En el caso de que los productores de producto no hayan designado un representante autorizado en España, el primer distribuidor o comerciante del producto envasado con sede en España será, subsidiariamente, el sujeto responsable...' -- both the mandatory-appointment duty and the first-distributor fallback this row's summary already describes are confirmed word for word, resolving the 13 Sept draft's only open question. NOT modelled, found in the same article's paragraph 5: for transport packaging used in distance sales, the courier/parcel company (or the e-commerce platform, where it facilitates a third party's sale) fulfils the producer's financial/information obligations on the producer's behalf -- but this is scoped narrowly to shipping/transport packaging only, not the AR duty as a whole, so left out of applies_when."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

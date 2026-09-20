@@ -1,12 +1,12 @@
 {
   "id": "be.epr.packaging-ivc",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Interregional cooperation agreement on packaging waste",
   "article_ref": "Cooperation Agreement of 4 Nov. 2008, Art. 6 (take-back, >300kg) and Art. 18 (reporting)",
   "title": "Belgium: IVC declaration and Fost Plus or Valipac membership",
-  "summary": "A business placing packaging on the Belgian market registers through the Interregional Packaging Commission (IVC/CIE) and joins Fost Plus for household packaging, Valipac for industrial packaging, or both. There is no de minimis threshold.",
+  "summary": "A business placing at least 300 kg of packaging on the Belgian market per year registers through the Interregional Packaging Commission (IVC/CIE) and joins Fost Plus for household packaging, Valipac for industrial packaging, or both. Below 300 kg/year, neither the take-back nor the reporting duty in the Cooperation Agreement's own text applies.",
   "applies_when": {
     "all": [
       {
@@ -14,6 +14,11 @@
       },
       {
         "product.has_packaging": true
+      },
+      {
+        "organisation.be_packaging_kg_previous_year": {
+          "gte": 300
+        }
       }
     ]
   },
@@ -39,17 +44,17 @@
       "url": "https://www.ivcie.be/wp-content/uploads/2021/05/Cooperation-agreement-of-04-11-2008-on-the-prevention-and-management-of-packaging-waste.pdf",
       "retrieved_at": "2026-09-20",
       "verified": true,
-      "note": "Fetched the treaty text directly (English version). FINDING that changes the picture from the 13 Sept draft: the Agreement's OWN text sets Art. 6's take-back obligation (join Fost Plus/Valipac or self-fulfil) at 'at least 300 kg of packaging on the market per year' -- there IS a threshold in the primary source, contrary to this draft's summary ('There is no de minimis threshold'), which was carried over from IVC/CIE's own English guidance page. Art. 18's annual reporting duty is worded as applying to 'the responsible company subject to the take-back obligation', i.e. the same 300 kg-gated population in the treaty text -- not, as the guidance page states, 'any company placing packaged products on the Belgian market' regardless of volume. OPEN QUESTION, not resolved this pass: IVC/CIE's own practical guidance may reflect a later amendment broadening the reporting duty to everyone (the Agreement has been amended repeatedly, e.g. 05.03.2020 and 02.04.2015 insertions visible in this same text), or the guidance page may simply be describing best practice rather than the strict legal minimum. Recommend either finding the amendment that decouples Art. 18 from Art. 6, or adding organisation.be_packaging_kg_previous_year >= 300 to applies_when (same shape as the NL row in this batch) so a sub-300kg seller is not told they must register when the treaty text does not clearly require it."
+      "note": "Fetched the treaty text directly (English version). FINDING that changes the picture from the 13 Sept draft: the Agreement's OWN text sets Art. 6's take-back obligation (join Fost Plus/Valipac or self-fulfil) at 'at least 300 kg of packaging on the market per year' -- there IS a threshold in the primary source, contrary to this draft's original summary ('There is no de minimis threshold'), which was carried over from IVC/CIE's own English guidance page. Art. 18's annual reporting duty is worded as applying to 'the responsible company subject to the take-back obligation', i.e. the same 300 kg-gated population in the treaty text -- not, as the guidance page states, 'any company placing packaged products on the Belgian market' regardless of volume. DECISION (Tabeen Raoof, 2026-09-20, PR #6 review): 'Trust the treaty text over the vendor's \"no de minimis\" claim. Update the draft to enforce the 300 kg limit.' RESOLVED by adding organisation.be_packaging_kg_previous_year >= 300 to applies_when, same shape as the NL row in this batch (nl.epr.packaging-verpact), and rewriting the summary to match."
     },
     {
       "title": "Interregional Packaging Commission (IVC/CIE) — reporting obligation page",
       "url": "https://www.ivcie.be/en/obligations/reporting-obligation/",
       "retrieved_at": "2026-09-20",
       "verified": true,
-      "note": "States plainly: 'Any company placing packaged products on the Belgian market' has the reporting obligation, with no volume threshold mentioned. This is the source for the current (thresholdless) applies_when, but it conflicts with the 4 Nov. 2008 treaty text's own Art. 18 wording -- see the note on that source above. Kept both sources rather than picking a winner, since the discrepancy itself is the finding."
+      "note": "States plainly: 'Any company placing packaged products on the Belgian market' has the reporting obligation, with no volume threshold mentioned. Kept as a source of record even though the treaty text above is what applies_when now follows -- it may reflect a later amendment or informal practice, but per Tabeen's review the primary text governs."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

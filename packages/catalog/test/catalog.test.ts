@@ -119,14 +119,21 @@ describe("the requirement files in this repository", () => {
     // (uk.gpsr.uk-responsible-person — a scoping question, not a citation fix); the third
     // (project-setup/review-packet-2026-09-20c.md) published four more and held one more
     // (eu.ppwr.authorised-representative — a scoping question, not a citation fix); that hold
-    // was then resolved by rescoping applies_when (D-040, PR #5) and published on its own.
-    // This test is expected to grow that set one review packet at a time, not to jump back to
-    // zero.
+    // was then resolved by rescoping applies_when (D-040, PR #5) and published on its own. The
+    // fourth (project-setup/review-packet-2026-09-20d.md) published four national packaging-EPR
+    // rows outright and held three more for the same reason (AT/BE/IT scoping questions); all
+    // three were then rescoped per Tabeen's PR #6 review and published in the same pass. This
+    // test is expected to grow that set one review packet at a time, not to jump back to zero.
     const { catalog, withheldDrafts } = await loadRealCatalog(false);
     const publishedIds = catalog.requirements.map((r) => r.id).sort();
     expect(publishedIds).toEqual(
       [
+        "at.epr.authorised-representative",
+        "at.epr.packaging-edm",
+        "be.epr.packaging-ivc",
         "de.epr.packaging-lucid",
+        "es.epr.authorised-representative",
+        "es.epr.packaging-rpp",
         "eu.dsa.trader-information",
         "eu.gpsr.distance-selling-information",
         "eu.gpsr.manufacturer-identification",
@@ -136,6 +143,8 @@ describe("the requirement files in this repository", () => {
         "eu.ppwr.producer-registration",
         "fr.epr.packaging-citeo",
         "fr.epr.packaging-triman-marking",
+        "it.epr.packaging-conai",
+        "nl.epr.packaging-verpact",
         "uk.epr.packaging-registration",
         "uk.gpsr.general-safety-requirement",
         "uk.importer.identification",

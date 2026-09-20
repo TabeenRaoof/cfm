@@ -1,7 +1,7 @@
 {
   "id": "nl.epr.packaging-verpact",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Besluit beheer verpakkingen — Afvalfonds Verpakkingen / Verpact",
   "article_ref": "Art. 8(1) Besluit beheer verpakkingen 2014",
@@ -54,7 +54,7 @@
       "note": "Confirms the threshold applies even to a business 'that does not have a place of business in the Netherlands but sells to Dutch consumers (online)' -- so organisation.established_in_market is correctly NOT part of this row's applies_when; the duty is market-of-sale-based, not establishment-based, unlike the AT/ES authorised-representative rows in this same batch."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

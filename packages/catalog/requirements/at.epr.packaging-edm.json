@@ -1,7 +1,7 @@
 {
   "id": "at.epr.packaging-edm",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Verpackungsverordnung (VVO)",
   "article_ref": "AWG 2002, § 13g(1) (Primärverpflichtete)",
@@ -49,7 +49,7 @@
       "note": "Portal confirmed as the correct registration channel; the underlying legal duty is § 13g(1) AWG 2002 (see the usp.gv.at source above), not a citation of its own."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

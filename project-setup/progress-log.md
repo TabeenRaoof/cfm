@@ -351,3 +351,33 @@ Wrote up all seven, including full verbatim citations and the three open questio
 `project-setup/review-packet-2026-09-20d.md` and in each requirement's own `sources` array.
 No `state` changes made — citations and notes only, same as every prior packet. Catalog gate
 unchanged: 13 published, 15 drafts, 0 issues. Full suite: 469/469.
+
+## 2026-09-20 (continued) — Tabeen's review of PR #6: 4 published, 3 rescoped and published
+
+Tabeen reviewed [PR #6](https://github.com/TabeenRaoof/cfm/pull/6). Approved the four clean rows
+outright (`nl.epr.packaging-verpact`, `es.epr.authorised-representative`, `es.epr.packaging-rpp`,
+`at.epr.packaging-edm`) and gave a concrete resolution for each of the three held ones, all
+implemented in the same PR (D-041):
+
+- **Italy**: confirmed the CONAI foreign-company exemption against D.Lgs 116/2020 and directed
+  scoping to entities with an Italian establishment or fiscal representative. Added
+  `organisation.has_it_fiscal_representative` and an `any`-branch in `applies_when`.
+- **Belgium**: directed trusting the treaty text's 300 kg threshold over the vendor guidance's
+  "no de minimis" claim. Added `organisation.be_packaging_kg_previous_year >= 300`.
+- **Austria (AR)**: directed the same D-040-shaped fix — scope to B2C distance sales only. Added
+  `organisation.sells_direct_to_end_users: true`, reusing the existing fact.
+
+Also flagged that CI hadn't reported checks on PR #6 or the PR #5 follow-up push, and suspected a
+`paths:` filter in `ci.yml`. Checked: `ci.yml` has no `paths`/`paths-ignore` key at all, and the
+GitHub Actions API confirms both runs did eventually fire and pass (`workflow_runs` for both
+commits shows `conclusion: success`) — just later than the ~30-60s I'd waited before moving on.
+Delayed indexing, not a filter; noted for next time to wait longer or poll the API by commit SHA
+before concluding CI is silently skipping a path.
+
+Added `organisation.be_packaging_kg_previous_year` and `organisation.has_it_fiscal_representative`
+to `FULLY_KNOWN`, seven new tests in `evaluate.test.ts` covering all three rescopes, and updated
+`catalog.test.ts`'s published-ids assertion to the new set of 20. Catalog gate: **20 published, 8
+drafts, 0 issues** — every remaining draft is now category-specific (batteries, toys, WEEE, UKCA/CE
+marking) or the UK responsible-person row held pending secondary legislation; the general-goods
+breadth pass from D-034 is essentially done. Full suite: 480/480 (11 new). Merged via
+[PR #6](https://github.com/TabeenRaoof/cfm/pull/6).

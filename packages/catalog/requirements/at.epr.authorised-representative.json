@@ -1,12 +1,12 @@
 {
   "id": "at.epr.authorised-representative",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Verpackungsverordnung (VVO)",
   "article_ref": "Verpackungsverordnung 2014, § 16b; AWG 2002, § 12b(1)",
   "title": "Austria: Austrian-based authorised representative for foreign sellers",
-  "summary": "Since 1 January 2023 a company without an Austrian establishment, including online retailers selling into Austria, must appoint an Austrian-based authorised representative to hold its packaging obligations. There is no distance-selling carve-out from the underlying registration and system-participation duties.",
+  "summary": "Since 1 January 2023 a company without an Austrian establishment that sells packaging or packaged goods directly to a private end consumer in Austria via distance selling must appoint an Austrian-based authorised representative to hold its packaging obligations. A seller who only sells to businesses (B2B) has an optional right to appoint one, not a duty.",
   "applies_when": {
     "all": [
       {
@@ -17,6 +17,9 @@
       },
       {
         "organisation.established_in_market": false
+      },
+      {
+        "organisation.sells_direct_to_end_users": true
       }
     ]
   },
@@ -42,10 +45,10 @@
       "url": "https://www.ara.at/uploads/Dokumente/Bevollmaechtigter-Vertreter/%C2%A7-16a-d-VerpackVO.pdf",
       "retrieved_at": "2026-09-20",
       "verified": true,
-      "note": "Fetched the regulation text directly. FINDING that revises this row's own summary, same shape as the PPWR AR row held at PR #4 (D-040): the statute draws a mandatory/optional line by customer type, which 'no distance-selling carve-out' gets backwards. § 12b(1) AWG 2002 makes appointment MANDATORY ('haben ... zu bestellen') only for the Primaerverpflichtete defined at § 13g(1)(5) -- 'Versandhaendler, die keinen Sitz und keine Niederlassung in Oesterreich haben und die Verpackungen ... in Oesterreich an einen PRIVATEN Letztverbraucher im Rahmen des Fernabsatzes uebergeben' (distance sellers with no AT seat selling to PRIVATE end consumers). Separately, § 16a VerpackVO gives EU-established sellers who sell to NON-private (business) end users only an OPTIONAL right to appoint one ('koennen') -- not a duty. Confirmed the effective date precisely: § 16a(5), appointment can be made from 1 Oct. 2022 but 'entfaltet ... erst mit 1. Jaenner 2023 Rechtswirkung' (has legal effect only from 1 Jan 2023) -- matches effective_from exactly. RECOMMENDATION, not applied this pass: add organisation.sells_direct_to_end_users: true to applies_when, reusing the exact fact introduced for eu.ppwr.authorised-representative (D-040) -- same underlying distinction, same fix shape, pending Tabeen's sign-off rather than applied unilaterally here."
+      "note": "Fetched the regulation text directly. § 12b(1) AWG 2002 makes appointment MANDATORY ('haben ... zu bestellen') only for the Primaerverpflichtete defined at § 13g(1)(5) -- 'Versandhaendler, die keinen Sitz und keine Niederlassung in Oesterreich haben und die Verpackungen ... in Oesterreich an einen PRIVATEN Letztverbraucher im Rahmen des Fernabsatzes uebergeben' (distance sellers with no AT seat selling to PRIVATE end consumers). Separately, § 16a VerpackVO gives EU-established sellers who sell to NON-private (business) end users only an OPTIONAL right to appoint one ('koennen') -- not a duty. Confirmed the effective date precisely: § 16a(5), appointment can be made from 1 Oct. 2022 but 'entfaltet ... erst mit 1. Jaenner 2023 Rechtswirkung' (has legal effect only from 1 Jan 2023) -- matches effective_from exactly. DECISION (Tabeen Raoof, 2026-09-20, PR #6 review): held at first review of this pass, same shape as D-040 -- 'Rescope this to apply strictly to B2C distance sales (private end-consumers) so commercial B2B shipments aren't falsely flagged.' RESOLVED by adding organisation.sells_direct_to_end_users: true to applies_when, reusing the exact fact introduced for eu.ppwr.authorised-representative (D-040) rather than inventing a new one -- same underlying B2C/B2B distinction, same fix shape."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }
