@@ -228,3 +228,19 @@ goods. Did not apply a citation fix — wrote up the finding and three options
 decision, since this is a scoping call, not something to sign off on as drafted.
 
 Catalog gate and all 200 catalog tests still pass; nothing published yet from this batch.
+
+## 2026-09-20 (continued) — Tabeen's sign-off on batch 2: 3 published, 1 held deliberately
+
+Tabeen reviewed [PR #3](https://github.com/TabeenRaoof/cfm/pull/3) and approved three
+(`eu.gpsr.technical-documentation`, `eu.gpsr.manufacturer-identification`,
+`uk.gpsr.general-safety-requirement`), publishing them. For the fourth,
+`uk.gpsr.uk-responsible-person`, chose option (a) from the packet explicitly: held, left as
+`draft`, on the reasoning that forcing it now "risks modelling phantom compliance" until the
+Product Regulation and Metrology Act 2025's secondary legislation actually creates the duty.
+Recorded that decision directly in the requirement's own source note (not just this log) so a
+future reader of the file, not only this log, sees it was a deliberate hold rather than an
+oversight — `state` stays `draft` on purpose, not by default.
+
+Updated `catalog.test.ts`'s published-ids assertion to the new set of 8. Catalog gate: 8
+published, 20 drafts, 0 issues. Full suite: 465/465. Merged via
+[PR #3](https://github.com/TabeenRaoof/cfm/pull/3).

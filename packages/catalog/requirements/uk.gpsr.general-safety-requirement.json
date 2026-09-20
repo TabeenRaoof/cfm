@@ -1,7 +1,7 @@
 {
   "id": "uk.gpsr.general-safety-requirement",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "UK",
   "regulation": "General Product Safety Regulations 2005 (SI 2005/1803)",
   "article_ref": "reg. 5 (general safety requirement)",
@@ -38,6 +38,6 @@
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }
