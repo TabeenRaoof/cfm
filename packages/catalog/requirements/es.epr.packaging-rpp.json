@@ -4,7 +4,7 @@
   "state": "draft",
   "jurisdiction": "EU",
   "regulation": "Real Decreto 1055/2022 de envases y residuos de envases",
-  "article_ref": "Registro de Productores de Producto (envases); unconfirmed article",
+  "article_ref": "Real Decreto 1055/2022, Art. 14-16",
   "title": "Spain: RPP registration and SCRAP membership",
   "summary": "A business placing packaging on the Spanish market must be entered in the Registro de Productores de Producto (packaging section) held by MITECO, join a collective scheme (SCRAP) such as Ecoembes or Ecovidrio, and file an annual declaration. There is no volume threshold — the duty applies from the first unit.",
   "applies_when": {
@@ -35,18 +35,18 @@
   "effective_to": null,
   "sources": [
     {
-      "title": "Packaging EPR in Spain: registration, fees and deadlines",
-      "url": "https://www.repax.io/epr-compliance/packaging-in-spain",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+      "title": "Real Decreto 1055/2022, de 27 de diciembre, de envases y residuos de envases (BOE-A-2022-22690)",
+      "url": "https://www.boe.es/buscar/doc.php?id=BOE-A-2022-22690",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the statute directly, resolving the 13 Sept draft's 'unconfirmed article' note. Art. 14 creates the packaging section of the Registro de Productores de Productos; Art. 15 is the registration duty itself ('Los productores de producto ... se inscribirán en la sección de envases del Registro de Productores de Productos ... en el plazo de tres meses'); Art. 16 is the annual information duty. No general volume threshold gates registration -- confirmed correct as drafted -- though a MITECO guidance note (below) describes a lighter 'declaración simplificada' path for producers placing under 15 tonnes/year; that is a reporting-form simplification, not a registration exemption, so it does not change applies_when."
     },
     {
-      "title": "MITECO — Registro de Productores de Producto",
-      "url": "https://www.miteco.gob.es/",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Registry identified; the RPP packaging section and the annual declaration deadline of 31 March are from secondary sources and NOT confirmed here."
+      "title": "MITECO — Nota interpretativa sobre inscripción en el RPP (sección de envases)",
+      "url": "https://www.miteco.gob.es/content/dam/miteco/es/calidad-y-evaluacion-ambiental/sgecocir/envases/registro-productores-de-producto/230616_NOTA%20INSCRIPCION%20RPP.pdf",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "MITECO's own interpretive note, issued in response to registration questions. Confirms Art. 15's three-month registration window and, separately, that a producer with no Spanish-appointed authorised representative is not itself excused from the RPP -- the first Spain-based distributor picks up the obligation instead (same fallback as es.epr.authorised-representative, same batch), and must register with a simplified declaration if that is the only packaging it is handling."
     }
   ],
   "confidence": "low",

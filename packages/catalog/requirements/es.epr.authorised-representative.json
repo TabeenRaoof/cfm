@@ -4,7 +4,7 @@
   "state": "draft",
   "jurisdiction": "EU",
   "regulation": "Real Decreto 1055/2022 de envases y residuos de envases",
-  "article_ref": "Unconfirmed",
+  "article_ref": "Real Decreto 1055/2022, Art. 17.2",
   "title": "Spain: authorised representative for non-established producers",
   "summary": "A producer not established in Spain must appoint a representante autorizado to carry the packaging obligations. Where none is appointed, responsibility passes to the first distributor in Spain — which is why a seller may believe they are covered when they are not.",
   "applies_when": {
@@ -38,11 +38,11 @@
   "effective_to": null,
   "sources": [
     {
-      "title": "Packaging EPR in Spain: registration, fees and deadlines",
-      "url": "https://www.repax.io/epr-compliance/packaging-in-spain",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+      "title": "Real Decreto 1055/2022, de 27 de diciembre, de envases y residuos de envases (BOE-A-2022-22690)",
+      "url": "https://www.boe.es/buscar/doc.php?id=BOE-A-2022-22690",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the statute directly. Art. 17.2, verbatim: 'Los productores de productos que estén establecidos en otro Estado miembro o en terceros países y que comercialicen productos en España, deberán designar a una persona física o jurídica en territorio español como representante autorizado...' and its third paragraph: 'En el caso de que los productores de producto no hayan designado un representante autorizado en España, el primer distribuidor o comerciante del producto envasado con sede en España será, subsidiariamente, el sujeto responsable...' -- both the mandatory-appointment duty and the first-distributor fallback this row's summary already describes are confirmed word for word, resolving the 13 Sept draft's only open question. NOT modelled, found in the same article's paragraph 5: for transport packaging used in distance sales, the courier/parcel company (or the e-commerce platform, where it facilitates a third party's sale) fulfils the producer's financial/information obligations on the producer's behalf -- but this is scoped narrowly to shipping/transport packaging only, not the AR duty as a whole, so left out of applies_when."
     }
   ],
   "confidence": "low",

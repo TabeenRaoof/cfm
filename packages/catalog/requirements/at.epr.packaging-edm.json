@@ -4,7 +4,7 @@
   "state": "draft",
   "jurisdiction": "EU",
   "regulation": "Verpackungsverordnung (VVO)",
-  "article_ref": "Unconfirmed",
+  "article_ref": "AWG 2002, § 13g(1) (Primärverpflichtete)",
   "title": "Austria: EDM registration and collection-system participation",
   "summary": "A business placing packaging on the Austrian market must register in the EDM portal (edm.gv.at) and contract with a licensed collection and recovery system such as ARA, then report packaging volumes and materials.",
   "applies_when": {
@@ -35,18 +35,18 @@
   "effective_to": null,
   "sources": [
     {
-      "title": "EDM — Elektronisches Datenmanagement (Umweltbundesamt)",
-      "url": "https://edm.gv.at/",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+      "title": "Primärverpflichtete von Verpackungen (Unternehmensserviceportal, usp.gv.at)",
+      "url": "https://www.usp.gv.at/services/suchen-und-finden/lexikon/primaerverpflichtete-von-verpackungen.html",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched directly. § 13g(1) AWG 2002 defines 'Primärverpflichtete' as, among others, importers with an AT seat, packers with an AT seat, and -- the category that matters for a non-established e-commerce seller -- distance sellers with NO Austrian seat/establishment who deliver packaging or packaged goods to a private end consumer in Austria via distance selling. That last limb is what keeps this row's applies_when correctly broad (no organisation.established_in_market condition needed): the EDM/collection-system duty attaches regardless of AT establishment, as long as the sale reaches an Austrian end consumer. This mirrors the at.epr.authorised-representative row in this same batch, which additionally requires appointing an AT-based representative to carry out this very duty when the seller has no AT presence."
     },
     {
-      "title": "Austria EPR guide — packaging compliance, registration and reporting",
-      "url": "https://regsurance.com/austria-epr-guide/",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+      "title": "EDM — Elektronisches Datenmanagement (Umweltbundesamt)",
+      "url": "https://edm.gv.at/",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Portal confirmed as the correct registration channel; the underlying legal duty is § 13g(1) AWG 2002 (see the usp.gv.at source above), not a citation of its own."
     }
   ],
   "confidence": "low",

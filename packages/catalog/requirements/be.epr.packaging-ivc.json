@@ -4,7 +4,7 @@
   "state": "draft",
   "jurisdiction": "EU",
   "regulation": "Interregional cooperation agreement on packaging waste",
-  "article_ref": "Unconfirmed",
+  "article_ref": "Cooperation Agreement of 4 Nov. 2008, Art. 6 (take-back, >300kg) and Art. 18 (reporting)",
   "title": "Belgium: IVC declaration and Fost Plus or Valipac membership",
   "summary": "A business placing packaging on the Belgian market registers through the Interregional Packaging Commission (IVC/CIE) and joins Fost Plus for household packaging, Valipac for industrial packaging, or both. There is no de minimis threshold.",
   "applies_when": {
@@ -35,18 +35,18 @@
   "effective_to": null,
   "sources": [
     {
-      "title": "Interregional Packaging Commission (IVC/CIE)",
-      "url": "https://www.ivcie.be/",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+      "title": "Cooperation Agreement of 4 November 2008 on the prevention and management of packaging waste (Belgian Official Gazette 29.12.2008)",
+      "url": "https://www.ivcie.be/wp-content/uploads/2021/05/Cooperation-agreement-of-04-11-2008-on-the-prevention-and-management-of-packaging-waste.pdf",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the treaty text directly (English version). FINDING that changes the picture from the 13 Sept draft: the Agreement's OWN text sets Art. 6's take-back obligation (join Fost Plus/Valipac or self-fulfil) at 'at least 300 kg of packaging on the market per year' -- there IS a threshold in the primary source, contrary to this draft's summary ('There is no de minimis threshold'), which was carried over from IVC/CIE's own English guidance page. Art. 18's annual reporting duty is worded as applying to 'the responsible company subject to the take-back obligation', i.e. the same 300 kg-gated population in the treaty text -- not, as the guidance page states, 'any company placing packaged products on the Belgian market' regardless of volume. OPEN QUESTION, not resolved this pass: IVC/CIE's own practical guidance may reflect a later amendment broadening the reporting duty to everyone (the Agreement has been amended repeatedly, e.g. 05.03.2020 and 02.04.2015 insertions visible in this same text), or the guidance page may simply be describing best practice rather than the strict legal minimum. Recommend either finding the amendment that decouples Art. 18 from Art. 6, or adding organisation.be_packaging_kg_previous_year >= 300 to applies_when (same shape as the NL row in this batch) so a sub-300kg seller is not told they must register when the treaty text does not clearly require it."
     },
     {
-      "title": "List of EU packaging producer responsibility organisations",
-      "url": "https://www.compliancegate.com/epr-organisations-european-union/",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+      "title": "Interregional Packaging Commission (IVC/CIE) — reporting obligation page",
+      "url": "https://www.ivcie.be/en/obligations/reporting-obligation/",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "States plainly: 'Any company placing packaged products on the Belgian market' has the reporting obligation, with no volume threshold mentioned. This is the source for the current (thresholdless) applies_when, but it conflicts with the 4 Nov. 2008 treaty text's own Art. 18 wording -- see the note on that source above. Kept both sources rather than picking a winner, since the discrepancy itself is the finding."
     }
   ],
   "confidence": "low",
