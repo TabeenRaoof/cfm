@@ -174,3 +174,30 @@ not something to infer. Wrote `project-setup/review-packet-2026-09-20.md` summar
 findings and the two open decisions (split the French row; how to scope the UK small/large
 distinction) so review is reading and signing, not re-researching. Catalog gate and all 200
 catalog tests still pass.
+
+## 2026-09-20 (continued) — Tabeen's sign-off: the catalog's first 5 published requirements
+
+Tabeen reviewed the packet in [PR #1](https://github.com/TabeenRaoof/cfm/pull/1), approved it with
+notes, and made both open decisions: split `fr.epr.packaging-citeo` into two rows
+(`fr.epr.packaging-citeo` for the EPR registration duty, new
+`fr.epr.packaging-triman-marking` for the Triman-marking duty) rather than keep two legal bases
+under one citation; and scope `uk.epr.packaging-registration` to registration only (Option A),
+deferring the large-producer-only duties (PRNs/PERNs, compliance certificate, disposal fee) to a
+future requirement rather than modelling them now.
+
+Applying the sign-off caught two schema violations in the submitted JSON before they could land:
+`state: "active"` isn't a value `RequirementState` accepts (`draft` or `published` only) —
+corrected to `"published"`; `last_reviewed_at` needed a plain ISO date, not a full timestamp. Also
+caught and fixed a citation bug the split introduced: the new Triman-marking row's Légifrance URL
+had been copied from the EPR row and pointed at `L541-10-1`'s article page rather than
+`L541-9-3`'s own page — the kind of thing that's easy to miss because both articles share a
+Légifrance page family.
+
+Updated `catalog.test.ts`'s "are all still drafts" assertion, correct until this commit and now
+stale by design — it asserts the five published ids explicitly instead of an empty array, so
+the test grows with each future review packet rather than needing deletion.
+
+**Catalog gate: 5 published, 23 drafts, 0 issues — the first requirements in this catalog a
+customer could actually be shown.** Full suite: 465/465. FR requirement count 11 → 12 (the
+Triman split). Merged via [PR #1](https://github.com/TabeenRaoof/cfm/pull/1), squash-merged to
+`main`, CI green post-merge.
