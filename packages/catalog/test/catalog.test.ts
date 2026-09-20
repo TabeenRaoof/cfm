@@ -111,12 +111,23 @@ describe("the requirement files in this repository", () => {
     expect(issues).toEqual([]);
   });
 
-  it("are all still drafts, so the live catalog is empty", async () => {
+  it("publishes only what Tabeen has actually signed off, and withholds the rest", async () => {
     // Every entry was drafted from the technical plan's own article references, which that
-    // plan says must be verified against EUR-Lex before publishing. Until Tabeen has done
-    // that, nothing is customer-facing. This test is expected to change when review happens.
+    // plan says must be verified against EUR-Lex before publishing. The first review packet
+    // (2026-09-20, project-setup/review-packet-2026-09-20.md) published five; the remainder
+    // stay withheld until their own review happens. This test is expected to grow that set
+    // one review packet at a time, not to jump back to zero.
     const { catalog, withheldDrafts } = await loadRealCatalog(false);
-    expect(catalog.requirements).toHaveLength(0);
+    const publishedIds = catalog.requirements.map((r) => r.id).sort();
+    expect(publishedIds).toEqual(
+      [
+        "de.epr.packaging-lucid",
+        "eu.gpsr.responsible-economic-operator",
+        "fr.epr.packaging-citeo",
+        "fr.epr.packaging-triman-marking",
+        "uk.epr.packaging-registration",
+      ].sort(),
+    );
     expect(withheldDrafts.length).toBeGreaterThan(0);
   });
 });

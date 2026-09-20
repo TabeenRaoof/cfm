@@ -1,7 +1,7 @@
 {
   "id": "de.epr.packaging-lucid",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Verpackungsgesetz (VerpackG)",
   "article_ref": "§ 9, § 7",
@@ -46,10 +46,10 @@
       "url": "https://www.gesetze-im-internet.de/verpackg/VerpackG.pdf",
       "retrieved_at": "2026-09-20",
       "verified": true,
-      "note": "Fetched the official consolidated statute text. § 9(1): 'Hersteller von mit Ware befüllten Verpackungen sind verpflichtet, sich vor dem Inverkehrbringen der Verpackungen bei der Zentralen Stelle registrieren zu lassen' — 'Manufacturers of goods-filled packaging must register with the Zentrale Stelle before placing the packaging on the market,' matching this requirement's summary exactly. § 7 ('Systembeteiligungspflicht') is the separate dual-system participation duty for system-relevant packaging, also matching. Both article numbers already in the draft are correct; PPWR (the EU regulation, in force from 12 Aug 2026 per verpackungsregister.org) is reshaping some responsibilities and is worth a note for the next review cycle but does not change what is cited here today. READY for Tabeen's sign-off."
+      "note": "Fetched the official consolidated statute text. § 9(1): 'Hersteller von mit Ware befüllten Verpackungen sind verpflichtet, sich vor dem Inverkehrbringen der Verpackungen bei der Zentralen Stelle registrieren zu lassen' — 'Manufacturers of goods-filled packaging must register with the Zentrale Stelle before placing the packaging on the market,' matching this requirement's summary exactly. § 7 ('Systembeteiligungspflicht') is the separate dual-system participation duty for system-relevant packaging, also matching. Both article numbers already in the draft are correct. SIGNED OFF 2026-09-20 (Tabeen Raoof) at confidence medium. FOR THE NEXT REVIEW CYCLE: PPWR (the EU packaging regulation) takes effect 12 August 2026 per verpackungsregister.org and is reshaping some of these responsibilities — this citation and summary do not yet reflect PPWR and must be re-checked against it before the next re-review, not treated as settled indefinitely."
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

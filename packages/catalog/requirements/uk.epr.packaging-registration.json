@@ -1,12 +1,12 @@
 {
   "id": "uk.epr.packaging-registration",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "UK",
   "regulation": "Packaging Extended Producer Responsibility (pEPR)",
   "article_ref": "The Producer Responsibility Obligations (Packaging and Packaging Waste) Regulations 2024, S.I. 2024/1332, regs. 23-25",
-  "title": "United Kingdom: packaging producer registration, above threshold",
-  "summary": "A UK-established business that supplied or imported more than 25 tonnes of packaging in the previous year AND had worldwide turnover of £1 million or more must register with the environmental regulator and report packaging data. Below both thresholds there is no pEPR registration obligation.",
+  "title": "United Kingdom: packaging producer registration only, above threshold",
+  "summary": "A UK-established business that supplied or imported more than 25 tonnes of packaging in the previous year AND had worldwide turnover of £1 million or more must register with the environmental regulator and report packaging data. This requirement covers registration only; additional duties for large producers are tracked separately. Below both thresholds there is no pEPR registration obligation.",
   "applies_when": {
     "all": [
       {
@@ -66,10 +66,10 @@
       "url": "https://www.legislation.gov.uk/uksi/2024/1332/made",
       "retrieved_at": "2026-09-20",
       "verified": true,
-      "note": "Fetched the statute directly, resolving the note in the previous draft that the S.I. number was unconfirmed: it is S.I. 2024/1332. Reg. 23 defines 'large producer' and 'small producer'; reg. 24(2) sets the small-producer threshold this requirement models — more than £1,000,000 turnover in the relevant prior year AND more than 25 tonnes of packaging supplied — matching the draft's thresholds exactly. Reg. 25 is the actual registration/reporting obligation. FINDING the draft does not yet model: this requirement treats every producer past the threshold identically, but regs. 23-25 set materially different duties for 'small producer' (register + report annually) versus 'large producer' (register + report every 6 months + buy PRNs/PERNs + submit a compliance certificate + pay a disposal fee — large producer starts above 50 tonnes AND £2m turnover per reg. 24(1)/GOV.UK's own threshold table). A design partner who is a small producer would currently be told they need evidence a large producer's obligations imply, or vice versa, once this is more than a single 'proof of registration' evidence type. Tabeen decision needed: split into small-producer and large-producer rows, or explicitly scope this row to registration only (which is common to both tiers) and add the large-producer-only duties as a separate future row. Also note: S.I. 2025/1369 amends the 2024 Regulations from 1 January 2026 — none of the amendments found so far touch regs. 23-25, but re-check before the 2026 reporting cycle."
+      "note": "Fetched the statute directly, resolving the note in the previous draft that the S.I. number was unconfirmed: it is S.I. 2024/1332. Reg. 23 defines 'large producer' and 'small producer'; reg. 24(2) sets the small-producer threshold this requirement models — more than £1,000,000 turnover in the relevant prior year AND more than 25 tonnes of packaging supplied — matching the draft's thresholds exactly. Reg. 25 is the actual registration/reporting obligation. SIGNED OFF 2026-09-20 (Tabeen Raoof): scoped explicitly to registration duties only (Option A), since registration applies to both small and large producers and that is what this row actually tests for today. Large-producer-only duties (PRNs/PERNs, compliance certificate, disposal fee) to be drafted as separate requirement(s) later."
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }
