@@ -9,7 +9,14 @@ function sentRequest(overrides: Partial<SupplierRequest> = {}): SupplierRequest 
     id: "req_1",
     productIds: ["prod_1"],
     partyId: "party_1",
-    requestedItems: [{ key: "rp_mandate", label: "RP mandate", fulfilledAt: null }],
+    requestedItems: [
+      {
+        key: "rp_mandate",
+        requirementId: "eu.gpsr.responsible-economic-operator",
+        label: "RP mandate",
+        fulfilledAt: null,
+      },
+    ],
     tokenHash: "a".repeat(64),
     createdAt: "2026-09-01T00:00:00Z",
     sentAt: "2026-09-01T00:00:00Z",
@@ -75,8 +82,25 @@ describe("dueReminder", () => {
     expect(dueReminder(cancelled, "2026-09-14T00:00:00Z")).toBeNull();
     const fulfilled = sentRequest({
       status: "fulfilled",
-      requestedItems: [{ key: "rp_mandate", label: "RP mandate", fulfilledAt: "2026-09-05T00:00:00Z" }],
+      requestedItems: [
+        {
+          key: "rp_mandate",
+          requirementId: "eu.gpsr.responsible-economic-operator",
+          label: "RP mandate",
+          fulfilledAt: "2026-09-05T00:00:00Z",
+        },
+      ],
     });
     expect(dueReminder(fulfilled, "2026-09-14T00:00:00Z")).toBeNull();
+  });
+
+  it("stops firing once the due date has already passed, rather than working through the rest of the schedule late", () => {
+    // Without this guard, every remaining offset satisfies `daysUntilDue <= offset` once
+    // daysUntilDue goes negative, so an un-expired overdue request would keep sending its
+    // remaining reminders one cron run at a time regardless of how long ago the deadline
+    // passed. What should happen instead is expiry (request.ts `expireIfDue`), not a nudge
+    // about a date already gone.
+    const request = sentRequest();
+    expect(dueReminder(request, "2026-09-16T00:00:00Z")).toBeNull(); // one day past dueAt
   });
 });

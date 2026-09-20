@@ -17,8 +17,18 @@ function baseRequest(overrides: Partial<SupplierRequest> = {}): SupplierRequest 
     productIds: ["prod_1"],
     partyId: "party_1",
     requestedItems: [
-      { key: "rp_mandate", label: "Responsible person mandate", fulfilledAt: null },
-      { key: "epr_certificate", label: "EPR registration certificate", fulfilledAt: null },
+      {
+        key: "rp_mandate",
+        requirementId: "eu.gpsr.responsible-economic-operator",
+        label: "Responsible person mandate",
+        fulfilledAt: null,
+      },
+      {
+        key: "epr_certificate",
+        requirementId: "de.epr.packaging-lucid",
+        label: "EPR registration certificate",
+        fulfilledAt: null,
+      },
     ],
     tokenHash: "a".repeat(64),
     createdAt: "2026-09-01T00:00:00Z",
@@ -70,14 +80,51 @@ describe("the status lifecycle", () => {
     expect(() => markSent(request, "2026-09-02T00:00:00Z")).toThrow(InvalidTransitionError);
   });
 
-  it("refuses to fulfil an item on a request never sent", () => {
-    expect(() => fulfilItem(baseRequest(), "rp_mandate", "2026-09-02T00:00:00Z")).not.toThrow();
-    // Fulfilling is allowed from draft in this model (an upload could theoretically race the
-    // email), but a terminal request always refuses:
+  it("refuses to fulfil an item on a request never sent — no magic link exists yet", () => {
+    // A draft was never emailed, so there is no link a supplier could have used to upload
+    // anything. Fulfilling from draft used to be allowed on the theory that "an upload could
+    // race the email", but that left a request that could never be sent afterward: markSent
+    // requires status === "draft", and fulfilling moved it to partially_fulfilled first.
+    expect(() => fulfilItem(baseRequest(), "rp_mandate", "2026-09-02T00:00:00Z")).toThrow(
+      InvalidTransitionError,
+    );
+  });
+
+  it("a draft can always still be sent — fulfilling it first is no longer possible", () => {
+    // Regression guard for the specific bug this fixed: fulfilItem no longer lets a draft
+    // become unsendable.
+    const request = markSent(baseRequest(), "2026-09-01T00:00:00Z");
+    expect(request.status).toBe("sent");
+  });
+
+  it("refuses to fulfil an item on a cancelled or already-fulfilled request", () => {
     const cancelled = cancel(baseRequest(), "2026-09-02T00:00:00Z");
     expect(() => fulfilItem(cancelled, "rp_mandate", "2026-09-03T00:00:00Z")).toThrow(
       InvalidTransitionError,
     );
+
+    let fulfilled = markSent(baseRequest(), "2026-09-01T00:00:00Z");
+    fulfilled = fulfilItem(fulfilled, "rp_mandate", "2026-09-02T00:00:00Z");
+    fulfilled = fulfilItem(fulfilled, "epr_certificate", "2026-09-03T00:00:00Z");
+    expect(fulfilled.status).toBe("fulfilled");
+    expect(() => fulfilItem(fulfilled, "rp_mandate", "2026-09-04T00:00:00Z")).toThrow(
+      InvalidTransitionError,
+    );
+  });
+
+  it("still accepts a late upload against an expired request, rather than discarding it", () => {
+    // A supplier who uploads the day after the deadline has still given you the document —
+    // the hard rule's reasoning in a different costume: a wrong "we never got it" is worse than
+    // an honest "we got it late".
+    let request = markSent(baseRequest(), "2026-09-01T00:00:00Z");
+    request = expireIfDue(request, "2026-09-16T00:00:00Z");
+    expect(request.status).toBe("expired");
+
+    request = fulfilItem(request, "rp_mandate", "2026-09-17T00:00:00Z");
+    expect(request.status).toBe("partially_fulfilled");
+
+    request = fulfilItem(request, "epr_certificate", "2026-09-18T00:00:00Z");
+    expect(request.status).toBe("fulfilled");
   });
 
   it("rejects fulfilling an item key that was never requested", () => {

@@ -38,6 +38,26 @@ describe("renderSupplierRequestEmail — English", () => {
     expect(email.subject).toMatch(/^Reminder:/);
     expect(email.body).toMatch(/still waiting/i);
   });
+
+  it("marks the final reminder distinctly from an earlier one — same 'still waiting' fact, different urgency", () => {
+    const early = renderSupplierRequestEmail("en", baseParams({ reminderNumber: 1, isFinalReminder: false }));
+    const final = renderSupplierRequestEmail(
+      "en",
+      baseParams({ reminderNumber: 3, isFinalReminder: true }),
+    );
+    expect(early.subject).toMatch(/^Reminder:/);
+    expect(early.subject).not.toMatch(/Final/i);
+    expect(final.subject).toMatch(/^Final reminder:/);
+    expect(final.body).toMatch(/due tomorrow/i);
+  });
+
+  it("ignores isFinalReminder on the initial send — there is no reminder to distinguish", () => {
+    const email = renderSupplierRequestEmail(
+      "en",
+      baseParams({ reminderNumber: null, isFinalReminder: true }),
+    );
+    expect(email.subject).not.toMatch(/Reminder|Final/i);
+  });
 });
 
 describe("renderSupplierRequestEmail — Chinese", () => {
@@ -52,6 +72,14 @@ describe("renderSupplierRequestEmail — Chinese", () => {
   it("marks a reminder distinctly from the first send", () => {
     const email = renderSupplierRequestEmail("zh", baseParams({ reminderNumber: 1 }));
     expect(email.subject).toContain("【提醒】");
+  });
+
+  it("marks the final reminder distinctly, in Chinese too", () => {
+    const final = renderSupplierRequestEmail(
+      "zh",
+      baseParams({ reminderNumber: 3, isFinalReminder: true }),
+    );
+    expect(final.subject).toContain("【最后提醒】");
   });
 
   it("greets by name when known and falls back generically otherwise", () => {

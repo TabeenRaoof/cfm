@@ -32,6 +32,12 @@ export function dueReminder(request: SupplierRequest, asOf: string): number | nu
   if (isTerminal(request.status) || request.status === "draft") return null;
 
   const daysUntilDue = daysBetween(asOf, request.dueAt);
+  // Once the deadline has passed, a reminder about it is not useful — what happens next is
+  // expiry (request.ts `expireIfDue`), not another nudge about a date already gone. Without
+  // this, every offset in the schedule satisfies `daysUntilDue <= offset` for a negative
+  // daysUntilDue, so an un-expired overdue request would keep working through its remaining
+  // reminders one cron run at a time regardless of how long ago the deadline passed.
+  if (daysUntilDue < 0) return null;
   const dueOffsetIndexes = REMINDER_OFFSETS_DAYS
     .map((offset, index) => ({ offset, index }))
     .filter(({ offset }) => daysUntilDue <= offset)

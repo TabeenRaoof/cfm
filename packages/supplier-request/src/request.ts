@@ -18,6 +18,13 @@ export type SupplierRequestStatus =
 
 export interface RequestedItem {
   readonly key: string;
+  /**
+   * The catalog requirement this item's upload is meant to satisfy. Without this,
+   * `EvidenceView.hasOpenRequest(requirementId)` in `@cfm/catalog`'s evaluator — the entire
+   * reason the `pending` assessment status exists — has nothing to match a request against.
+   * `@cfm/evidence` reads this field; it is not decorative.
+   */
+  readonly requirementId: string;
   readonly label: string;
   /** Set once a document has been uploaded and linked against this item. Never guessed. */
   readonly fulfilledAt: string | null;
@@ -93,13 +100,34 @@ export function markOpened(request: SupplierRequest, openedAt: string): Supplier
  * Records that one requested item now has an upload. Recomputes status from the item set itself
  * (fulfilmentStatus) rather than incrementing a counter, so a duplicate or out-of-order call is
  * safe to replay.
+ *
+ * Two decisions worth recording, both because the obvious-looking alternative was tried first
+ * and broke something:
+ *
+ * A `draft` request cannot be fulfilled. Fulfilling used to be allowed from `draft` on the
+ * theory that "an upload could theoretically race the email" — but nothing had been sent yet,
+ * so there was no magic link a supplier could have used, and a draft that reached
+ * `partially_fulfilled` this way could never be sent afterward: `markSent` requires `draft` and
+ * a fulfilled-while-draft request is no longer in it. The request must be sent first.
+ *
+ * An `expired` request CAN still be fulfilled, unlike every other terminal status. A supplier
+ * who uploads the day after the deadline has still given you the document — discarding that
+ * upload because a status flipped first would be exactly the kind of silent wrong answer the
+ * hard rule refuses elsewhere in this codebase (`unknown` vs `na`, in a different costume).
+ * `cancelled` and `fulfilled` still refuse: a cancelled request was deliberately withdrawn, and
+ * a fulfilled one has nothing left to fulfil.
  */
 export function fulfilItem(
   request: SupplierRequest,
   itemKey: string,
   fulfilledAt: string,
 ): SupplierRequest {
-  requireNotTerminal(request, "fulfil an item for");
+  if (request.status === "draft") {
+    throw new InvalidTransitionError(request.status, "fulfil an item for");
+  }
+  if (request.status === "cancelled" || request.status === "fulfilled") {
+    throw new InvalidTransitionError(request.status, "fulfil an item for");
+  }
   const items = request.requestedItems.map((item) =>
     item.key === itemKey ? { ...item, fulfilledAt } : item,
   );
@@ -107,8 +135,15 @@ export function fulfilItem(
     throw new Error(`Supplier request ${request.id} has no requested item "${itemKey}".`);
   }
   const derived = fulfilmentStatus(items);
+  // A late-but-received upload against an expired request is recorded as fulfilment, not
+  // silently reopened as though it arrived on time — the status reflects what actually
+  // happened (late) rather than pretending the deadline never passed.
   const status: SupplierRequestStatus =
-    derived === "complete" ? "fulfilled" : derived === "partial" ? "partially_fulfilled" : request.status;
+    derived === "complete"
+      ? "fulfilled"
+      : derived === "partial"
+        ? "partially_fulfilled"
+        : request.status;
   return { ...request, requestedItems: items, status };
 }
 
@@ -125,7 +160,10 @@ export function cancel(request: SupplierRequest, cancelledAt: string): SupplierR
  */
 export function isOverdue(request: SupplierRequest, asOf: string): boolean {
   if (isTerminal(request.status)) return false;
-  return asOf > request.dueAt;
+  // Parsed, not compared as strings: a lexical `>` on ISO strings only agrees with chronological
+  // order while every timestamp is UTC in an identical format — a "+02:00" offset, or one
+  // timestamp with milliseconds and one without, breaks a string comparison silently.
+  return Date.parse(asOf) > Date.parse(request.dueAt);
 }
 
 export function expireIfDue(request: SupplierRequest, asOf: string): SupplierRequest {
