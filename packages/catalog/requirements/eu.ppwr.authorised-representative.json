@@ -1,12 +1,12 @@
 {
   "id": "eu.ppwr.authorised-representative",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Regulation (EU) 2025/40 (PPWR)",
   "article_ref": "Art. 45(3)",
   "title": "Authorised representative for packaging in each member state",
-  "summary": "A producer not established in a member state where it makes packaging available must appoint an authorised representative for extended producer responsibility in that member state.",
+  "summary": "A producer not established in a member state, who sells packaging or packaged products there directly to end users (its own storefront or marketplace listing, not through a locally-established distributor who takes on the producer role instead), must appoint an authorised representative for extended producer responsibility in that member state.",
   "applies_when": {
     "all": [
       {
@@ -17,6 +17,9 @@
       },
       {
         "organisation.established_in_market": false
+      },
+      {
+        "organisation.sells_direct_to_end_users": true
       }
     ]
   },
@@ -42,10 +45,10 @@
       "url": "https://eur-lex.europa.eu/eli/reg/2025/40/oj",
       "retrieved_at": "2026-09-20",
       "verified": true,
-      "note": "Fetched the full text directly. The blanket citation 'Art. 45' was too broad -- Art. 45 as a whole is titled 'Extended producer responsibility' and covers financial-contribution costs (para 2) and marketplace/fulfilment-provider duties (paras 4-9); the authorised-representative appointment duty this row actually models is one paragraph inside it, para 3: 'A producer referred to in Article 3(1), point (15)(c) and (d), shall appoint, by written mandate, an authorised representative for the extended producer responsibility in each Member State where the producer makes packaging or packaged products available for the first time, other than the Member State where the producer is established.' Tightened the citation to Art. 45(3) to match, same pattern as D-034's Art. 9 -> Art. 9(6) tightening. SCOPING QUESTION for Tabeen, not fixed here: Art. 45(3)'s mandatory duty is narrower than this row's applies_when (organisation.established_in_market: false) -- it is keyed to the producer definitions at Art. 3(1)(15)(c)/(d), which (per the industry summary checked) are producers selling packaging or packaged products cross-border directly to end users, not every non-established seller. Art. 45(3)'s second subparagraph also leaves it to each Member State's discretion whether to require an authorised representative from other third-country-established producers. Modelling the narrower Art. 3(1)(15)(c)/(d) test properly would need those two definitions read directly (not yet done) before this could be tightened without risking false negatives -- left as an open question rather than guessed at. DECISION (Tabeen Raoof, 2026-09-20, PR #4 review): Held, not published. Citation (Art. 45(3)) confirmed correct, but the applies_when scoping needs to distinguish the universal Art. 45(3) duty from member-state-specific enforcement choices before this row ships, to avoid over-blocking non-EU sellers who are not actually caught by Art. 3(1)(15)(c)/(d). Next step is reading that definition directly and rescoping applies_when accordingly, then re-reviewing -- not a citation fix, a logic fix."
+      "note": "Fetched the full text directly. The blanket citation 'Art. 45' was too broad -- Art. 45 as a whole is titled 'Extended producer responsibility' and covers financial-contribution costs (para 2) and marketplace/fulfilment-provider duties (paras 4-9); the authorised-representative appointment duty this row actually models is one paragraph inside it, para 3: 'A producer referred to in Article 3(1), point (15)(c) and (d), shall appoint, by written mandate, an authorised representative for the extended producer responsibility in each Member State where the producer makes packaging or packaged products available for the first time, other than the Member State where the producer is established.' Tightened the citation to Art. 45(3) to match, same pattern as D-034's Art. 9 -> Art. 9(6) tightening. DECISION (Tabeen Raoof, 2026-09-20, PR #4 review): Held, not published, because applies_when needed to distinguish the universal Art. 45(3) duty from member-state-specific enforcement choices before this row ships, to avoid over-blocking non-EU sellers not actually caught by Art. 3(1)(15)(c)/(d). RESOLVED this pass by reading Art. 3(1), point (15) directly rather than the secondary summary used earlier. Its exact text: 'producer' means any manufacturer, importer or distributor to whom one of five tests, (a)-(e), applies. (a)/(b) are pure home-market tests (established in a Member State, selling on that same territory) -- structurally incapable of triggering Art. 45(3), which only ever fires for a producer selling into a DIFFERENT Member State than where it is established. (c)/(d) are the cross-border test that actually matters here: 'established in a Member State or in a third country and makes available for the first time on the territory of ANOTHER Member State, DIRECTLY TO END USERS' packaging/packaged products. The words 'directly to end users' are the qualifier the previous applies_when was missing -- a manufacturer that sells wholesale to a locally-established distributor who then resells to consumers is not itself the Art. 3(1)(15) 'producer' for that market (the local distributor is, under (a)/(b), since it is established there), so Art. 45(3) never attaches to the manufacturer in that scenario; CFM's evaluator would have wrongly told it to appoint an AR anyway. Added organisation.sells_direct_to_end_users (a plain input fact, same shape as organisation.established_in_market) to applies_when so that case now resolves 'unknown' rather than an incorrect 'applies', and resolves 'na' once a customer confirms they sell only via a local distributor. Home country (EU vs. third country) makes no difference to (c)/(d) itself, so organisation.established_in_market alone still correctly captures the 'not established in the destination market' half of the test -- no change needed there. RESIDUAL CAVEAT, not modelled: Art. 45(3)'s second subparagraph lets a Member State additionally require an AR from third-country-established producers even outside the direct-to-end-user case, at that state's discretion. That is a national-law variation (same shape as the at.epr / es.epr authorised-representative rows, which are their own separate drafts, still unverified) and is out of scope for this EU-wide floor row."
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

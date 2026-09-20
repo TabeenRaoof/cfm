@@ -37,6 +37,7 @@ export const FULLY_KNOWN: FactBag = {
   "organisation.legal_name": "Example Brands Ltd",
   "organisation.trade_register_number": "12345678",
   "organisation.vat_number": "GB123456789",
+  "organisation.sells_direct_to_end_users": true,
 
   "product.has_packaging": true,
   "product.is_toy": true,

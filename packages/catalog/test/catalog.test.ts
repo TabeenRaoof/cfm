@@ -118,8 +118,10 @@ describe("the requirement files in this repository", () => {
     // (project-setup/review-packet-2026-09-20b.md) published three more and held one
     // (uk.gpsr.uk-responsible-person — a scoping question, not a citation fix); the third
     // (project-setup/review-packet-2026-09-20c.md) published four more and held one more
-    // (eu.ppwr.authorised-representative — same reason, a scoping question). This test is
-    // expected to grow that set one review packet at a time, not to jump back to zero.
+    // (eu.ppwr.authorised-representative — a scoping question, not a citation fix); that hold
+    // was then resolved by rescoping applies_when (D-040, PR #5) and published on its own.
+    // This test is expected to grow that set one review packet at a time, not to jump back to
+    // zero.
     const { catalog, withheldDrafts } = await loadRealCatalog(false);
     const publishedIds = catalog.requirements.map((r) => r.id).sort();
     expect(publishedIds).toEqual(
@@ -130,6 +132,7 @@ describe("the requirement files in this repository", () => {
         "eu.gpsr.manufacturer-identification",
         "eu.gpsr.responsible-economic-operator",
         "eu.gpsr.technical-documentation",
+        "eu.ppwr.authorised-representative",
         "eu.ppwr.producer-registration",
         "fr.epr.packaging-citeo",
         "fr.epr.packaging-triman-marking",
