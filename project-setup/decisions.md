@@ -768,6 +768,46 @@ case for each). Catalog gate after this PR: **20 published, 8 drafts** — every
 now either category-specific (batteries, toys, WEEE, UKCA/CE marking — deprioritised per D-034)
 or `uk.gpsr.uk-responsible-person` (held pending UK secondary legislation, not a research gap).
 
+### D-042 · Batch 5: the last 7 category-specific requirements published; catalog formally closed out
+
+**Status:** Accepted (implemented) · **Date:** 2026-09-20
+
+PR #7 read the primary statutes for the last 7 drafts — batteries, toys, WEEE, and UK marking —
+excluding `uk.gpsr.uk-responsible-person`, which stays held on legislation (D-039-adjacent, not
+research). Unlike batches 4 and 5's predecessors, this pass surfaced almost no scoping ambiguity;
+its main finding was **two real date bugs**, caught only by reading each statute's own
+commencement/application clause rather than trusting the drafted date:
+
+- `eu.flag.battery-registration`: `effective_from` was a year early (2024-08-18 → 2025-08-18).
+  Regulation (EU) 2023/1542 Art. 96 states Chapter VIII — which contains Art. 55, the actual
+  registration article (not Art. 56, which is EPR financing and was the drafted citation) —
+  applies a full year after several other provisions that share the 2024 date.
+- `uk.toys.safety`: `effective_from` was a month early (2011-07-20, copied "by analogy" from the
+  EU Directive → 2011-08-19, SI 2011/1881's own commencement clause).
+- `uk.batteries.producer-registration`: `effective_from` was three months late in the other
+  direction (2010-01-01 → 2009-10-15, SI 2009/890's actual registration-duty dates).
+
+Tabeen approved all seven outright and explicitly endorsed leaving one nuance unmodelled: UK
+battery registration has two tracks (1-tonne threshold for portable batteries via a compliance
+scheme; thresholdless direct registration with the Secretary of State for industrial/automotive)
+that `applies_when` doesn't distinguish. Her reasoning: "sub-1-tonne producers still have a
+baseline statutory obligation to register (just via a different administrative track), the
+boolean requirement to hold a registration remains true. Modeling the threshold would add
+complexity without changing the ultimate gating outcome."
+
+Publishing all seven had one direct test consequence: `techfile/test/render.test.ts`'s "not yet
+reviewed" citation test ran against the real catalog (`includeDrafts: true`) and relied on *some*
+requirement applicable to a German toy assessment being unreviewed — which stopped being true
+once every EU/DE-applicable row was published. Split the assertion: general confidence-rendering
+keeps the toy/DE fixture; "not yet reviewed" gets its own test targeting
+`uk.gpsr.uk-responsible-person` directly (GB market, non-UK-established seller), the one row that
+can still exercise that fallback text, rather than depending on whatever happens to be unreviewed
+on a given day.
+
+Catalog gate after this PR: **27 published, 1 draft** — every drafted requirement is published
+except the one deliberately held on legislation. The drafted catalog from the 12 September
+technical plan is formally closed out.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
