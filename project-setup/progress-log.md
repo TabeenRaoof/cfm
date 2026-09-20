@@ -289,3 +289,25 @@ rescope `applies_when` to match, then re-review.
 Updated `catalog.test.ts`'s published-ids assertion to the new set of 12. Catalog gate: 12
 published, 16 drafts, 0 issues. Full suite: 465/465. Merged via
 [PR #4](https://github.com/TabeenRaoof/cfm/pull/4).
+
+## 2026-09-20 (continued) — rescoped `eu.ppwr.authorised-representative`'s applies_when (D-040)
+
+Picked up the held row from batch 3. Read PPWR Art. 3(1), point (15) directly this time instead of
+the secondary summary from the previous pass. The definition's cross-border limbs, (c) and (d),
+require selling **directly to end users** -- a word the modelled `applies_when` was missing. A
+manufacturer selling wholesale to an already-established local distributor, who resells to
+consumers itself, is not the Art. 3(1)(15) "producer" for that market at all, so it never needed
+an authorised representative there; the old condition would have told it otherwise.
+
+Added a new plain input fact, `organisation.sells_direct_to_end_users`, to `applies_when` (no code
+change needed -- `validate.ts` already accepts any `organisation.`-prefixed path). Added it to the
+`FULLY_KNOWN` test fixture and two new tests in `evaluate.test.ts`: the local-distributor case now
+resolves `na`, and not knowing how the seller sells now resolves `unknown` rather than either
+extreme. Logged the full reasoning in the requirement's own source note and in
+`decisions.md` (D-040), including the one thing deliberately left unmodelled: Art. 45(3)'s
+second subparagraph, a Member-State-discretionary AR duty for third-country producers independent
+of the direct-to-end-user test -- that is a national-law variation out of scope for this EU-wide
+floor row.
+
+Still `state: "draft"` -- this is a logic fix awaiting re-review, not a sign-off. Catalog gate
+unchanged: 12 published, 16 drafts, 0 issues. Full suite: 469/469 (4 new).

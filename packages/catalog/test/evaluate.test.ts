@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { EvidenceView } from "../src/evaluate.ts";
 import { assessProduct, NO_EVIDENCE } from "../src/evaluate.ts";
-import { AS_OF, FULLY_KNOWN, loadRealCatalog } from "./fixtures.ts";
+import { AS_OF, FULLY_KNOWN, loadRealCatalog, without } from "./fixtures.ts";
 
 const { catalog } = await loadRealCatalog(true);
 
@@ -45,6 +45,26 @@ describe("market scoping", () => {
   it("does not apply the packaging representative where the seller is established", () => {
     const established = { ...FULLY_KNOWN, "organisation.establishment_country": "DE" };
     expect(find(assess(established, { iso: "DE" }), "eu.ppwr.authorised-representative")?.status).toBe("na");
+  });
+
+  it("does not apply the PPWR representative duty to a seller who only sells via a local distributor", () => {
+    // PPWR Art. 3(1)(15)(c)/(d): the mandatory Art. 45(3) duty only ever attaches to a producer
+    // that sells directly to end users in the market where it isn't established. A manufacturer
+    // that sells wholesale to an already-established local distributor, who resells to
+    // consumers themselves, is not the Art. 3(1)(15) "producer" for that market at all -- the
+    // distributor is -- so it never needed an authorised representative in the first place.
+    const viaDistributor = { ...FULLY_KNOWN, "organisation.sells_direct_to_end_users": false };
+    expect(find(assess(viaDistributor), "eu.ppwr.authorised-representative")?.status).toBe("na");
+  });
+
+  it("does not know the PPWR representative duty applies until told how the seller sells", () => {
+    // The hard rule in miniature for this specific fact: absence must read as "unknown", never
+    // as either "applies" or "na" — see hard-rule.test.ts for the same assertion made
+    // exhaustively across the whole catalog.
+    const noChannelInfo = without(FULLY_KNOWN, "organisation.sells_direct_to_end_users");
+    const result = find(assess(noChannelInfo), "eu.ppwr.authorised-representative");
+    expect(result?.status).toBe("unknown");
+    expect(result?.missing_facts).toContain("organisation.sells_direct_to_end_users");
   });
 });
 

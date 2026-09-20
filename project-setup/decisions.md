@@ -689,6 +689,40 @@ for a product is a caller/database concern), and confidence scoring for market m
 single `country` field — multi-field scoping (e.g. by `scheme_name`) is not needed by any
 requirement in the catalog yet, so it was not speculatively added.
 
+---
+
+### D-040 · New fact `organisation.sells_direct_to_end_users`, added to close the PPWR AR scoping gap
+
+**Status:** Accepted (implemented) · **Date:** 2026-09-20
+
+`eu.ppwr.authorised-representative` was held at PR #4 review (batch-3 catalog packet) because its
+`applies_when` — `organisation.established_in_market: false` — was broader than PPWR
+Art. 45(3)'s actual trigger, risking over-blocking a non-EU seller who sells wholesale to an
+already-established local distributor and never itself needed an authorised representative.
+
+Read Regulation (EU) 2025/40 Art. 3(1), point (15) directly rather than relying on the secondary
+summary used at first draft. Its five sub-tests, (a)-(e), split cleanly: (a)/(b) are pure
+home-market tests and structurally cannot trigger Art. 45(3), which only ever fires cross-border;
+(c)/(d) are the cross-border test, and the operative word missing from the modelled condition was
+**"directly to end users"** — a manufacturer selling wholesale to a local distributor, who then
+resells to consumers itself, is not the Art. 3(1)(15) "producer" for that market at all (the
+distributor is, under (a)/(b)), so the manufacturer never needed an AR there.
+
+Added `organisation.sells_direct_to_end_users` (plain input fact, same shape as the existing
+`organisation.established_in_market`, no code change needed beyond the fact itself — the
+`organisation.` prefix is already accepted by `validate.ts`'s `checkFactPath`) and required it
+`true` in `applies_when`. Absence now correctly resolves `unknown` rather than either `applies` or
+`na` (`hard-rule.test.ts` covers this generically; `evaluate.test.ts` adds two cases specific to
+this row). Added the fact to `FULLY_KNOWN` in `test/fixtures.ts` (`true`, matching that fixture's
+own stated intent of maximising which requirements apply) rather than leaving it for the hard-rule
+test to discover as an omission.
+
+**Deliberately not modelled**: Art. 45(3)'s second subparagraph, which lets a Member State
+additionally require an AR from third-country-established producers at that state's discretion,
+independent of the direct-to-end-user test. That is a national-law variation, the same shape as
+the still-unverified `at.epr.authorised-representative` / `es.epr.authorised-representative` rows,
+and is out of scope for this EU-wide floor requirement.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
