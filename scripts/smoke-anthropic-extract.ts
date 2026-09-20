@@ -59,7 +59,6 @@ const gateway = new Gateway({
   provider: new AnthropicProvider({ maxTotalSpendUsd: MAX_SPEND_USD }),
   models: { extract: "claude-haiku-4-5" },
   usage,
-  imageTokensPerPage: 1_600,
 });
 
 // issue_date is labelled plainly, so @cfm/documents resolves it for free. rp_name, rp_address,

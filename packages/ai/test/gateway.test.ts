@@ -21,7 +21,6 @@ const build = (profile = FRONTIER_PROFILE, respond: () => unknown = () => ({ typ
     provider,
     models: { classify: "fake-small-1" },
     usage,
-    imageTokensPerPage: 1_900,
   });
   return { gateway, provider, usage };
 };
@@ -152,7 +151,7 @@ describe("cost attribution", () => {
 describe("configuration errors", () => {
   it("refuses a task whose role has no configured model", async () => {
     const provider = new FakeProvider("fake", FRONTIER_PROFILE, () => ({}));
-    const gateway = new Gateway({ provider, models: {}, usage: new RecordingUsageSink(), imageTokensPerPage: 1_900 });
+    const gateway = new Gateway({ provider, models: {}, usage: new RecordingUsageSink() });
     await expect(
       gateway.runTask(classifyDocument, input({ textLayer: "lorem ".repeat(100) })),
     ).rejects.toThrow(/No model configured for role "classify"/);

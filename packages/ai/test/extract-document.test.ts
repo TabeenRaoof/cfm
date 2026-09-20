@@ -25,7 +25,6 @@ const build = (respond: () => unknown = () => ({ lab_name: "SGS" })) => {
     provider,
     models: { classify: "m", extract: "m" },
     usage,
-    imageTokensPerPage: 1_900,
   });
   return { gateway, provider, usage };
 };

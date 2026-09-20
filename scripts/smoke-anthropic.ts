@@ -66,7 +66,6 @@ const gateway = new Gateway({
   provider: new AnthropicProvider({ maxTotalSpendUsd: MAX_SPEND_USD }),
   models: { classify: "claude-haiku-4-5" },
   usage,
-  imageTokensPerPage: 1_600,
 });
 
 // Deliberately ambiguous — two document types match ("test report" AND "declaration of

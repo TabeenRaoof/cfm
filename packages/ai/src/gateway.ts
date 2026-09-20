@@ -12,7 +12,6 @@
  */
 
 import type { GenerationRequest, ModelCapabilities, Provider } from "./provider.ts";
-import { estimateTokens } from "./provider.ts";
 import type { PreparedInput, TaskDefinition } from "./task.ts";
 import { BudgetExceededError } from "./task.ts";
 
@@ -43,8 +42,6 @@ export interface GatewayConfig {
   /** Role to concrete model id. Configuration, so a swap never touches feature code. */
   readonly models: Readonly<Record<string, string>>;
   readonly usage: UsageSink;
-  /** Tokens charged per rendered page image; differs by provider and page size. */
-  readonly imageTokensPerPage: number;
 }
 
 export interface RunContext {
@@ -103,15 +100,6 @@ export class Gateway {
     const capabilities = this.config.provider.capabilities(model);
     const prepared = adaptToCapabilities(task.prepareInput(input), capabilities);
 
-    // 3. Budget, checked before anything is sent.
-    const estimated = estimateTokens(prepared.parts, this.config.imageTokensPerPage);
-    if (estimated > task.budget.maxInputTokens) {
-      throw new BudgetExceededError(task.id, estimated, task.budget.maxInputTokens);
-    }
-    if (estimated > capabilities.maxInputTokens) {
-      throw new BudgetExceededError(task.id, estimated, capabilities.maxInputTokens);
-    }
-
     const request: GenerationRequest = {
       model,
       system: task.system,
@@ -120,6 +108,19 @@ export class Gateway {
       maxOutputTokens: Math.min(task.budget.maxOutputTokens, capabilities.maxOutputTokens),
       ...(task.batchable && context.preferBatch && capabilities.supportsBatch ? { batch: true } : {}),
     };
+
+    // 3. Budget, checked before anything is sent. The estimate comes from the configured
+    // provider's own `estimateInputTokens` — a documented approximation of its actual
+    // tokenizer — rather than a generic character-count guess that knows nothing about which
+    // provider is configured. `Provider.estimateInputTokens` existed as an interface member
+    // with no caller until this; every provider (real or fake) already implements it.
+    const estimated = this.config.provider.estimateInputTokens(request);
+    if (estimated > task.budget.maxInputTokens) {
+      throw new BudgetExceededError(task.id, estimated, task.budget.maxInputTokens);
+    }
+    if (estimated > capabilities.maxInputTokens) {
+      throw new BudgetExceededError(task.id, estimated, capabilities.maxInputTokens);
+    }
 
     const result = await this.config.provider.generate(request);
 

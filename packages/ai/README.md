@@ -7,7 +7,7 @@ The only place in this codebase that may talk to a model.
 | Rule | Enforced by |
 |---|---|
 | Deterministic first — a model is only reached when code cannot answer | `Gateway.runTask` runs `determinism.attempt` before anything else; `registry.test.ts` fails a task that declares neither an attempt nor a written reason there is none |
-| Every task declares a token budget, and the gateway refuses to exceed it | `gateway.test.ts` — the request is never sent |
+| Every task declares a token budget, and the gateway refuses to exceed it, estimated by the configured provider's own tokenizer | `gateway.test.ts` — the request is never sent |
 | No provider SDK outside `src/providers/` | `boundary.test.ts` walks every `.ts` file in every package |
 
 ## Swapping providers: what actually transfers
@@ -39,14 +39,17 @@ eval is how you take it.**
 
 Create `src/providers/<vendor>.ts` implementing `Provider` — three methods: `capabilities`,
 `estimateInputTokens`, `generate`. It is the only file permitted to import that vendor's SDK.
-Nothing else changes: model ids live in `GatewayConfig.models`, keyed by role.
+`estimateInputTokens` is what the gateway calls for the pre-flight budget check (rule above),
+so it needs to be a real approximation of that vendor's tokenizer, not a placeholder — an
+image-per-page estimate belongs inside it, since that cost varies by provider and page size and
+the gateway has no business knowing either. Nothing else changes: model ids live in
+`GatewayConfig.models`, keyed by role.
 
 ```ts
 const gateway = new Gateway({
   provider: new WhicheverProvider(process.env.API_KEY),
   models: { classify: "…", extract: "…" },   // configuration, never literals in feature code
   usage: usageSink,
-  imageTokensPerPage: 1_900,
 });
 ```
 

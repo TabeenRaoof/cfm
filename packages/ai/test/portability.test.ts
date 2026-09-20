@@ -47,7 +47,6 @@ describe.each(PROFILES)("against a provider whose profile is %s", (_label, profi
       provider,
       models: Object.fromEntries(TASKS.map((t) => [t.modelRole, "whatever-model-id"])),
       usage,
-      imageTokensPerPage: 1_900,
     });
     return { gateway, provider, usage };
   };
@@ -78,7 +77,6 @@ describe.each(PROFILES)("against a provider whose profile is %s", (_label, profi
       provider,
       models: { classify: "whatever" },
       usage: new RecordingUsageSink(),
-      imageTokensPerPage: 1_900,
     });
     await expect(gateway.runTask(classifyDocument, ambiguous)).rejects.toThrow(/returned no type/);
   });
