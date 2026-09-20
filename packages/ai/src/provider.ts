@@ -92,8 +92,21 @@ export interface GenerationRequest {
 }
 
 export interface Usage {
+  /**
+   * Fresh input tokens only — on Anthropic this is tokens after the last cache breakpoint,
+   * excluding both `cachedInputTokens` and `cacheWriteTokens` below. Verified against
+   * Anthropic's prompt-caching documentation 2026-09-20: `input_tokens` in the API response
+   * does not include either cache bucket, it is not a total to subtract from.
+   */
   readonly inputTokens: number;
+  /** Tokens served from an existing cache entry, billed at `costPerMTokCachedInput`. */
   readonly cachedInputTokens: number;
+  /**
+   * Tokens written to a new cache entry this call, billed at `costPerMTokCacheWrite` — the
+   * premium D-029 calls "half the arithmetic" that a reads-are-10%-cheaper mental model leaves
+   * out. Zero on a provider or a request with no caching.
+   */
+  readonly cacheWriteTokens: number;
   readonly outputTokens: number;
   readonly costUsd: number;
 }

@@ -90,6 +90,7 @@ export class FakeProvider implements Provider {
       usage: {
         inputTokens,
         cachedInputTokens: 0,
+        cacheWriteTokens: 0,
         outputTokens,
         costUsd:
           (inputTokens / 1_000_000) * this.profile.costPerMTokInput +

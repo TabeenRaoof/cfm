@@ -22,6 +22,11 @@ export interface UsageRecord {
   readonly providerId: string;
   readonly model: string;
   readonly organisationId: string | null;
+  /**
+   * Total input tokens this call actually processed — fresh, cache-read and cache-write
+   * combined (Provider.Usage keeps those three separate; a cost-per-customer report wants the
+   * total). Anthropic's own SDK types describe this exact sum as "total input tokens".
+   */
   readonly inputTokens: number;
   readonly outputTokens: number;
   readonly costUsd: number;
@@ -128,7 +133,7 @@ export class Gateway {
       providerId: result.providerId,
       model: result.model,
       organisationId: context.organisationId,
-      inputTokens: result.usage.inputTokens,
+      inputTokens: result.usage.inputTokens + result.usage.cachedInputTokens + result.usage.cacheWriteTokens,
       outputTokens: result.usage.outputTokens,
       costUsd: result.usage.costUsd,
       resolvedWithoutModel: false,

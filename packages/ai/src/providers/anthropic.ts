@@ -144,14 +144,24 @@ export class AnthropicProvider implements Provider {
       output_config: { format: { type: "json_schema", schema: request.schema } },
     } as Anthropic.MessageCreateParamsNonStreaming);
 
+    // Verified against Anthropic's prompt-caching documentation 2026-09-20: `input_tokens` is
+    // ONLY the tokens after the last cache breakpoint — it already excludes both
+    // `cache_read_input_tokens` and `cache_creation_input_tokens`, so none of the three is a
+    // subset of another and none should be subtracted from another. The previous version of
+    // this code subtracted cache reads from `input_tokens` (double-discounting them, since they
+    // were never in there) and dropped cache-write tokens entirely (undercounting the 1.25x/2x
+    // premium D-029 flags as "half the arithmetic"). Both were invisible in the live smoke
+    // tests because neither request set `cacheable: true`.
     const usage = response.usage;
     const inputTokens = usage.input_tokens;
     const cachedInputTokens = usage.cache_read_input_tokens ?? 0;
+    const cacheWriteTokens = usage.cache_creation_input_tokens ?? 0;
     const outputTokens = usage.output_tokens;
 
     const costUsd =
-      ((inputTokens - cachedInputTokens) / 1_000_000) * capabilities.costPerMTokInput +
+      (inputTokens / 1_000_000) * capabilities.costPerMTokInput +
       (cachedInputTokens / 1_000_000) * capabilities.costPerMTokCachedInput +
+      (cacheWriteTokens / 1_000_000) * capabilities.costPerMTokCacheWrite +
       (outputTokens / 1_000_000) * capabilities.costPerMTokOutput;
 
     // Enforced AFTER the call, in addition to the check before it: the pre-call check catches
@@ -176,7 +186,7 @@ export class AnthropicProvider implements Provider {
       value: JSON.parse(textBlock.text) as unknown,
       model: response.model,
       providerId: this.id,
-      usage: { inputTokens, cachedInputTokens, outputTokens, costUsd },
+      usage: { inputTokens, cachedInputTokens, cacheWriteTokens, outputTokens, costUsd },
     };
   }
 }
