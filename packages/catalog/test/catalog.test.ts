@@ -114,18 +114,22 @@ describe("the requirement files in this repository", () => {
   it("publishes only what Tabeen has actually signed off, and withholds the rest", async () => {
     // Every entry was drafted from the technical plan's own article references, which that
     // plan says must be verified against EUR-Lex before publishing. The first review packet
-    // (2026-09-20, project-setup/review-packet-2026-09-20.md) published five; the remainder
-    // stay withheld until their own review happens. This test is expected to grow that set
-    // one review packet at a time, not to jump back to zero.
+    // (2026-09-20, project-setup/review-packet-2026-09-20.md) published five; the second
+    // (project-setup/review-packet-2026-09-20b.md) published three more and held one
+    // (uk.gpsr.uk-responsible-person — a scoping question, not a citation fix). This test is
+    // expected to grow that set one review packet at a time, not to jump back to zero.
     const { catalog, withheldDrafts } = await loadRealCatalog(false);
     const publishedIds = catalog.requirements.map((r) => r.id).sort();
     expect(publishedIds).toEqual(
       [
         "de.epr.packaging-lucid",
+        "eu.gpsr.manufacturer-identification",
         "eu.gpsr.responsible-economic-operator",
+        "eu.gpsr.technical-documentation",
         "fr.epr.packaging-citeo",
         "fr.epr.packaging-triman-marking",
         "uk.epr.packaging-registration",
+        "uk.gpsr.general-safety-requirement",
       ].sort(),
     );
     expect(withheldDrafts.length).toBeGreaterThan(0);

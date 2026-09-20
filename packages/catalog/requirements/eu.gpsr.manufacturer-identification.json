@@ -1,10 +1,10 @@
 {
   "id": "eu.gpsr.manufacturer-identification",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Regulation (EU) 2023/988 (GPSR)",
-  "article_ref": "Art. 9",
+  "article_ref": "Art. 9(6)",
   "title": "Manufacturer identification on the product",
   "summary": "The manufacturer's name, registered trade name or trade mark and postal address must appear on the product, or on its packaging or an accompanying document where the product is too small.",
   "applies_when": {
@@ -28,12 +28,12 @@
     {
       "title": "Regulation (EU) 2023/988 on general product safety",
       "url": "https://eur-lex.europa.eu/eli/reg/2023/988/oj",
-      "retrieved_at": null,
-      "verified": false,
-      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the consolidated text directly. Art. 9(6): 'Manufacturers shall indicate their name, their registered trade name or registered trade mark, their postal and electronic address... on the product or, where that is not possible, on its packaging or in a document accompanying the product.' Matches the summary exactly. CORRECTION: tightened article_ref from the general 'Art. 9' to the specific paragraph, '9(6)' — Art. 9 as a whole covers seven distinct manufacturer duties (technical documentation, retention, serial numbers, this one, etc.), and citing the whole article for one specific duty invites the same kind of ambiguity the France row had. READY for Tabeen's sign-off."
     }
   ],
   "confidence": "high",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

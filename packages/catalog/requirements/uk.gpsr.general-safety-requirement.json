@@ -1,7 +1,7 @@
 {
   "id": "uk.gpsr.general-safety-requirement",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "UK",
   "regulation": "General Product Safety Regulations 2005 (SI 2005/1803)",
   "article_ref": "reg. 5 (general safety requirement)",
@@ -25,19 +25,19 @@
     {
       "title": "The General Product Safety Regulations 2005",
       "url": "https://www.legislation.gov.uk/uksi/2005/1803/contents",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Regulation number not yet confirmed against the instrument; GOV.UK guidance describes the general safety requirement but the reg. number here is unverified."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Re-fetched the statute's table of contents directly. Part 2, reg. 5 is titled exactly 'General safety requirement' — confirming the regulation number and that it is still in force (the site's revision notice found no unapplied amendments to Part 2). Confirms the draft's citation was correct once checked, just previously unverified."
     },
     {
       "title": "General Product Safety Regulations 2005: Great Britain — GOV.UK",
       "url": "https://www.gov.uk/government/publications/general-product-safety-regulations-2005/general-product-safety-regulations-2005-great-britain",
       "retrieved_at": "2026-09-13",
       "verified": false,
-      "note": "Drafted 13 Sept 2026 from the cited GOV.UK guidance found by search. The guidance was read; the underlying statutory reference has NOT been checked, and guidance is a secondary source. Verify against legislation.gov.uk before publishing."
+      "note": "Not re-fetched this pass; superseded as the primary citation by the statute above, now checked directly. Worth knowing for context: the Product Regulation and Metrology Act 2025 is a new enabling Act that will let future secondary legislation add obligations on top of this regime (see uk.gpsr.uk-responsible-person's source note in this same batch) — it does not touch reg. 5 itself, per the guidance checked for that other requirement."
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }
