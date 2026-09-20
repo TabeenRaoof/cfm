@@ -1,7 +1,7 @@
 {
   "id": "eu.dsa.trader-information",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Regulation (EU) 2022/2065 (DSA)",
   "article_ref": "Art. 30",
@@ -45,6 +45,6 @@
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

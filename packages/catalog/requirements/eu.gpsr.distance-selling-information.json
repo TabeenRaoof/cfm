@@ -1,7 +1,7 @@
 {
   "id": "eu.gpsr.distance-selling-information",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Regulation (EU) 2023/988 (GPSR)",
   "article_ref": "Art. 19",
@@ -41,6 +41,6 @@
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

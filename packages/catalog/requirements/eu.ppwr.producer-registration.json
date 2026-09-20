@@ -1,7 +1,7 @@
 {
   "id": "eu.ppwr.producer-registration",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Regulation (EU) 2025/40 (PPWR)",
   "article_ref": "Art. 44",
@@ -43,6 +43,6 @@
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }
