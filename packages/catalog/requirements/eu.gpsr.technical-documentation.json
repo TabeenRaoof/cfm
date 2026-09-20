@@ -4,7 +4,7 @@
   "state": "draft",
   "jurisdiction": "EU",
   "regulation": "Regulation (EU) 2023/988 (GPSR)",
-  "article_ref": "Art. 9(2), Annex",
+  "article_ref": "Art. 9(2)-(3)",
   "title": "Technical documentation including risk analysis",
   "summary": "The manufacturer must draw up technical documentation containing a general description of the product, its essential safety characteristics and an analysis of the possible risks, and keep it available to authorities for ten years.",
   "applies_when": {
@@ -30,9 +30,9 @@
     {
       "title": "Regulation (EU) 2023/988 on general product safety",
       "url": "https://eur-lex.europa.eu/eli/reg/2023/988/oj",
-      "retrieved_at": null,
-      "verified": false,
-      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the consolidated text directly. Art. 9(2) requires the internal risk analysis and technical documentation ('a general description of the product and its essential characteristics relevant for assessing its safety' plus, where relevant, the risk analysis) — matches the summary. Art. 9(3) is the separate 10-year retention duty the summary also asserts. CORRECTION: the draft's citation to 'Annex' was wrong — this Regulation's only Annex (checked directly) is a correlation table mapping the old Directive 2001/95/EC to this Regulation's articles, not a substantive annex about technical-documentation content. Changed article_ref to 'Art. 9(2)-(3)', which is what actually says what the summary claims. READY for Tabeen's sign-off."
     }
   ],
   "confidence": "high",

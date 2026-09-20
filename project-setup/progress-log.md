@@ -201,3 +201,30 @@ the test grows with each future review packet rather than needing deletion.
 customer could actually be shown.** Full suite: 465/465. FR requirement count 11 → 12 (the
 Triman split). Merged via [PR #1](https://github.com/TabeenRaoof/cfm/pull/1), squash-merged to
 `main`, CI green post-merge.
+
+## 2026-09-20 (continued) — Second catalog review packet: general-goods GPSR requirements
+
+Picked the next 4 per D-034's own priority (general goods over category-specific depth):
+`eu.gpsr.technical-documentation`, `eu.gpsr.manufacturer-identification`,
+`uk.gpsr.general-safety-requirement`, `uk.gpsr.uk-responsible-person`.
+
+Three were straightforward citation corrections once checked against the actual EUR-Lex/
+legislation.gov.uk text: `eu.gpsr.technical-documentation` had cited "Art. 9(2), Annex," but
+GPSR's only Annex is an old-Directive correlation table, not substantive content — corrected to
+`Art. 9(2)-(3)`. `eu.gpsr.manufacturer-identification` cited the whole of Art. 9 for one specific
+duty among seven the article covers — tightened to `9(6)`. `uk.gpsr.general-safety-requirement`
+was already correct, just unverified.
+
+The fourth, `uk.gpsr.uk-responsible-person`, turned into the batch's real finding. Its cited
+regulation (GPSR 2005 reg. 8) is titled "Obligations of distributors," unrelated to appointing
+anyone — but the deeper problem is the premise: as far as could be established, there is
+currently **no blanket UK Responsible Person requirement for general consumer goods**. The
+Product Regulation and Metrology Act 2025 only *enables* a future UKRP requirement by secondary
+legislation not yet made; today's actual rule under GPSR 2005 is narrower and weaker — an
+importer-of-last-resort inheriting some duties, not a duty to appoint anyone. A general UKRP duty
+exists today only in specific sectors (cosmetics, medical devices confirmed), not for general
+goods. Did not apply a citation fix — wrote up the finding and three options
+(hold/rescope/split-by-sector) in `project-setup/review-packet-2026-09-20b.md` for Tabeen's
+decision, since this is a scoping call, not something to sign off on as drafted.
+
+Catalog gate and all 200 catalog tests still pass; nothing published yet from this batch.
