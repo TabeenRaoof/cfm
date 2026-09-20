@@ -1,7 +1,7 @@
 {
   "id": "eu.flag.weee-registration",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Directive 2012/19/EU (WEEE)",
   "article_ref": "Art. 16 (registration)",
@@ -29,14 +29,21 @@
   "effective_to": null,
   "sources": [
     {
-      "title": "Directive 2012/19/EU on waste electrical and electronic equipment",
-      "url": "https://eur-lex.europa.eu/eli/dir/2012/19/oj",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Directive identified; Art. 16 is the registration article per its structure but has NOT been read. National implementations differ and none is modelled."
+      "title": "Directive 2012/19/EU on waste electrical and electronic equipment (WEEE)",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex%3A32012L0019",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched directly. Art. 16 confirmed exactly as drafted: each Member State draws up a producer register, per-Member-State (no EU-wide WEEE number); a distance seller not registered in the Member State it sells into must register through an authorised representative (Art. 17(2)) instead. effective_from (2014-02-14) matches the Directive's own transposition deadline. National implementations differ substantially, as the draft already notes, and none is modelled here -- correctly out of scope for an EU-wide flag row."
+    },
+    {
+      "title": "Commission Implementing Regulation (EU) 2019/290 (registration/reporting format)",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX%3A32019R0290",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Confirms Art. 16 registration is harmonised in format (Annex I) but not in a single EU register -- each Member State still runs its own, consistent with this row's summary."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

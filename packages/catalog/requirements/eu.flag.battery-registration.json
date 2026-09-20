@@ -1,12 +1,12 @@
 {
   "id": "eu.flag.battery-registration",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Regulation (EU) 2023/1542 (Batteries Regulation)",
-  "article_ref": "Art. 56",
+  "article_ref": "Art. 55",
   "title": "Batteries: producer registration required",
-  "summary": "A producer making batteries available on the market of a member state, including batteries incorporated into products, must be registered in that member state. Flagged in v1; the full module is v2.",
+  "summary": "A producer making batteries available on the market of a member state, including batteries incorporated into products, must be registered in that member state before doing so. Flagged in v1; the full module is v2.",
   "applies_when": {
     "all": [
       {
@@ -25,18 +25,18 @@
   ],
   "required_evidence": [],
   "channel_mappings": {},
-  "effective_from": "2024-08-18",
+  "effective_from": "2025-08-18",
   "effective_to": null,
   "sources": [
     {
       "title": "Regulation (EU) 2023/1542 concerning batteries and waste batteries",
       "url": "https://eur-lex.europa.eu/eli/reg/2023/1542/oj",
-      "retrieved_at": null,
-      "verified": false,
-      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the consolidated text directly. TWO FIXES from the 13 Sept draft. (1) Citation: Art. 56 is 'Extended Producer Responsibility' generally (financing, and its own para. 3 -- an authorised-representative duty for cross-border distance sellers under Art. 3(1)(47)(d), same shape as D-040/D-041's pattern but out of scope for this v1 flag row); the registration duty this row actually models is Art. 55 ('Register of producers'), one article earlier. (2) Date bug: Art. 96 (application) states 'Chapter VIII shall apply from 18 August 2025' -- Chapter VIII is Articles 54-63, which includes Art. 55. The draft's effective_from was 2024-08-18, a full year early; a SKU could have been wrongly flagged as needing this registration for a year before the duty actually existed. Corrected to 2025-08-18. NOT modelled, deliberately (per this row's own 'full module is v2' scope): Art. 56(3)'s authorised-representative duty for a producer under Art. 3(1)(47)(d) (a distance seller selling directly to end users in a Member State where it isn't established) -- same shape as the PPWR/AT/ES authorised-representative rows already published."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

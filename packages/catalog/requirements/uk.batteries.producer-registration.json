@@ -1,10 +1,10 @@
 {
   "id": "uk.batteries.producer-registration",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "UK",
   "regulation": "Waste Batteries and Accumulators Regulations 2009",
-  "article_ref": "Unconfirmed",
+  "article_ref": "SI 2009/890, regs. 9, 26 (portable, via scheme) and regs. 42-45 (industrial/automotive, direct)",
   "title": "United Kingdom: battery producer registration",
   "summary": "A producer placing batteries on the UK market, including batteries inside products, must register as a battery producer. A tonnage threshold determines whether registration is direct or through a scheme. Flagged in v1; the full module is v2.",
   "applies_when": {
@@ -25,18 +25,18 @@
   ],
   "required_evidence": [],
   "channel_mappings": {},
-  "effective_from": "2010-01-01",
+  "effective_from": "2009-10-15",
   "effective_to": null,
   "sources": [
     {
-      "title": "The Waste Batteries and Accumulators Regulations 2009",
+      "title": "The Waste Batteries and Accumulators Regulations 2009 (SI 2009/890)",
       "url": "https://www.legislation.gov.uk/uksi/2009/890/contents",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Instrument identified but NOT read. The 1-tonne threshold commonly cited is unverified here."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the statute directly. The 1-tonne threshold is confirmed, but only for PORTABLE batteries: reg. 2 defines a 'small producer' as one placing 1 tonne or less of portable batteries on the market per year; reg. 9 requires non-small portable-battery producers to join a compliance scheme, and reg. 26 covers registration of scheme members and small producers via that scheme. Industrial and automotive batteries are a SEPARATE, thresholdless track: reg. 42 requires direct registration with the Secretary of State for any producer placing industrial/automotive batteries on the market, 'with effect from 16th October 2009', regardless of tonnage. This row's applies_when (product.has_battery, no battery-type distinction) does not separate the two tracks -- not a correctness bug (both tracks require *some* form of registration, so the row is not wrong to say registration applies), but the specific registration route and threshold shown to a customer should differ by battery type; not modelled this pass. DATE FIX: effective_from was 2010-01-01; the general commencement of these Regulations is 5 May 2009 (reg. 1(2)), and the specific registration duties (regs. 26, 42) took effect on 15/16 October 2009 -- a full quarter earlier than drafted. Corrected to 2009-10-15."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

@@ -1,10 +1,10 @@
 {
   "id": "uk.marking.ukca-or-ce",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "UK",
   "regulation": "UK conformity assessment regime (UKCA / continued CE recognition)",
-  "article_ref": "Sector regulations; see GOV.UK guidance",
+  "article_ref": "Product Safety and Metrology etc. (Amendment) Regulations 2024 (SI 2024/696); sector regulations (Toys (Safety) Regs 2011, Electrical Equipment (Safety) Regs 2016)",
   "title": "United Kingdom: UKCA or CE marking for regulated product categories",
   "summary": "A product in a regulated category placed on the GB market must carry either UKCA or CE marking, supported by a conformity assessment and a declaration of conformity. GB continues to recognise CE marking for most categories; which applies depends on the sector. Flagged in v1; category depth is v2.",
   "applies_when": {
@@ -42,21 +42,21 @@
   "effective_to": null,
   "sources": [
     {
-      "title": "Placing UKCA or CE marked products on the market in Great Britain — GOV.UK",
-      "url": "https://www.gov.uk/guidance/placing-ukca-or-ce-marked-products-on-the-market-in-great-britain",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Drafted 13 Sept 2026 from the cited GOV.UK guidance found by search. The guidance was read; the underlying statutory reference has NOT been checked, and guidance is a secondary source. Verify against legislation.gov.uk before publishing."
+      "title": "The Product Safety and Metrology etc. (Amendment) Regulations 2024 (SI 2024/696)",
+      "url": "https://www.legislation.gov.uk/uksi/2024/696/introduction/made",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched directly, resolving the 13 Sept draft's unverified statutory reference. This SI (in force 1 Oct. 2024) is what actually makes the draft's central claim ('GB continues to recognise CE marking... indefinitely') current law: it revokes the sunset date that would otherwise have ended CE recognition, replacing it with open-ended recognition for the categories this row covers (toys, electrical equipment) among others. Confirms there is no fixed CE-recognition deadline as of this pass -- an earlier version of GB policy did have one (repeatedly extended before being made indefinite), so this is a live area to re-check periodically, not a one-time fact. Separately, note the UKCA marking itself may be affixed to a label/document rather than the product until 31 Dec 2027 (a labelling-location transitional rule, not a marking-choice one) -- not modelled in applies_when since it doesn't change which marking applies, only where it may be physically placed."
     },
     {
-      "title": "Using the UKCA marking — GOV.UK",
-      "url": "https://www.gov.uk/guidance/using-the-ukca-marking",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Drafted 13 Sept 2026 from the cited GOV.UK guidance found by search. The guidance was read; the underlying statutory reference has NOT been checked, and guidance is a secondary source. Verify against legislation.gov.uk before publishing."
+      "title": "Placing UKCA or CE marked products on the market in Great Britain — GOV.UK",
+      "url": "https://www.gov.uk/guidance/placing-ukca-or-ce-marked-products-on-the-market-in-great-britain",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Re-fetched. Confirms toys and electrical equipment may use either CE or UKCA marking on the GB market, consistent with this row's applies_when covering both product.is_toy and product.is_electrical."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

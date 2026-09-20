@@ -381,3 +381,63 @@ drafts, 0 issues** — every remaining draft is now category-specific (batteries
 marking) or the UK responsible-person row held pending secondary legislation; the general-goods
 breadth pass from D-034 is essentially done. Full suite: 480/480 (11 new). Merged via
 [PR #6](https://github.com/TabeenRaoof/cfm/pull/6).
+
+## 2026-09-20 (continued) — batch 5: the category-specific requirements (batteries, toys, WEEE, UK marking)
+
+Moved into the category-specific batch per D-034's deprioritization, now that the general-goods
+breadth pass is done. Read the primary statutes for all 7 remaining drafts (excluding
+`uk.gpsr.uk-responsible-person`, which stays held on legislation, not research): Regulation (EU)
+2023/1542 for batteries, Directive 2009/48/EC + SI 2011/1881 for toys, Directive 2012/19/EU + SI
+2013/3113 for WEEE, SI 2009/890 for UK batteries, and SI 2024/696 for the UKCA/CE marking row.
+
+Unlike the last two batches, this one surfaced almost no scoping ambiguity — but did surface
+**two real date bugs**, caught only by reading the statute's own commencement/application
+clauses instead of trusting the drafted date:
+- `eu.flag.battery-registration`: effective_from was a year early (2024-08-18 vs. the correct
+  2025-08-18 — Art. 96 states Chapter VIII, which contains the registration article, applies a
+  full year after several other provisions the 2024 date actually belongs to).
+- `uk.toys.safety`: effective_from was a month early (2011-07-20, copied from the EU Directive
+  "by analogy," vs. the SI's own commencement of 2011-08-19).
+- `uk.batteries.producer-registration`: effective_from was three months late (2010-01-01 vs. the
+  actual registration duties' 2009-10-15).
+
+Also fixed citations that were "Unconfirmed" or wrong (Art. 56 → Art. 55 for the battery
+registration row — Art. 56 is EPR financing, not registration) and confirmed two that were already
+correct (`eu.flag.toy-safety`, `eu.flag.weee-registration`). One nuance flagged but not modelled:
+UK battery registration has two tracks (1-tonne-threshold portable vs. thresholdless
+industrial/automotive) that the row doesn't distinguish — not a false positive/negative, just an
+imprecise "how," left for a future pass.
+
+Wrote up all seven in `project-setup/review-packet-2026-09-20e.md`. No `state` changes — citations
+and date fixes only. Catalog gate unchanged: 20 published, 8 drafts, 0 issues. Full suite: 480/480.
+
+## 2026-09-20 (continued) — Tabeen's review of PR #7: all 7 published, catalog formally closed out
+
+Tabeen reviewed [PR #7](https://github.com/TabeenRaoof/cfm/pull/7) and approved all seven
+outright — no scoping questions this time, both date fixes and the citation fix confirmed
+correct. Also explicitly endorsed leaving the UK battery 1-tonne/thresholdless distinction
+unmodelled: "sub-1-tonne producers still have a baseline statutory obligation to register (just
+via a different administrative track), the boolean requirement to hold a registration remains
+true. Modeling the threshold would add complexity without changing the ultimate gating outcome."
+
+Published all seven (`eu.flag.battery-registration`, `eu.flag.toy-safety`,
+`eu.flag.weee-registration`, `uk.batteries.producer-registration`, `uk.marking.ukca-or-ce`,
+`uk.toys.safety`, `uk.weee.producer-registration`) and updated `catalog.test.ts`'s published-ids
+assertion to the new set of 27 — every drafted requirement except `uk.gpsr.uk-responsible-person`,
+which stays deliberately held pending PRMA 2025's secondary legislation. Tightened that test's
+`withheldDrafts` assertion from `toBeGreaterThan(0)` to `toBe(1)`, now that the withheld set is
+exactly one requirement, not an open-ended "some."
+
+Publishing all seven broke one test as a direct, expected consequence: `techfile`'s
+"carry the review date... not yet reviewed" test asserted against the real catalog with
+`includeDrafts: true`, and relied on there being *some* unreviewed requirement applicable to a
+German toy assessment — which there no longer was, since every EU/DE-applicable row is now
+published. Split that assertion in two: confidence-rendering stays on the general toy/DE
+fixture, and "not yet reviewed" gets its own test that targets `uk.gpsr.uk-responsible-person`
+directly (GB market, non-UK-established seller) — the one requirement in the whole catalog that
+can still exercise that fallback text, rather than relying on whatever happens to be unreviewed
+on a given day.
+
+Catalog gate: **27 published, 1 draft, 0 issues** — the drafted catalog is formally closed out.
+Full suite: 481/481 (1 new, replacing the one that broke). Merged via
+[PR #7](https://github.com/TabeenRaoof/cfm/pull/7).

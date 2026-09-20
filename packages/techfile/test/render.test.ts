@@ -104,6 +104,30 @@ describe("citations", () => {
   it("carry the review date and confidence, not just a link", () => {
     const html = render();
     expect(html).toContain("confidence ");
+  });
+
+  it("say so plainly when a requirement has not been reviewed yet", () => {
+    // As of the fifth review packet (2026-09-20e), uk.gpsr.uk-responsible-person is the only
+    // requirement left in `draft` state — held on legislation (PRMA 2025's secondary
+    // legislation hasn't landed), not on research. It is also therefore the only requirement
+    // in the whole catalog that can still exercise the "not yet reviewed" fallback text, so
+    // this test targets it directly (UK market, non-UK-established seller) rather than relying
+    // on whatever happens to be unreviewed on a given day.
+    const html = renderTechnicalFile({
+      sku: "TOY-001",
+      title: "Wooden train set",
+      organisationName: "Example Brands Ltd",
+      generatedAt: "2026-09-13",
+      assessment: assessProduct(
+        catalog,
+        {
+          facts: { ...FACTS, "organisation.establishment_country": "CN" } as never,
+          market: { iso_country: "GB" },
+          channel: { type: "amazon_de" },
+        },
+        { asOf: "2026-09-13" },
+      ),
+    });
     expect(html).toContain("not yet reviewed");
   });
 });
