@@ -1,7 +1,7 @@
 {
   "id": "uk.marking.ukca-or-ce",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "UK",
   "regulation": "UK conformity assessment regime (UKCA / continued CE recognition)",
   "article_ref": "Product Safety and Metrology etc. (Amendment) Regulations 2024 (SI 2024/696); sector regulations (Toys (Safety) Regs 2011, Electrical Equipment (Safety) Regs 2016)",
@@ -57,6 +57,6 @@
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

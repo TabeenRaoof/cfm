@@ -1,7 +1,7 @@
 {
   "id": "eu.flag.toy-safety",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Directive 2009/48/EC (Toy Safety Directive)",
   "article_ref": "Art. 4, Art. 15",
@@ -43,6 +43,6 @@
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

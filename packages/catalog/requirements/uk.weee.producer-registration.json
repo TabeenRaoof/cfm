@@ -1,7 +1,7 @@
 {
   "id": "uk.weee.producer-registration",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "UK",
   "regulation": "Waste Electrical and Electronic Equipment Regulations 2013",
   "article_ref": "SI 2013/3113, regs. 15-17 (small producer, <5t) and reg. 77 (register)",
@@ -37,6 +37,6 @@
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

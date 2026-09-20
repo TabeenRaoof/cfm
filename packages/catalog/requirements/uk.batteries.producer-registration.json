@@ -1,7 +1,7 @@
 {
   "id": "uk.batteries.producer-registration",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "UK",
   "regulation": "Waste Batteries and Accumulators Regulations 2009",
   "article_ref": "SI 2009/890, regs. 9, 26 (portable, via scheme) and regs. 42-45 (industrial/automotive, direct)",
@@ -37,6 +37,6 @@
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

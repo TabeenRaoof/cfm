@@ -1,7 +1,7 @@
 {
   "id": "uk.toys.safety",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "UK",
   "regulation": "Toys (Safety) Regulations 2011",
   "article_ref": "SI 2011/1881, regs. 15 (declaration & marking duty) and 18 (marking placement)",
@@ -43,6 +43,6 @@
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

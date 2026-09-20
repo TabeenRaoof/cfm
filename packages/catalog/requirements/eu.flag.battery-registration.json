@@ -1,7 +1,7 @@
 {
   "id": "eu.flag.battery-registration",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Regulation (EU) 2023/1542 (Batteries Regulation)",
   "article_ref": "Art. 55",
@@ -37,6 +37,6 @@
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }
