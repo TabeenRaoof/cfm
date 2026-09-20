@@ -4,7 +4,7 @@
   "state": "draft",
   "jurisdiction": "UK",
   "regulation": "Packaging Extended Producer Responsibility (pEPR)",
-  "article_ref": "Producer Responsibility Obligations (Packaging and Packaging Waste) Regulations 2024",
+  "article_ref": "The Producer Responsibility Obligations (Packaging and Packaging Waste) Regulations 2024, S.I. 2024/1332, regs. 23-25",
   "title": "United Kingdom: packaging producer registration, above threshold",
   "summary": "A UK-established business that supplied or imported more than 25 tonnes of packaging in the previous year AND had worldwide turnover of £1 million or more must register with the environmental regulator and report packaging data. Below both thresholds there is no pEPR registration obligation.",
   "applies_when": {
@@ -50,16 +50,23 @@
     {
       "title": "Check if you must comply with EPR for packaging — GOV.UK",
       "url": "https://www.gov.uk/guidance/check-if-you-must-comply-with-epr-for-packaging--2",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Thresholds (25 tonnes; £1m turnover; UK-established) read from this guidance on 13 Sept 2026. The statutory instrument reference is NOT yet confirmed and the small-producer tier has lighter duties not modelled here."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Re-fetched. Thresholds confirmed unchanged since 13 Sept: 25 tonnes and £1m turnover, both required, plus UK-established. Still guidance, not the statute — see the S.I. source below, now checked."
     },
     {
       "title": "Extended producer responsibility for packaging: who is affected — GOV.UK",
       "url": "https://www.gov.uk/guidance/extended-producer-responsibility-for-packaging-who-is-affected-and-what-to-do",
       "retrieved_at": "2026-09-13",
       "verified": false,
-      "note": "Drafted 13 Sept 2026 from the cited GOV.UK guidance found by search. The guidance was read; the underlying statutory reference has NOT been checked, and guidance is a secondary source. Verify against legislation.gov.uk before publishing."
+      "note": "Not re-fetched this pass; superseded as the primary citation by the S.I. below."
+    },
+    {
+      "title": "The Producer Responsibility Obligations (Packaging and Packaging Waste) Regulations 2024 (S.I. 2024/1332)",
+      "url": "https://www.legislation.gov.uk/uksi/2024/1332/made",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the statute directly, resolving the note in the previous draft that the S.I. number was unconfirmed: it is S.I. 2024/1332. Reg. 23 defines 'large producer' and 'small producer'; reg. 24(2) sets the small-producer threshold this requirement models — more than £1,000,000 turnover in the relevant prior year AND more than 25 tonnes of packaging supplied — matching the draft's thresholds exactly. Reg. 25 is the actual registration/reporting obligation. FINDING the draft does not yet model: this requirement treats every producer past the threshold identically, but regs. 23-25 set materially different duties for 'small producer' (register + report annually) versus 'large producer' (register + report every 6 months + buy PRNs/PERNs + submit a compliance certificate + pay a disposal fee — large producer starts above 50 tonnes AND £2m turnover per reg. 24(1)/GOV.UK's own threshold table). A design partner who is a small producer would currently be told they need evidence a large producer's obligations imply, or vice versa, once this is more than a single 'proof of registration' evidence type. Tabeen decision needed: split into small-producer and large-producer rows, or explicitly scope this row to registration only (which is common to both tiers) and add the large-producer-only duties as a separate future row. Also note: S.I. 2025/1369 amends the 2024 Regulations from 1 January 2026 — none of the amendments found so far touch regs. 23-25, but re-check before the 2026 reporting cycle."
     }
   ],
   "confidence": "medium",

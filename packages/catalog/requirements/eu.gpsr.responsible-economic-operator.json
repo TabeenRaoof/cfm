@@ -54,9 +54,9 @@
     {
       "title": "Regulation (EU) 2023/988 on general product safety",
       "url": "https://eur-lex.europa.eu/eli/reg/2023/988/oj",
-      "retrieved_at": null,
-      "verified": false,
-      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the consolidated text on EUR-Lex directly. Article 16 is titled 'Responsible person for products placed on the Union market'; paragraph 1 reads 'A product covered by this Regulation shall not be placed on the market unless there is an economic operator established in the Union who is responsible for the tasks set out in Article 4(3) of Regulation (EU) 2019/1020 in respect to that product.' Matches this requirement's summary and article_ref exactly \u2014 no correction needed. READY for Tabeen's sign-off (reviewer, last_reviewed_at, state) rather than further research."
     }
   ],
   "confidence": "high",

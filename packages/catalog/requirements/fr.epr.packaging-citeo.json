@@ -4,7 +4,7 @@
   "state": "draft",
   "jurisdiction": "EU",
   "regulation": "Code de l'environnement (REP emballages)",
-  "article_ref": "Art. L541-10",
+  "article_ref": "Art. L541-10-1 (EPR obligation) and Art. L541-9-3 (Triman marking) \u2014 see source note",
   "title": "France: packaging EPR registration and Triman marking",
   "summary": "A producer placing packaged household goods on the French market must hold a unique identifier, contribute to an approved eco-organisme, and apply the Triman sorting marking with its Info-tri instructions.",
   "applies_when": {
@@ -44,7 +44,14 @@
       "url": "https://www.ademe.fr/",
       "retrieved_at": null,
       "verified": false,
-      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+      "note": "Not fetched this pass — kept as the practical/scheme-facing source, but the legal citation below is what actually needs sign-off."
+    },
+    {
+      "title": "Code de l'environnement — Art. L541-10, L541-10-1, L541-9-3 (Légifrance)",
+      "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000043974960/2022-01-01",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Direct fetch of legifrance.gouv.fr was blocked by its bot-check page; text below is quoted verbatim from Légifrance's own page via search, not from memory, but could not be re-fetched to double check today \u2014 re-verify with a browser before relying on this for the live catalog. FINDING: this requirement's original single citation, Art. L541-10, is the *general* extended-producer-responsibility principle that applies to all REP categories, not packaging specifically. The article that actually brings household packaging under REP is L541-10-1 ('Relèvent du principe de responsabilité élargie du producteur... 1° Les emballages servant à commercialiser les produits consommés ou utilisés par les ménages...'). The Triman-marking duty bundled into this same requirement row is a *separate* article, L541-9-3, not L541-10 at all ('Tout produit mis sur le marché à destination des ménages soumis au I de l'article L. 541-10... fait l'objet d'une signalétique...'). Tabeen decision needed: correct the citation to L541-10-1 + L541-9-3 (done above), or split this into two requirement rows (EPR registration vs. Triman marking) the way the schema's two required_evidence entries already suggest it could be."
     }
   ],
   "confidence": "medium",
