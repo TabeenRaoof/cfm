@@ -1,6 +1,7 @@
 /**
- * The one script in this repo permitted to spend real money. Run it manually, never in CI,
- * never as part of `npm run smoke` (which stays free by design — see decisions.md D-019).
+ * One of two scripts in this repo permitted to spend real money (the other is
+ * scripts/smoke-anthropic-extract.ts). Run either manually, never in CI, never as part of
+ * `npm run smoke` (which stays free by design — see decisions.md D-019).
  *
  * What it does: classifies one short, made-up document with Claude Haiku 4.5, through the same
  * Gateway and the same classify_document task the product uses — so this proves the adapter

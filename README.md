@@ -19,12 +19,16 @@ are immutable; corrections to them are in `project-setup/03-plan-review.md`.
 
 ```bash
 npm install
-npm test               # 378 tests
+npm test               # 441 tests
 npm run typecheck
 npm run catalog:check  # the requirement publish gate
 npm run smoke          # runs the deterministic path on a bare Node, no build step
 npm run scanner:preview # build the public scanner, drafts included
 ```
+
+Two more scripts spend real money against the live Anthropic API and are never run by CI or by
+the commands above — see `.env.example` and each script's own header before running either:
+`npm run smoke:anthropic -- --confirm` and `npm run smoke:anthropic:extract -- --confirm`.
 
 ## The rule everything else follows from
 
@@ -46,4 +50,5 @@ See `tabeen_AGENTS.md` and `packages/catalog/README.md`.
 | `@cfm/channels` | Channel exports — template-driven, plus a neutral export that cannot be wrong | **Never** |
 | `@cfm/documents` | Extraction schemas, deterministic patterns, validators, the confidence gate | **Never** |
 | `@cfm/ai` | The provider seam — the only place that may | Only when code cannot answer |
+| `@cfm/supplier-request` | The supplier magic-link request lifecycle, reminder scheduling, EN/ZH email templates | **Never** |
 | `apps/scanner` | The static page, its waitlist and its privacy notice | **Never** |

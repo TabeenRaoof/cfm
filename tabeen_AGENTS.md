@@ -206,36 +206,48 @@ Acceptance criteria are per story. The definition of done is not — it is the s
 
 ## Repo map
 
+**Corrected 20 September 2026 to match what is actually in the tree**, after the map below had
+drifted from reality for long enough that a `docs/` and a `stories/` directory were being cited
+by name in this same file while neither existed. Two layers, kept explicitly separate rather than
+merged into one aspirational tree, because pretending the second layer already exists is exactly
+the kind of drift this correction is fixing:
+
+**What exists right now:**
+
 ```
-README.md                 — repository front door
-AGENTS.md                 — this file; instructions for every AI assistant
-CLAUDE.md                 — Claude-specific notes; points here for everything else
-                            (pre-repo, these two live as tabeen_AGENTS.md / tabeen_CLAUDE.md)
+README.md                              — repository front door
+tabeen_AGENTS.md / tabeen_CLAUDE.md    — this file and its Claude-specific companion
+                                          (become AGENTS.md / CLAUDE.md once a repo exists — see
+                                          project-setup/README.md)
+project-setup/
+  decisions.md                         — settled decisions, D-001 onwards; do not relitigate
+  03-plan-review.md                    — corrections to the immutable 01-/02- plans
+  04-capacity-replan.md                — the 2-3 hrs/week schedule this repo is actually built on
+  playbook-addendum.md
+01-business-report-...md               — immutable input; do not edit
+02-technical-plan-...md                — immutable input; do not edit
+project-playbook.md
 
-docs/
-  decisions.md              — settled decisions, D-001 onwards; do not relitigate
-  glossary.md               — GPSR, PPWR, EPR, RP, AR, MYC, DoC, technical file, assessment…
-  sprint-plan.md            — schedule, capacity, gates, cut list
-  progress-log.md           — running chronological journal, newest at the bottom
-  story-template.md         — template for a new story file
-  catalog-authoring.md      — how to research, write and review a requirement
-  runbook.md                — daily/weekly/monthly operations, incident basics
-  opt-relevance.md          — how this work relates to the CS degree; keep current
-  incidents/                — post-mortems
-  archive/                  — superseded drafts, kept for their reasoning
-
-stories/                  — one file per story; README.md is the index
-
-apps/web                  — Next.js app (UI, route handlers, server actions)
-packages/catalog          — requirement JSON, evaluator, tests, sources.md
-packages/ai               — gateway, provider adapters, versioned prompts, eval harness
-packages/documents        — ingest, classify, extract, validators, Zod schemas
-packages/channels         — amazon/, shopify/, bol/ — mappers, templates, fixtures
-packages/db               — Drizzle schema, migrations, RLS policies and their tests, seed
-packages/emails           — React Email templates
-jobs/                     — Inngest functions
-golden-set/               — download script and checksums only; never the documents
+packages/catalog          — requirement JSON, evaluator, tests, sources
+packages/import           — CSV to facts, blank-is-not-false boundary
+packages/scanner          — the free public scanner's evaluation logic
+packages/techfile         — the per-SKU technical file, self-contained HTML
+packages/channels         — channel export templates and mappers
+packages/documents        — extraction schemas, deterministic patterns, validators, confidence gate
+packages/ai               — the provider gateway; only place permitted to import a provider SDK
+packages/supplier-request — supplier magic-link request lifecycle, reminders, EN/ZH templates
+apps/scanner               — the static scanner page, its waitlist and its privacy notice
+scripts/                   — smoke.ts (free) and the two smoke-anthropic*.ts scripts (spend money)
 ```
+
+**What `02-` describes and does not yet exist** — `docs/` (glossary, sprint-plan, progress-log,
+catalog-authoring, runbook, opt-relevance, incidents/, archive/), `stories/` and its
+`stories/README.md` index, `apps/web` (the actual product UI), `packages/db` (Drizzle schema,
+RLS policies), `packages/emails`, `jobs/` (Inngest functions), `golden-set/`. Every reference to
+these elsewhere in this file describes the intended future process for when they exist, per
+D-012's Slice B and v1.5 — it is not describing the present tree. Do not create any of them
+speculatively "to match the file"; build them when the story that needs them is actually being
+built, and update this map in the same pull request.
 
 **These are places, not people.** The layout separates the algorithm from the service that exposes
 it on purpose: `packages/catalog` must run from a script or a test without booting Next.js, and

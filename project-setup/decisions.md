@@ -571,6 +571,87 @@ everywhere else in `01-`, rather than the Starter-heavy mix the original 6–10 
 its churn-replacement figure wherever the plan is used for actual target-setting, e.g. in
 `01-` §7.4's funnel targets and in any future pricing-page copy.
 
+---
+
+### D-037 · The Anthropic adapter went live; first real-money calls verified the whole seam
+**Status:** Accepted (implemented) · **Date:** 2026-09-19
+
+`packages/ai/src/providers/anthropic.ts` is written and, per D-014, is the one adapter behind
+the gateway seam. Two live, `--confirm`-gated calls (`scripts/smoke-anthropic.ts` for
+`classify_document`, `scripts/smoke-anthropic-extract.ts` for `extract_document`) exercised the
+full path — gateway, deterministic gate, provider, budget check, spend limit, cost tracking —
+against the real API for the first time, each capped locally (`maxTotalSpendUsd`) independent of
+the account-level cap in the Anthropic Console. Total spend across both: **$0.001739**, no real
+documents involved (synthetic text written directly into each script).
+
+Both calls also found a real defect, which is the point of running them rather than trusting the
+fake-provider tests alone: `extract_document`'s deterministic pass did not resolve `issue_date`
+against an RP mandate phrased "Signed on: …" — only issue-style labels ("date of issue", "issued
+on") were recognised. Fixed in `packages/documents/src/patterns.ts` (added signed-on/signé
+le/unterzeichnet am equivalents), verified with zero further API cost by calling
+`extractDeterministically` directly, and covered by a regression test.
+
+**Models and prices, verified against Anthropic's own documentation on 2026-09-19 — re-verify
+before trusting this again, per the standing rule against restating vendor facts from memory:**
+classification routes to `claude-haiku-4-5` (200K context, $1/$5 per MTok in/out), extraction to
+`claude-sonnet-5` (1M context, $2/$10). The bare alias `claude-haiku-4-5` resolved to the dated
+snapshot `claude-haiku-4-5-20251001` in the response — normal aliasing behaviour, not an error.
+
+**A second finding, closed in a follow-up correction rather than left standing:** the cache-cost
+arithmetic in the adapter as first written was wrong — it subtracted `cache_read_input_tokens`
+from `input_tokens` (double-discounting a bucket that Anthropic's `input_tokens` field already
+excludes) and never read `cache_creation_input_tokens` at all, so a cache write — the 1.25x/2x
+premium D-029 calls "half the arithmetic" — was billed at zero. Invisible in both live smoke
+tests because neither request set `cacheable: true`. Corrected the same day, with `Usage`
+extended to carry cache-write tokens as its own bucket and a regression test asserting the three
+input buckets are additive rather than overlapping.
+
+---
+
+### D-038 · `@cfm/supplier-request`: the deterministic half of the supplier-request flow
+**Status:** Accepted (implemented) · **Date:** 2026-09-19
+
+`02-` §10.1 week 7 ("Supplier request flow: template (EN/ZH), magic-link upload page, reminders")
+is split the same way `@cfm/catalog` and `@cfm/channels` already are (D-022): everything that
+does not touch a filesystem or a clock is in the package's pure surface, and only magic-link
+token generation is Node-only (`node:crypto`, split into `src/node.ts`), enforced by the same
+`browser-safe.test.ts` pattern.
+
+**No model call anywhere in this package**, by design — the lifecycle state machine
+(`src/request.ts`), reminder scheduling (`src/reminders.ts`) and EN/ZH email copy
+(`src/templates.ts`) are all deterministic. Chinese was included because a meaningful share of
+sellers' suppliers are China-based factories (`02-` line 40, line 319).
+
+Design decisions worth recording because each replaced a first attempt that looked reasonable
+and turned out to have a hole in it:
+
+- **A `RequestedItem` carries `requirementId`.** Without it, `EvidenceView.hasOpenRequest` in
+  `@cfm/catalog`'s evaluator — the entire reason the `pending` status exists — has nothing to
+  match a request against. This is what `@cfm/evidence` (v1.5 groundwork, in progress) reads to
+  populate that method.
+- **Fulfilling an item requires the request to have been sent first.** A `draft` was never
+  emailed, so no magic link exists yet for anything to have raced. The first version allowed
+  fulfilment from `draft` on the theory that "an upload could race the email" — which left a
+  request that could never subsequently be sent, since `markSent` requires `draft` and fulfilling
+  had already moved it past that.
+- **A late upload against an `expired` request still counts.** `expired` is terminal for sending,
+  opening and reminders, but not for fulfilment — discarding a document that genuinely arrived
+  because a deadline had already passed would be the hard rule's false-negative failure mode
+  (`unknown` vs `na`) in a different costume. `cancelled` and `fulfilled` still refuse.
+- **Timestamps are parsed, never compared as strings.** `asOf > dueAt` on raw ISO strings only
+  agrees with chronological order while every timestamp is UTC in an identical format.
+- **Reminders stop once the due date has passed.** Without this, every remaining offset in
+  `REMINDER_OFFSETS_DAYS` is satisfied once `daysUntilDue` goes negative, so an un-expired
+  overdue request would keep working through its remaining reminders one cron run at a time.
+  What should happen instead is expiry (`expireIfDue`), not another nudge about a date already
+  gone — this package does not own the cron job that would call both in the right order, so the
+  guard is structural rather than left to caller discipline.
+
+**Not built, and deliberately not**: sending email (Resend wiring), the upload page itself, and
+the Inngest cron binding — those need the app/infrastructure layer this repo does not have yet
+(see `tabeen_AGENTS.md`'s repo map, corrected the same day). This package is the part that is
+provider-agnostic and fully testable without any of it.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
