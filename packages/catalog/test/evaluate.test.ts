@@ -68,6 +68,64 @@ describe("market scoping", () => {
   });
 });
 
+describe("national packaging-EPR scoping (batch 4, PR #6 review)", () => {
+  it("does not apply the Austrian representative duty to a B2B-only seller", () => {
+    // AWG 2002 § 12b(1) + § 13g(1)(5): mandatory AR appointment only attaches to a distance
+    // seller with no AT establishment selling to a PRIVATE end consumer. A seller who only
+    // sells to businesses has an optional right under § 16a, not a duty -- same shape as the
+    // PPWR fix above (D-040), reusing the same fact.
+    const b2bOnly = { ...FULLY_KNOWN, "organisation.sells_direct_to_end_users": false };
+    expect(find(assess(b2bOnly, { iso: "AT" }), "at.epr.authorised-representative")?.status).toBe(
+      "na",
+    );
+  });
+
+  it("does not know the Austrian representative duty applies until told how the seller sells", () => {
+    const noChannelInfo = without(FULLY_KNOWN, "organisation.sells_direct_to_end_users");
+    const result = find(assess(noChannelInfo, { iso: "AT" }), "at.epr.authorised-representative");
+    expect(result?.status).toBe("unknown");
+  });
+
+  it("does not apply the Belgian IVC duty below the 300kg treaty threshold", () => {
+    // Cooperation Agreement of 4 Nov. 2008, Art. 6: the take-back obligation (and Art. 18's
+    // reporting duty, which is worded as applying to the same population) only attaches at
+    // 300 kg/year or more.
+    const underThreshold = { ...FULLY_KNOWN, "organisation.be_packaging_kg_previous_year": 299 };
+    expect(find(assess(underThreshold, { iso: "BE" }), "be.epr.packaging-ivc")?.status).toBe("na");
+  });
+
+  it("does not know the Belgian IVC duty applies until told the seller's packaging volume", () => {
+    const noVolume = without(FULLY_KNOWN, "organisation.be_packaging_kg_previous_year");
+    const result = find(assess(noVolume, { iso: "BE" }), "be.epr.packaging-ivc");
+    expect(result?.status).toBe("unknown");
+  });
+
+  it("does not apply the Italian CONAI duty to a seller with no IT establishment or fiscal rep", () => {
+    // CONAI's own membership rules: a foreign company with neither an Italian establishment
+    // nor an Italian fiscal representative cannot join CONAI as a standard member, so the row
+    // must not tell it that it has to.
+    const neitherRoute = {
+      ...FULLY_KNOWN,
+      "organisation.has_it_fiscal_representative": false,
+    };
+    // FULLY_KNOWN's seller is GB-established, so organisation.established_in_market is already
+    // false for the IT market -- only the fiscal-rep fact needs overriding here.
+    expect(find(assess(neitherRoute, { iso: "IT" }), "it.epr.packaging-conai")?.status).toBe("na");
+  });
+
+  it("still applies the Italian CONAI duty to a seller with only a fiscal representative", () => {
+    expect(
+      find(assess(FULLY_KNOWN, { iso: "IT" }), "it.epr.packaging-conai")?.status,
+    ).not.toBe("na");
+  });
+
+  it("does not know the Italian CONAI duty applies until told about a fiscal representative", () => {
+    const noFiscalRepInfo = without(FULLY_KNOWN, "organisation.has_it_fiscal_representative");
+    const result = find(assess(noFiscalRepInfo, { iso: "IT" }), "it.epr.packaging-conai");
+    expect(result?.status).toBe("unknown");
+  });
+});
+
 describe("channel scoping", () => {
   it("applies marketplace traceability on a marketplace", () => {
     expect(find(assess(FULLY_KNOWN, { channel: "amazon_de" }), "eu.dsa.trader-information")?.status).not.toBe("na");

@@ -723,6 +723,51 @@ independent of the direct-to-end-user test. That is a national-law variation, th
 the still-unverified `at.epr.authorised-representative` / `es.epr.authorised-representative` rows,
 and is out of scope for this EU-wide floor requirement.
 
+### D-041 · Batch 4 (AT/BE/IT) national-EPR rescopes, and publishing 7 country packaging schemes
+
+**Status:** Accepted (implemented) · **Date:** 2026-09-20
+
+PR #6 read the primary statutes for the seven national packaging-EPR drafts flagged by
+`review/epr-national-schemes.md` (AT ×2, BE, ES ×2, IT, NL). Four had no logic issue and were
+published straight from that reading: `nl.epr.packaging-verpact` (Art. 8(1) Besluit beheer
+verpakkingen 2014, 50,000 kg/year threshold), `es.epr.authorised-representative` (Art. 17.2 RD
+1055/2022), `es.epr.packaging-rpp` (Art. 14-16 RD 1055/2022), `at.epr.packaging-edm`
+(§ 13g(1) AWG 2002).
+
+Three surfaced genuine scoping mismatches between the drafted `applies_when` and the primary
+text, held at first review (PR #6) and resolved in the same PR once Tabeen decided each:
+
+1. **`at.epr.authorised-representative`** — same shape as D-040. § 12b(1) AWG 2002 makes AR
+   appointment mandatory only for a distance seller with no AT establishment selling **to a
+   private end consumer**; a seller selling only to businesses has an optional right under
+   § 16a, not a duty. Added `organisation.sells_direct_to_end_users: true` to `applies_when`,
+   reusing D-040's fact rather than inventing a new one.
+
+2. **`be.epr.packaging-ivc`** — the 2008 Cooperation Agreement's own text sets a **300 kg/year**
+   threshold on both the take-back duty (Art. 6) and the reporting duty (Art. 18, worded as
+   applying to "the responsible company subject to the take-back obligation"), contradicting
+   the draft's "no de minimis" summary, which came from IVC/CIE's own guidance page rather than
+   the treaty itself. Added `organisation.be_packaging_kg_previous_year >= 300` to
+   `applies_when`, same shape as the NL row's threshold in this batch.
+
+3. **`it.epr.packaging-conai`** — CONAI's own membership rules state foreign companies "are not
+   obliged to join CONAI, but they may do so voluntarily," corroborated by an independent
+   secondary source. A foreign seller with no Italian establishment cannot join CONAI as a
+   standard member, so telling it that it must would be a false positive. Added a new fact,
+   `organisation.has_it_fiscal_representative`, and scoped `applies_when` to
+   `any: [organisation.established_in_market, organisation.has_it_fiscal_representative]` —
+   absence of both resolves `na`; not knowing either resolves `unknown`, per the hard rule.
+   **Deliberately not modelled**: who, if anyone, is responsible for CONAI-side EPR obligations
+   when a foreign seller has neither an Italian establishment nor a fiscal representative — no
+   equivalent to Spain's first-distributor fallback has been identified for Italy yet.
+
+Added `organisation.be_packaging_kg_previous_year` and `organisation.has_it_fiscal_representative`
+to `FULLY_KNOWN` in `test/fixtures.ts` and dedicated tests in `evaluate.test.ts` for all three
+rescopes (the applies-below-threshold / na-above-threshold pairs, and the unknown-when-absent
+case for each). Catalog gate after this PR: **20 published, 8 drafts** — every remaining draft is
+now either category-specific (batteries, toys, WEEE, UKCA/CE marking — deprioritised per D-034)
+or `uk.gpsr.uk-responsible-person` (held pending UK secondary legislation, not a research gap).
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.

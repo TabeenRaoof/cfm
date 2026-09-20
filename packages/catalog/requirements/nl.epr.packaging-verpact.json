@@ -1,10 +1,10 @@
 {
   "id": "nl.epr.packaging-verpact",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Besluit beheer verpakkingen — Afvalfonds Verpakkingen / Verpact",
-  "article_ref": "Unconfirmed",
+  "article_ref": "Art. 8(1) Besluit beheer verpakkingen 2014",
   "title": "Netherlands: packaging waste contribution above 50,000 kg",
   "summary": "A business placing more than 50,000 kg of packaging on the Dutch market in a year must report to and pay the waste management contribution to Verpact (formerly Afvalfonds Verpakkingen). Below that weight the contribution does not apply, though other packaging duties may.",
   "applies_when": {
@@ -40,21 +40,21 @@
   "effective_to": null,
   "sources": [
     {
-      "title": "Verpact (formerly Afvalfonds Verpakkingen)",
-      "url": "https://verpact.nl/",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+      "title": "Besluit beheer verpakkingen 2014, Art. 8(1) (wetten.overheid.nl)",
+      "url": "https://wetten.overheid.nl/BWBR0035711/2024-01-01/0",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the consolidated statute directly. Art. 8(1): 'De producent of importeur van wie het totaal van de door hem in de handel gebrachte verpakkingen ... jaarlijks meer dan 50.000 kilogram bedraagt, zendt elk jaar voor 1 augustus aan Onze Minister een verslag' -- the 50,000 kg/year threshold and the reporting duty it triggers are both confirmed exactly as drafted, resolving the previous draft's single biggest open question. Art. 8a(2) cross-references the same 50,000 kg figure for a related decree (Besluit regeling voor uitgebreide producentenverantwoordelijkheid), so the number is used consistently, not just in one place. TWO THINGS NOT YET MODELLED, found via Verpact's own guidance (not re-verified against the statute this pass): (1) single-use plastic and deposit-return packaging (cans, plastic drink bottles) have NO threshold -- registration is required from the first kilogram regardless of the 50,000 kg figure, which this row's applies_when does not carve out; (2) Verpact states the 50,000 kg threshold itself 'is expected to be removed' once PPWR's own producer-registration regime (eu.ppwr.producer-registration, already published) is fully implemented -- a future date-watch item, same shape as that row's implementing-act timing risk."
     },
     {
-      "title": "EPR registration by country: registers and thresholds",
-      "url": "https://tarafex.com/epr-by-country",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "The 50,000 kg threshold is from secondary sources and is the single most important number in this requirement. Confirm it against Verpact or the Besluit before publishing."
+      "title": "Registration form Europe / Non-Europe | Verpact",
+      "url": "https://www.verpact.nl/en/registration-form-europe",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Confirms the threshold applies even to a business 'that does not have a place of business in the Netherlands but sells to Dutch consumers (online)' -- so organisation.established_in_market is correctly NOT part of this row's applies_when; the duty is market-of-sale-based, not establishment-based, unlike the AT/ES authorised-representative rows in this same batch."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

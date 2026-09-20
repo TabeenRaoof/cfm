@@ -321,3 +321,63 @@ compliance blocks for traditional B2B supply chain pathways." Published
 `eu.ppwr.authorised-representative`. Updated `catalog.test.ts`'s published-ids assertion to the
 new set of 13. Catalog gate: 13 published, 15 drafts, 0 issues. Full suite: 469/469. Merged via
 [PR #5](https://github.com/TabeenRaoof/cfm/pull/5).
+
+## 2026-09-20 (continued) — batch 4: the seven national packaging-EPR schemes (AT, BE, ES, IT, NL)
+
+Picked up `review/epr-national-schemes.md`'s recommended next batch: seven `confidence: low`
+drafts drawn entirely from secondary compliance-provider guidance, none previously checked
+against a primary source. Read the actual statutes for all seven (Besluit beheer verpakkingen
+2014 for NL, the 2008 Cooperation Agreement for BE, RD 1055/2022 for both ES rows, § 13g/16a-d
+AWG-VerpackVO for both AT rows, CONAI's own membership rules plus a corroborating source for IT).
+
+Four came back clean and are ready to publish on sign-off: `nl.epr.packaging-verpact` (50,000 kg
+threshold confirmed, Art. 8(1) Besluit beheer verpakkingen 2014), `es.epr.authorised-representative`
+(Art. 17.2 RD 1055/2022, fallback-to-distributor confirmed verbatim), `es.epr.packaging-rpp`
+(Art. 14-16 RD 1055/2022), `at.epr.packaging-edm` (§ 13g(1) AWG 2002).
+
+Three surfaced genuine scoping questions, held rather than silently resolved or silently
+published, same discipline as the PPWR AR row at PR #4:
+- **`it.epr.packaging-conai`**: CONAI's own guidance states foreign companies are not obliged to
+  join CONAI at all — if true, this row may not attach to CFM's typical (non-Italian-established)
+  customer. Have not read D.Lgs. 152/2006 Art. 221/218 directly to confirm.
+- **`be.epr.packaging-ivc`**: the 2008 treaty's own text gates both the take-back duty (Art. 6)
+  and the reporting duty (Art. 18) behind a 300 kg/year threshold, contradicting the draft's
+  "no de minimis" summary, which came from IVC/CIE's own guidance page.
+- **`at.epr.authorised-representative`**: same shape as D-040 — § 12b(1) AWG 2002 makes AR
+  appointment mandatory only for distance sales to *private* end consumers, not for B2B sales;
+  the draft's "no distance-selling carve-out" claim doesn't hold once split that way.
+
+Wrote up all seven, including full verbatim citations and the three open questions, in
+`project-setup/review-packet-2026-09-20d.md` and in each requirement's own `sources` array.
+No `state` changes made — citations and notes only, same as every prior packet. Catalog gate
+unchanged: 13 published, 15 drafts, 0 issues. Full suite: 469/469.
+
+## 2026-09-20 (continued) — Tabeen's review of PR #6: 4 published, 3 rescoped and published
+
+Tabeen reviewed [PR #6](https://github.com/TabeenRaoof/cfm/pull/6). Approved the four clean rows
+outright (`nl.epr.packaging-verpact`, `es.epr.authorised-representative`, `es.epr.packaging-rpp`,
+`at.epr.packaging-edm`) and gave a concrete resolution for each of the three held ones, all
+implemented in the same PR (D-041):
+
+- **Italy**: confirmed the CONAI foreign-company exemption against D.Lgs 116/2020 and directed
+  scoping to entities with an Italian establishment or fiscal representative. Added
+  `organisation.has_it_fiscal_representative` and an `any`-branch in `applies_when`.
+- **Belgium**: directed trusting the treaty text's 300 kg threshold over the vendor guidance's
+  "no de minimis" claim. Added `organisation.be_packaging_kg_previous_year >= 300`.
+- **Austria (AR)**: directed the same D-040-shaped fix — scope to B2C distance sales only. Added
+  `organisation.sells_direct_to_end_users: true`, reusing the existing fact.
+
+Also flagged that CI hadn't reported checks on PR #6 or the PR #5 follow-up push, and suspected a
+`paths:` filter in `ci.yml`. Checked: `ci.yml` has no `paths`/`paths-ignore` key at all, and the
+GitHub Actions API confirms both runs did eventually fire and pass (`workflow_runs` for both
+commits shows `conclusion: success`) — just later than the ~30-60s I'd waited before moving on.
+Delayed indexing, not a filter; noted for next time to wait longer or poll the API by commit SHA
+before concluding CI is silently skipping a path.
+
+Added `organisation.be_packaging_kg_previous_year` and `organisation.has_it_fiscal_representative`
+to `FULLY_KNOWN`, seven new tests in `evaluate.test.ts` covering all three rescopes, and updated
+`catalog.test.ts`'s published-ids assertion to the new set of 20. Catalog gate: **20 published, 8
+drafts, 0 issues** — every remaining draft is now category-specific (batteries, toys, WEEE, UKCA/CE
+marking) or the UK responsible-person row held pending secondary legislation; the general-goods
+breadth pass from D-034 is essentially done. Full suite: 480/480 (11 new). Merged via
+[PR #6](https://github.com/TabeenRaoof/cfm/pull/6).
