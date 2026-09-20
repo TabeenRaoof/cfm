@@ -311,3 +311,13 @@ floor row.
 
 Still `state: "draft"` -- this is a logic fix awaiting re-review, not a sign-off. Catalog gate
 unchanged: 12 published, 16 drafts, 0 issues. Full suite: 469/469 (4 new).
+
+## 2026-09-20 (continued) — Tabeen's sign-off on the PPWR AR rescope
+
+Tabeen reviewed [PR #5](https://github.com/TabeenRaoof/cfm/pull/5) and approved it: the
+`sells_direct_to_end_users` rescoping "correctly focuses the authorized representative obligation
+on cross-border distance sellers and B2C e-commerce models... preventing false-positive
+compliance blocks for traditional B2B supply chain pathways." Published
+`eu.ppwr.authorised-representative`. Updated `catalog.test.ts`'s published-ids assertion to the
+new set of 13. Catalog gate: 13 published, 15 drafts, 0 issues. Full suite: 469/469. Merged via
+[PR #5](https://github.com/TabeenRaoof/cfm/pull/5).
