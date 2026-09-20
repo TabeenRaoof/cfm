@@ -39,9 +39,9 @@
     {
       "title": "Regulation (EU) 2022/2065 on a Single Market For Digital Services",
       "url": "https://eur-lex.europa.eu/eli/reg/2022/2065/oj",
-      "retrieved_at": null,
-      "verified": false,
-      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the full text directly. Art. 30 'Traceability of traders' matches the draft's summary point for point: para 1 lists the five items a marketplace must obtain before onboarding a trader -- (a) name/address/phone/email, (b) ID document or eID, (c) payment account details, (d) trade register + registration number where applicable, (e) self-certification of compliance -- and para 2 requires the platform to make best efforts to assess whether all of points (a)-(e) are reliable and complete, via official databases or supporting documents. Citation confirmed correct as drafted."
     }
   ],
   "confidence": "medium",
