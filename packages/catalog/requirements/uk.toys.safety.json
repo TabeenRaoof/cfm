@@ -4,7 +4,7 @@
   "state": "draft",
   "jurisdiction": "UK",
   "regulation": "Toys (Safety) Regulations 2011",
-  "article_ref": "Unconfirmed",
+  "article_ref": "SI 2011/1881, regs. 15 (declaration & marking duty) and 18 (marking placement)",
   "title": "United Kingdom: toy safety, marking and declaration",
   "summary": "A toy placed on the GB market requires conformity assessment against the essential safety requirements, a declaration of conformity, and UKCA or CE marking. Flagged in v1; category depth is v2.",
   "applies_when": {
@@ -31,18 +31,18 @@
     }
   ],
   "channel_mappings": {},
-  "effective_from": "2011-07-20",
+  "effective_from": "2011-08-19",
   "effective_to": null,
   "sources": [
     {
-      "title": "The Toys (Safety) Regulations 2011",
+      "title": "The Toys (Safety) Regulations 2011 (SI 2011/1881)",
       "url": "https://www.legislation.gov.uk/uksi/2011/1881/contents",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Instrument identified but NOT read. Drafted by analogy with the EU toy requirement; GB divergence is unchecked."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the statute directly. Reg. 15 requires the manufacturer to draw up a declaration of conformity and affix the UK marking per reg. 18 once conformity assessment demonstrates the toy meets the essential safety requirements; reg. 18 sets the placement rules (visible/legible/indelible, on the toy/label/packaging, with a small-toy carve-out). Continued CE-marking recognition for GB is confirmed current via the same primary source used for uk.marking.ukca-or-ce in this batch (SI 2024/696) -- no separate citation needed here since that row already covers it and this row's applies_when doesn't duplicate the marking-choice logic. DATE FIX: effective_from was 2011-07-20 (the EU Directive's date, drafted 'by analogy'); this SI's own commencement (reg. 1(2)) is 19 August 2011 -- a month later. Corrected to 2011-08-19."
     }
   ],
-  "confidence": "low",
+  "confidence": "medium",
   "last_reviewed_at": null,
   "reviewer": null
 }

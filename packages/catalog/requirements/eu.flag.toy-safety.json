@@ -37,9 +37,9 @@
     {
       "title": "Directive 2009/48/EC on the safety of toys",
       "url": "https://eur-lex.europa.eu/eli/dir/2009/48/oj",
-      "retrieved_at": null,
-      "verified": false,
-      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the consolidated text directly. Both citations confirmed exactly as drafted: Art. 4(2) requires manufacturers to draw up the EC declaration of conformity and affix CE marking once the applicable conformity assessment (Art. 19) demonstrates compliance with Art. 10/Annex II; Art. 15 sets the declaration's own content requirements. effective_from (2011-07-20) matches the Directive's own transposition/application date. No changes needed."
     }
   ],
   "confidence": "medium",

@@ -381,3 +381,32 @@ drafts, 0 issues** — every remaining draft is now category-specific (batteries
 marking) or the UK responsible-person row held pending secondary legislation; the general-goods
 breadth pass from D-034 is essentially done. Full suite: 480/480 (11 new). Merged via
 [PR #6](https://github.com/TabeenRaoof/cfm/pull/6).
+
+## 2026-09-20 (continued) — batch 5: the category-specific requirements (batteries, toys, WEEE, UK marking)
+
+Moved into the category-specific batch per D-034's deprioritization, now that the general-goods
+breadth pass is done. Read the primary statutes for all 7 remaining drafts (excluding
+`uk.gpsr.uk-responsible-person`, which stays held on legislation, not research): Regulation (EU)
+2023/1542 for batteries, Directive 2009/48/EC + SI 2011/1881 for toys, Directive 2012/19/EU + SI
+2013/3113 for WEEE, SI 2009/890 for UK batteries, and SI 2024/696 for the UKCA/CE marking row.
+
+Unlike the last two batches, this one surfaced almost no scoping ambiguity — but did surface
+**two real date bugs**, caught only by reading the statute's own commencement/application
+clauses instead of trusting the drafted date:
+- `eu.flag.battery-registration`: effective_from was a year early (2024-08-18 vs. the correct
+  2025-08-18 — Art. 96 states Chapter VIII, which contains the registration article, applies a
+  full year after several other provisions the 2024 date actually belongs to).
+- `uk.toys.safety`: effective_from was a month early (2011-07-20, copied from the EU Directive
+  "by analogy," vs. the SI's own commencement of 2011-08-19).
+- `uk.batteries.producer-registration`: effective_from was three months late (2010-01-01 vs. the
+  actual registration duties' 2009-10-15).
+
+Also fixed citations that were "Unconfirmed" or wrong (Art. 56 → Art. 55 for the battery
+registration row — Art. 56 is EPR financing, not registration) and confirmed two that were already
+correct (`eu.flag.toy-safety`, `eu.flag.weee-registration`). One nuance flagged but not modelled:
+UK battery registration has two tracks (1-tonne-threshold portable vs. thresholdless
+industrial/automotive) that the row doesn't distinguish — not a false positive/negative, just an
+imprecise "how," left for a future pass.
+
+Wrote up all seven in `project-setup/review-packet-2026-09-20e.md`. No `state` changes — citations
+and date fixes only. Catalog gate unchanged: 20 published, 8 drafts, 0 issues. Full suite: 480/480.

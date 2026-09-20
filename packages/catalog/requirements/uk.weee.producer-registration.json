@@ -4,7 +4,7 @@
   "state": "draft",
   "jurisdiction": "UK",
   "regulation": "Waste Electrical and Electronic Equipment Regulations 2013",
-  "article_ref": "Unconfirmed",
+  "article_ref": "SI 2013/3113, regs. 15-17 (small producer, <5t) and reg. 77 (register)",
   "title": "United Kingdom: WEEE producer registration for electrical goods",
   "summary": "A producer placing electrical or electronic equipment on the UK market must register as a WEEE producer, generally through an approved compliance scheme. Flagged in v1; the full module is v2.",
   "applies_when": {
@@ -29,14 +29,14 @@
   "effective_to": null,
   "sources": [
     {
-      "title": "The Waste Electrical and Electronic Equipment Regulations 2013",
+      "title": "The Waste Electrical and Electronic Equipment Regulations 2013 (SI 2013/3113)",
       "url": "https://www.legislation.gov.uk/uksi/2013/3113/contents",
-      "retrieved_at": "2026-09-13",
-      "verified": false,
-      "note": "Instrument identified but NOT read. Thresholds and the small-producer position are unestablished. Do not publish without reading it."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the statute directly. 'Small producer' (reg. 2/2D) is defined as placing LESS THAN 5 tonnes of EEE on the market per compliance period (calendar year) -- confirmed threshold, distinct from the batteries row's 1-tonne figure in this same batch, so worth stating explicitly rather than leaving as a generic 'a threshold applies'. Reg. 15 requires small producers (or their authorised representative) to register directly with the appropriate authority; reg. 16 sets the application deadline (31 January, or within 28 days of first placing EEE on the market) and tonnage-evidence requirement; reg. 17 requires a producer who crosses 5 tonnes mid-year to notify within 28 days and join a compliance scheme instead. effective_from (2014-01-01) confirmed against reg. 1(2)'s own general commencement -- no date fix needed here, unlike the battery and toy rows in this batch."
     }
   ],
-  "confidence": "low",
+  "confidence": "medium",
   "last_reviewed_at": null,
   "reviewer": null
 }
