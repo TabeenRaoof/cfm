@@ -652,6 +652,43 @@ the Inngest cron binding — those need the app/infrastructure layer this repo d
 (see `tabeen_AGENTS.md`'s repo map, corrected the same day). This package is the part that is
 provider-agnostic and fully testable without any of it.
 
+### D-039 · `@cfm/evidence`: linking is market-scoped, and refusing beats guessing
+
+**Status:** Accepted (implemented) · **Date:** 2026-09-19
+
+The missing middle between an accepted extraction (`@cfm/documents`) and an assessment
+(`@cfm/catalog`'s `evidenceFor`/`hasOpenRequest`): nothing previously turned a `decision: "accept"`
+verdict into the `EvidenceRef[]` the evaluator reads, so no upload could ever move a cell off
+`missing`. `@cfm/evidence` is three small, independently testable pieces:
+
+- **`record.ts`** — `evidenceFromVerdict` turns an accepted `ExtractionVerdict` into an
+  `EvidenceRecord`, and throws rather than returning a half-built record if the verdict was not
+  actually accepted. `validTo` comes from the schema's own `valid_to` field when present, `null`
+  otherwise — never guessed from a different field.
+- **`scope.ts`** — `requirementMarketScope` reads a requirement's `applies_when` for any leaf on
+  `market.iso_country` (plain equality or an `in` matcher, including inside `all`/`any`/`not`) and
+  returns the set of countries named, or `{ kind: "unscoped" }` if none is. It answers "which
+  markets does this requirement's text mention", not "does this requirement apply" — the two are
+  different questions, and only the evaluator's own `evaluateCondition` answers the second.
+- **`link.ts`** — `linkEvidence` is the reason this package exists. **The concrete failure it
+  exists to prevent:** `de.epr.packaging-lucid` and `fr.epr.packaging-citeo` both require
+  `epr_certificate`; matching evidence to a requirement by document type alone would let a German
+  Lucid certificate satisfy the French Citeo row — a false green with real regulatory
+  consequences. `linkEvidence` checks every document against every requirement that wants its
+  type, and for each pairing where the requirement is market-scoped, requires the evidence's own
+  `country` field to be in that scope. No stated country against a scoped requirement is a
+  refusal, not a link — the same "unknown is not na" discipline as the evaluator's own hard rule,
+  applied one layer earlier. Every refusal is returned (`RefusedLink[]`), not merely dropped, so a
+  caller building a review UI can show *why* an upload did not close a row instead of a silent
+  no-op. `hasOpenRequest` is wired from the same call: it is true when a non-terminal
+  `SupplierRequest` has a `requestedItems` entry for that `requirementId` whose `fulfilledAt` is
+  still `null` (D-038's `requirementId` field is what makes this possible at all).
+
+**Not built, and deliberately not**: persistence (which documents are "the current evidence set"
+for a product is a caller/database concern), and confidence scoring for market matches beyond the
+single `country` field — multi-field scoping (e.g. by `scheme_name`) is not needed by any
+requirement in the catalog yet, so it was not speculatively added.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.

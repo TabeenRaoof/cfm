@@ -20,6 +20,7 @@ export default defineConfig({
         new URL("./packages/supplier-request/src/node.ts", import.meta.url),
       ),
       "@cfm/supplier-request": pkg("supplier-request"),
+      "@cfm/evidence": pkg("evidence"),
     },
   },
   test: {

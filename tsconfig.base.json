@@ -53,6 +53,9 @@
       ],
       "@cfm/supplier-request/node": [
         "packages/supplier-request/src/node.ts"
+      ],
+      "@cfm/evidence": [
+        "packages/evidence/src/index.ts"
       ]
     },
     "erasableSyntaxOnly": true

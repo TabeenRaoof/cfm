@@ -19,7 +19,7 @@ are immutable; corrections to them are in `project-setup/03-plan-review.md`.
 
 ```bash
 npm install
-npm test               # 441 tests
+npm test               # 465 tests
 npm run typecheck
 npm run catalog:check  # the requirement publish gate
 npm run smoke          # runs the deterministic path on a bare Node, no build step
@@ -51,4 +51,5 @@ See `tabeen_AGENTS.md` and `packages/catalog/README.md`.
 | `@cfm/documents` | Extraction schemas, deterministic patterns, validators, the confidence gate | **Never** |
 | `@cfm/ai` | The provider seam — the only place that may | Only when code cannot answer |
 | `@cfm/supplier-request` | The supplier magic-link request lifecycle, reminder scheduling, EN/ZH email templates | **Never** |
+| `@cfm/evidence` | Links an accepted extraction to the catalog requirement(s) it satisfies, market-scoped | **Never** |
 | `apps/scanner` | The static page, its waitlist and its privacy notice | **Never** |
