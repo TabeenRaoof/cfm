@@ -116,20 +116,26 @@ describe("the requirement files in this repository", () => {
     // plan says must be verified against EUR-Lex before publishing. The first review packet
     // (2026-09-20, project-setup/review-packet-2026-09-20.md) published five; the second
     // (project-setup/review-packet-2026-09-20b.md) published three more and held one
-    // (uk.gpsr.uk-responsible-person — a scoping question, not a citation fix). This test is
+    // (uk.gpsr.uk-responsible-person — a scoping question, not a citation fix); the third
+    // (project-setup/review-packet-2026-09-20c.md) published four more and held one more
+    // (eu.ppwr.authorised-representative — same reason, a scoping question). This test is
     // expected to grow that set one review packet at a time, not to jump back to zero.
     const { catalog, withheldDrafts } = await loadRealCatalog(false);
     const publishedIds = catalog.requirements.map((r) => r.id).sort();
     expect(publishedIds).toEqual(
       [
         "de.epr.packaging-lucid",
+        "eu.dsa.trader-information",
+        "eu.gpsr.distance-selling-information",
         "eu.gpsr.manufacturer-identification",
         "eu.gpsr.responsible-economic-operator",
         "eu.gpsr.technical-documentation",
+        "eu.ppwr.producer-registration",
         "fr.epr.packaging-citeo",
         "fr.epr.packaging-triman-marking",
         "uk.epr.packaging-registration",
         "uk.gpsr.general-safety-requirement",
+        "uk.importer.identification",
       ].sort(),
     );
     expect(withheldDrafts.length).toBeGreaterThan(0);

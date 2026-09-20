@@ -1,7 +1,7 @@
 {
   "id": "eu.ppwr.producer-registration",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Regulation (EU) 2025/40 (PPWR)",
   "article_ref": "Art. 44",
@@ -37,12 +37,12 @@
     {
       "title": "Regulation (EU) 2025/40 on packaging and packaging waste",
       "url": "https://eur-lex.europa.eu/eli/reg/2025/40/oj",
-      "retrieved_at": null,
-      "verified": false,
-      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the full text directly. Art. 44 is titled 'Register of producers' and confirms the draft: para 2 obliges producers to register in each Member State where they first make packaging available; para 4 bars making packaging available there if they (or their Art. 45 authorised representative) are not registered. Citation confirmed correct as drafted. TIMING RISK worth flagging rather than silently publishing around: para 1 ties each Member State's actual register to '18 months of the date of entry into force of the first implementing act' under para 14, and that implementing act (due 12 Feb 2026 per the Regulation) was still not adopted as of the EUROPEN industry tracker checked the same day -- meaning the practical registration deadline for most markets is likely well past this row's effective_from, even though the legal obligation itself starts on the PPWR's general-application date. Recommend re-checking implementing-act status each review cycle rather than treating effective_from as the date registration actually becomes checkable in a given member state."
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

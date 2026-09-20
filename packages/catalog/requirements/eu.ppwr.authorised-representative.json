@@ -4,7 +4,7 @@
   "state": "draft",
   "jurisdiction": "EU",
   "regulation": "Regulation (EU) 2025/40 (PPWR)",
-  "article_ref": "Art. 45",
+  "article_ref": "Art. 45(3)",
   "title": "Authorised representative for packaging in each member state",
   "summary": "A producer not established in a member state where it makes packaging available must appoint an authorised representative for extended producer responsibility in that member state.",
   "applies_when": {
@@ -40,9 +40,9 @@
     {
       "title": "Regulation (EU) 2025/40 on packaging and packaging waste",
       "url": "https://eur-lex.europa.eu/eli/reg/2025/40/oj",
-      "retrieved_at": null,
-      "verified": false,
-      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the full text directly. The blanket citation 'Art. 45' was too broad -- Art. 45 as a whole is titled 'Extended producer responsibility' and covers financial-contribution costs (para 2) and marketplace/fulfilment-provider duties (paras 4-9); the authorised-representative appointment duty this row actually models is one paragraph inside it, para 3: 'A producer referred to in Article 3(1), point (15)(c) and (d), shall appoint, by written mandate, an authorised representative for the extended producer responsibility in each Member State where the producer makes packaging or packaged products available for the first time, other than the Member State where the producer is established.' Tightened the citation to Art. 45(3) to match, same pattern as D-034's Art. 9 -> Art. 9(6) tightening. SCOPING QUESTION for Tabeen, not fixed here: Art. 45(3)'s mandatory duty is narrower than this row's applies_when (organisation.established_in_market: false) -- it is keyed to the producer definitions at Art. 3(1)(15)(c)/(d), which (per the industry summary checked) are producers selling packaging or packaged products cross-border directly to end users, not every non-established seller. Art. 45(3)'s second subparagraph also leaves it to each Member State's discretion whether to require an authorised representative from other third-country-established producers. Modelling the narrower Art. 3(1)(15)(c)/(d) test properly would need those two definitions read directly (not yet done) before this could be tightened without risking false negatives -- left as an open question rather than guessed at. DECISION (Tabeen Raoof, 2026-09-20, PR #4 review): Held, not published. Citation (Art. 45(3)) confirmed correct, but the applies_when scoping needs to distinguish the universal Art. 45(3) duty from member-state-specific enforcement choices before this row ships, to avoid over-blocking non-EU sellers who are not actually caught by Art. 3(1)(15)(c)/(d). Next step is reading that definition directly and rescoping applies_when accordingly, then re-reviewing -- not a citation fix, a logic fix."
     }
   ],
   "confidence": "medium",

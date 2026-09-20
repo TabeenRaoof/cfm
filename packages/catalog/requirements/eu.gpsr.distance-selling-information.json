@@ -1,7 +1,7 @@
 {
   "id": "eu.gpsr.distance-selling-information",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Regulation (EU) 2023/988 (GPSR)",
   "article_ref": "Art. 19",
@@ -35,12 +35,12 @@
     {
       "title": "Regulation (EU) 2023/988 on general product safety",
       "url": "https://eur-lex.europa.eu/eli/reg/2023/988/oj",
-      "retrieved_at": null,
-      "verified": false,
-      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the Publications Office PDF directly. Art. 19, titled 'Obligations of economic operators in the case of distance sales', requires the offer itself to 'clearly and visibly indicate at least': (a) manufacturer's name/trade name/trademark plus postal and electronic address; (b) where the manufacturer is not established in the Union, the responsible person's name, postal and electronic address (cross-referencing Art. 16(1) of this Regulation and Art. 4(1) of Reg. (EU) 2019/1020, which is exactly the rp.name field this draft already models); (c) product identification incl. a picture; (d) warnings/safety information in a language the destination Member State's consumers understand. Citation and required_data both confirmed correct as drafted."
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }

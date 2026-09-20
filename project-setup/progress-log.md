@@ -244,3 +244,48 @@ oversight — `state` stays `draft` on purpose, not by default.
 Updated `catalog.test.ts`'s published-ids assertion to the new set of 8. Catalog gate: 8
 published, 20 drafts, 0 issues. Full suite: 465/465. Merged via
 [PR #3](https://github.com/TabeenRaoof/cfm/pull/3).
+
+## 2026-09-20 (continued) — review packet 3: DSA, GPSR distance selling, UK importer marking, PPWR
+
+Per D-034's general-goods-breadth priority, researched 5 more drafts (one over the usual 4 — the
+two PPWR rows share Regulation (EU) 2025/40 and were cheaper to check together):
+`eu.dsa.trader-information`, `eu.gpsr.distance-selling-information`, `uk.importer.identification`,
+`eu.ppwr.producer-registration`, `eu.ppwr.authorised-representative`.
+
+Two (DSA Art. 30, GPSR Art. 19) matched their EUR-Lex text point for point, no citation changes.
+One (`uk.importer.identification`) had an honest placeholder citation ("sector regulations;
+unconfirmed") upgraded to the real statute -- GPSR 2005 reg. 7(3)-(4)(a), the same instrument as
+`uk.gpsr.general-safety-requirement`'s reg. 5, not a separate importer-only regime. PPWR's
+producer-registration citation (Art. 44) confirmed correct, with a timing risk flagged: the
+implementing act that lets Member States actually stand up their registers is itself overdue, so
+the practical registration deadline in most markets likely runs later than this row's
+`effective_from`, even though the legal duty starts on that date. PPWR's authorised-representative
+citation tightened from the whole of Art. 45 down to para 3 specifically (same shape as packet 2's
+Art. 9 -> Art. 9(6)) -- and flagged, not fixed, that para 3's mandatory trigger is narrower than
+this row's current `applies_when`, keyed to a producer sub-definition (Art. 3(1)(15)(c)/(d)) that
+needs reading directly before the scope can be tightened without guessing.
+
+Wrote up findings in `project-setup/review-packet-2026-09-20c.md` for Tabeen's sign-off. No
+`state`/`reviewer`/`last_reviewed_at` changes made by me -- catalog gate still 8 published, 20
+drafts, 0 issues; full suite 465/465.
+
+**Standing note for future review cycles:** re-check PPWR Art. 44(14)'s implementing-act status
+each pass -- it changes whether `eu.ppwr.producer-registration`'s `effective_from` is also the date
+registration becomes practically checkable, not just legally required.
+
+## 2026-09-20 (continued) — Tabeen's sign-off on batch 3: 4 published, 1 held deliberately
+
+Tabeen reviewed [PR #4](https://github.com/TabeenRaoof/cfm/pull/4) and approved four
+(`eu.dsa.trader-information`, `eu.gpsr.distance-selling-information`,
+`uk.importer.identification`, `eu.ppwr.producer-registration`), publishing them. For the fifth,
+`eu.ppwr.authorised-representative`, held it -- confirmed the tightened Art. 45(3) citation was
+correct, but asked that `applies_when`'s scoping distinguish the universal Art. 45(3) duty from
+member-state-specific enforcement choices before this row ships, to avoid over-blocking non-EU
+sellers not actually caught by Art. 3(1)(15)(c)/(d). This is a logic fix, not a citation fix --
+recorded directly in the requirement's own source note so the next reviewer doesn't mistake the
+held state for an oversight. Next step when picked back up: read Art. 3(1)(15)(c)/(d) directly and
+rescope `applies_when` to match, then re-review.
+
+Updated `catalog.test.ts`'s published-ids assertion to the new set of 12. Catalog gate: 12
+published, 16 drafts, 0 issues. Full suite: 465/465. Merged via
+[PR #4](https://github.com/TabeenRaoof/cfm/pull/4).

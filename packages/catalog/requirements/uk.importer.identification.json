@@ -1,12 +1,12 @@
 {
   "id": "uk.importer.identification",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "UK",
-  "regulation": "UK product safety regime (importer identification)",
-  "article_ref": "Sector regulations; unconfirmed",
+  "regulation": "General Product Safety Regulations 2005 (SI 2005/1803)",
+  "article_ref": "reg. 7(3)-(4)(a)",
   "title": "United Kingdom: importer name and address on the product",
-  "summary": "Where goods are brought into GB from outside the UK, the GB importer's name and a contact address generally must appear on the product, its packaging or an accompanying document. The exact obligation varies by product regime.",
+  "summary": "Where a manufacturer is not established in the UK, GPSR 2005 treats the GB importer as the 'producer', who must generally indicate its name and address on the product or packaging (or, until 31 Dec 2027, on an accompanying batch/shipping document) so the product remains traceable, except where that is not reasonable to do.",
   "applies_when": {
     "all": [
       {
@@ -33,14 +33,21 @@
   "effective_to": null,
   "sources": [
     {
+      "title": "The General Product Safety Regulations 2005, reg. 7",
+      "url": "https://www.legislation.gov.uk/uksi/2005/1803/regulation/7",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the statute directly, resolving the previous draft's 'sector regulations; unconfirmed' citation. Reg. 7(2) defines 'producer' to include, where the manufacturer is not established in the UK and has no UK representative, 'the importer of the product from a state that is not a relevant state into a relevant state' -- so this is the same instrument and the same reg. 5 general-safety duty's sibling article, not a separate importer-only regime. Reg. 7(3) requires a producer to adopt measures enabling it to be informed of and act on product risks; reg. 7(4) lists what those measures include, with (a) being 'an indication by means of the product or its packaging of (i) the name and address of the producer, and (ii) the product reference or batch', qualified by 'except where it is not reasonable to do so' -- confirming the draft's 'generally must appear' phrasing is accurate, not overstated. GOV.UK guidance (kept below) also confirms a temporary transitional carve-out to 31 Dec 2027 letting the importer's address sit on batch/shipping/invoice documents instead of the individual product where individual marking is not yet reasonable."
+    },
+    {
       "title": "Placing manufactured products on the market in Great Britain — GOV.UK",
       "url": "https://www.gov.uk/guidance/placing-manufactured-goods-on-the-market-in-great-britain",
       "retrieved_at": "2026-09-13",
       "verified": false,
-      "note": "Drafted from GOV.UK guidance. Importer-marking duties sit in sector regulations rather than one instrument; the per-regime detail is NOT yet established."
+      "note": "Not re-fetched this pass; superseded as the primary citation by the statute above, now checked directly. Still useful context on the transitional batch-marking carve-out described in that source's note."
     }
   ],
-  "confidence": "low",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }
