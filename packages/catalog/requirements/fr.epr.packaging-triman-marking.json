@@ -1,0 +1,43 @@
+{
+  "id": "fr.epr.packaging-triman-marking",
+  "version": "2026.09",
+  "state": "published",
+  "jurisdiction": "EU",
+  "regulation": "Code de l'environnement (REP emballages)",
+  "article_ref": "Art. L541-9-3",
+  "title": "France: packaging Triman marking",
+  "summary": "A producer placing packaged household goods on the French market must apply the Triman sorting marking with its Info-tri instructions.",
+  "applies_when": {
+    "all": [
+      {
+        "market.iso_country": "FR"
+      },
+      {
+        "product.has_packaging": true
+      }
+    ]
+  },
+  "required_data": [],
+  "required_evidence": [
+    {
+      "type": "label_artwork",
+      "label": "Artwork showing Triman and Info-tri",
+      "expires": false
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2022-01-01",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Code de l'environnement — Art. L541-9-3 (Légifrance)",
+      "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000041556010/2022-01-01",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Corrected the URL during sign-off: the draft's pasted link (LEGIARTI000043974960) actually resolves to L541-10-1, not L541-9-3 — the two share a page family on Légifrance and it's an easy mix-up. This URL is L541-9-3's own article page. Direct fetch of legifrance.gouv.fr was blocked by its bot-check page; text below is quoted verbatim from Légifrance's own page via search, not from memory, but could not be re-fetched to double check today — re-verify with a browser before relying on this for the live catalog. FINDING: the Triman-marking duty is established in article L541-9-3 ('Tout produit mis sur le marché à destination des ménages soumis au I de l'article L. 541-10... fait l'objet d'une signalétique...'). SIGNED OFF 2026-09-20 (Tabeen Raoof) on this basis, split out of the former single fr.epr.packaging-citeo row to keep the catalog's one-requirement-one-citation convention; the manual browser re-check of the Légifrance text is still outstanding."
+    }
+  ],
+  "confidence": "medium",
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
+}

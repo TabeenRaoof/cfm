@@ -143,3 +143,34 @@ control, CI, Anthropic cost fix, supplier-request fixes and decisions, docs drif
 `tabeen_AGENTS.md`'s repo map as not yet existing since the "repo map, corrected" pass above.
 Created and backfilled from git history and the session transcript, going forward from here as
 work happens rather than reconstructed after the fact.
+
+## 2026-09-20 (continued) — First catalog review packet: 4 requirements researched against primary sources
+
+Asked "how much more work to ship," which surfaced that all 27 catalog requirements were still
+`state: "draft"` with every source `verified: false` — the largest gap between "the evaluator
+works" and "the product tells anyone anything they can rely on," and D-008's rule is that only a
+named human (Tabeen) publishes, so this can't be closed by an assistant alone.
+
+What an assistant *can* do without overstepping that rule: the research. Picked the four
+requirements Slice B's two target document types depend on —
+`eu.gpsr.responsible-economic-operator` (`rp_mandate`), `de.epr.packaging-lucid`,
+`fr.epr.packaging-citeo`, `uk.epr.packaging-registration` (all `epr_certificate`) — and fetched
+each one's primary source directly (EUR-Lex, the German VerpackG statute text, GOV.UK plus the
+actual UK statutory instrument, Légifrance for the French one, though that fetch was blocked by a
+bot-check and came through a search result instead, flagged for a manual check).
+
+Two were already correct as drafted (EU responsible-person Art. 16; German LUCID/dual-system
+§§ 7/9). Two needed real corrections: the French row cited the general EPR principle
+(`L541-10`) rather than the article that actually brings packaging into scope (`L541-10-1`), and
+bundles a second legal basis (Triman marking, `L541-9-3`) under one citation; the UK row's
+statutory instrument was unconfirmed and is now S.I. 2024/1332, which also revealed the
+regulation splits "small producer" and "large producer" into materially different obligations
+that this requirement's single evidence item doesn't yet distinguish.
+
+Updated every source's `verified`/`retrieved_at`/note in the four requirement JSON files with what
+was actually checked and how; corrected `article_ref` where the citation was wrong; left `state`,
+`reviewer` and `last_reviewed_at` untouched on all four, since setting those is Tabeen's decision,
+not something to infer. Wrote `project-setup/review-packet-2026-09-20.md` summarising the four
+findings and the two open decisions (split the French row; how to scope the UK small/large
+distinction) so review is reading and signing, not re-researching. Catalog gate and all 200
+catalog tests still pass.

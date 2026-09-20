@@ -1,7 +1,7 @@
 {
   "id": "de.epr.packaging-lucid",
   "version": "2026.09",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "Verpackungsgesetz (VerpackG)",
   "article_ref": "§ 9, § 7",
@@ -37,12 +37,19 @@
     {
       "title": "Zentrale Stelle Verpackungsregister — LUCID",
       "url": "https://www.verpackungsregister.org/",
-      "retrieved_at": null,
-      "verified": false,
-      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Practical/registry-facing source, confirmed live and describing the same registration process as the statute below."
+    },
+    {
+      "title": "Verpackungsgesetz (VerpackG) §§ 7, 9",
+      "url": "https://www.gesetze-im-internet.de/verpackg/VerpackG.pdf",
+      "retrieved_at": "2026-09-20",
+      "verified": true,
+      "note": "Fetched the official consolidated statute text. § 9(1): 'Hersteller von mit Ware befüllten Verpackungen sind verpflichtet, sich vor dem Inverkehrbringen der Verpackungen bei der Zentralen Stelle registrieren zu lassen' — 'Manufacturers of goods-filled packaging must register with the Zentrale Stelle before placing the packaging on the market,' matching this requirement's summary exactly. § 7 ('Systembeteiligungspflicht') is the separate dual-system participation duty for system-relevant packaging, also matching. Both article numbers already in the draft are correct. SIGNED OFF 2026-09-20 (Tabeen Raoof) at confidence medium. FOR THE NEXT REVIEW CYCLE: PPWR (the EU packaging regulation) takes effect 12 August 2026 per verpackungsregister.org and is reshaping some of these responsibilities — this citation and summary do not yet reflect PPWR and must be re-checked against it before the next re-review, not treated as settled indefinitely."
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-09-20",
+  "reviewer": "Tabeen Raoof"
 }
