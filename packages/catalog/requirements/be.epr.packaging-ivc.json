@@ -1,0 +1,55 @@
+{
+  "id": "be.epr.packaging-ivc",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Interregional cooperation agreement on packaging waste",
+  "article_ref": "Unconfirmed",
+  "title": "Belgium: IVC declaration and Fost Plus or Valipac membership",
+  "summary": "A business placing packaging on the Belgian market registers through the Interregional Packaging Commission (IVC/CIE) and joins Fost Plus for household packaging, Valipac for industrial packaging, or both. There is no de minimis threshold.",
+  "applies_when": {
+    "all": [
+      {
+        "market.iso_country": "BE"
+      },
+      {
+        "product.has_packaging": true
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "packaging.be_ivc_number",
+      "label": "IVC registration number"
+    }
+  ],
+  "required_evidence": [
+    {
+      "type": "epr_certificate",
+      "label": "Fost Plus or Valipac membership confirmation",
+      "expires": true
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2009-01-01",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Interregional Packaging Commission (IVC/CIE)",
+      "url": "https://www.ivcie.be/",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+    },
+    {
+      "title": "List of EU packaging producer responsibility organisations",
+      "url": "https://www.compliancegate.com/epr-organisations-european-union/",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+    }
+  ],
+  "confidence": "low",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

@@ -1,0 +1,42 @@
+{
+  "id": "uk.batteries.producer-registration",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "UK",
+  "regulation": "Waste Batteries and Accumulators Regulations 2009",
+  "article_ref": "Unconfirmed",
+  "title": "United Kingdom: battery producer registration",
+  "summary": "A producer placing batteries on the UK market, including batteries inside products, must register as a battery producer. A tonnage threshold determines whether registration is direct or through a scheme. Flagged in v1; the full module is v2.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "UK"
+      },
+      {
+        "product.has_battery": true
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "organisation.uk_battery_registration_number",
+      "label": "Battery producer registration number"
+    }
+  ],
+  "required_evidence": [],
+  "channel_mappings": {},
+  "effective_from": "2010-01-01",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "The Waste Batteries and Accumulators Regulations 2009",
+      "url": "https://www.legislation.gov.uk/uksi/2009/890/contents",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Instrument identified but NOT read. The 1-tonne threshold commonly cited is unverified here."
+    }
+  ],
+  "confidence": "low",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

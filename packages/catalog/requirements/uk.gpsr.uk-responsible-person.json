@@ -1,0 +1,46 @@
+{
+  "id": "uk.gpsr.uk-responsible-person",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "UK",
+  "regulation": "General Product Safety Regulations 2005 / UKCA regime",
+  "article_ref": "GPSR 2005 reg. 8",
+  "title": "United Kingdom: UK-based responsible person",
+  "summary": "Goods placed on the GB market by a business not established in the UK generally require a UK-established economic operator. The UK regime diverges from the EU GPSR and is assessed separately.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "UK"
+      },
+      {
+        "organisation.established_in_market": false
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "rp.uk_name",
+      "label": "UK responsible person name"
+    },
+    {
+      "key": "rp.uk_address",
+      "label": "UK postal address"
+    }
+  ],
+  "required_evidence": [],
+  "channel_mappings": {},
+  "effective_from": "2021-01-01",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "General Product Safety Regulations 2005",
+      "url": "https://www.legislation.gov.uk/uksi/2005/1803/contents",
+      "retrieved_at": null,
+      "verified": false,
+      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+    }
+  ],
+  "confidence": "low",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

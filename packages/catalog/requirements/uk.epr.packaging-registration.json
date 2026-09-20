@@ -1,0 +1,68 @@
+{
+  "id": "uk.epr.packaging-registration",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "UK",
+  "regulation": "Packaging Extended Producer Responsibility (pEPR)",
+  "article_ref": "Producer Responsibility Obligations (Packaging and Packaging Waste) Regulations 2024",
+  "title": "United Kingdom: packaging producer registration, above threshold",
+  "summary": "A UK-established business that supplied or imported more than 25 tonnes of packaging in the previous year AND had worldwide turnover of £1 million or more must register with the environmental regulator and report packaging data. Below both thresholds there is no pEPR registration obligation.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "UK"
+      },
+      {
+        "product.has_packaging": true
+      },
+      {
+        "organisation.established_in_market": true
+      },
+      {
+        "organisation.uk_packaging_tonnes_previous_year": {
+          "gt": 25
+        }
+      },
+      {
+        "organisation.annual_turnover_gbp": {
+          "gte": 1000000
+        }
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "organisation.uk_epr_registration_number",
+      "label": "pEPR registration number"
+    }
+  ],
+  "required_evidence": [
+    {
+      "type": "epr_certificate",
+      "label": "Proof of registration with the environmental regulator",
+      "expires": true
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2025-01-01",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Check if you must comply with EPR for packaging — GOV.UK",
+      "url": "https://www.gov.uk/guidance/check-if-you-must-comply-with-epr-for-packaging--2",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Thresholds (25 tonnes; £1m turnover; UK-established) read from this guidance on 13 Sept 2026. The statutory instrument reference is NOT yet confirmed and the small-producer tier has lighter duties not modelled here."
+    },
+    {
+      "title": "Extended producer responsibility for packaging: who is affected — GOV.UK",
+      "url": "https://www.gov.uk/guidance/extended-producer-responsibility-for-packaging-who-is-affected-and-what-to-do",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted 13 Sept 2026 from the cited GOV.UK guidance found by search. The guidance was read; the underlying statutory reference has NOT been checked, and guidance is a secondary source. Verify against legislation.gov.uk before publishing."
+    }
+  ],
+  "confidence": "medium",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

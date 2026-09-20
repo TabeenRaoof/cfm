@@ -1,0 +1,11 @@
+{
+  "name": "@cfm/scanner-app",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node --experimental-strip-types build.ts",
+    "build:preview": "node --experimental-strip-types build.ts --include-drafts",
+    "serve": "node --experimental-strip-types serve.ts"
+  }
+}

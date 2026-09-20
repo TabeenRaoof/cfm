@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests
+        run: npm test
+
+      # The catalog gate is separate from the tests on purpose: it is an editorial check, not a
+      # correctness one, and its failure message needs to reach whoever drafted the requirement.
+      - name: Catalog gate
+        run: npm run catalog:check
+
+      # Proves the deterministic path still runs on a bare Node with no build step — a claim
+      # that decays silently the moment someone adds an enum or a parameter property.
+      - name: Smoke (no build step)
+        run: npm run smoke
+
+      # Builds the public scanner and runs its own gates: catalog validation, a non-empty slice
+      # per market, and the check that the bundle cannot transmit the visitor's file.
+      - name: Scanner build
+        run: npm run scanner:preview

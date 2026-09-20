@@ -1,0 +1,48 @@
+{
+  "id": "uk.toys.safety",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "UK",
+  "regulation": "Toys (Safety) Regulations 2011",
+  "article_ref": "Unconfirmed",
+  "title": "United Kingdom: toy safety, marking and declaration",
+  "summary": "A toy placed on the GB market requires conformity assessment against the essential safety requirements, a declaration of conformity, and UKCA or CE marking. Flagged in v1; category depth is v2.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "UK"
+      },
+      {
+        "product.is_toy": true
+      }
+    ]
+  },
+  "required_data": [],
+  "required_evidence": [
+    {
+      "type": "test_report",
+      "label": "Test evidence against the applicable toy safety standards",
+      "expires": true
+    },
+    {
+      "type": "declaration_of_conformity",
+      "label": "Declaration of conformity",
+      "expires": false
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2011-07-20",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "The Toys (Safety) Regulations 2011",
+      "url": "https://www.legislation.gov.uk/uksi/2011/1881/contents",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Instrument identified but NOT read. Drafted by analogy with the EU toy requirement; GB divergence is unchecked."
+    }
+  ],
+  "confidence": "low",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

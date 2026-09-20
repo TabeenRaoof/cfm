@@ -1,0 +1,4 @@
+{
+  "version": "2026.09.0",
+  "note": "Bumped on every change to any requirement. assessment.catalog_version records which version produced a cell; a bump enqueues re-evaluation rather than changing anything at deploy time (decisions.md D-010)."
+}

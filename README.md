@@ -1,0 +1,49 @@
+# CFM
+
+Working label only — the product name is undecided. See `project-setup/decisions.md` D-001.
+
+Compliance evidence management for small physical-goods brands selling into the EU and UK.
+Strategy and architecture live in `01-business-report-…md` and `02-technical-plan-…md`, which
+are immutable; corrections to them are in `project-setup/03-plan-review.md`.
+
+## Start here
+
+| | |
+|---|---|
+| Rules for every AI assistant, and the definition of done | `tabeen_AGENTS.md` |
+| Claude-specific notes | `tabeen_CLAUDE.md` |
+| Decisions and open questions | `project-setup/decisions.md` |
+| Review of the two plans | `project-setup/03-plan-review.md` |
+
+## Running it
+
+```bash
+npm install
+npm test               # 378 tests
+npm run typecheck
+npm run catalog:check  # the requirement publish gate
+npm run smoke          # runs the deterministic path on a bare Node, no build step
+npm run scanner:preview # build the public scanner, drafts included
+```
+
+## The rule everything else follows from
+
+A requirement whose applicability cannot be determined from what is actually known about a SKU
+is never "not applicable". It is `unknown`, and `unknown` never counts toward market-ready.
+
+It runs from the CSV cell (`@cfm/import`'s blank-is-not-false boundary) through three-valued
+logic (`@cfm/catalog`) to the scanner's output, and it is tested end to end at each step.
+See `tabeen_AGENTS.md` and `packages/catalog/README.md`.
+
+## Packages
+
+| Package | What it is | Calls a model? |
+|---|---|---|
+| `@cfm/catalog` | Requirement catalog and the deterministic evaluator | **Never** |
+| `@cfm/import` | CSV to facts. Where "we were not told" stays distinct from "no" | **Never** |
+| `@cfm/scanner` | The free public scanner: spreadsheet in, gap list out | **Never** |
+| `@cfm/techfile` | The per-SKU technical file a seller would hand to an authority | **Never** |
+| `@cfm/channels` | Channel exports — template-driven, plus a neutral export that cannot be wrong | **Never** |
+| `@cfm/documents` | Extraction schemas, deterministic patterns, validators, the confidence gate | **Never** |
+| `@cfm/ai` | The provider seam — the only place that may | Only when code cannot answer |
+| `apps/scanner` | The static page, its waitlist and its privacy notice | **Never** |

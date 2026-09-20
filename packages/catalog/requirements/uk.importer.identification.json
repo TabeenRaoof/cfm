@@ -1,0 +1,46 @@
+{
+  "id": "uk.importer.identification",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "UK",
+  "regulation": "UK product safety regime (importer identification)",
+  "article_ref": "Sector regulations; unconfirmed",
+  "title": "United Kingdom: importer name and address on the product",
+  "summary": "Where goods are brought into GB from outside the UK, the GB importer's name and a contact address generally must appear on the product, its packaging or an accompanying document. The exact obligation varies by product regime.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "UK"
+      },
+      {
+        "organisation.established_in_market": false
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "organisation.uk_importer_name",
+      "label": "GB importer name"
+    },
+    {
+      "key": "organisation.uk_importer_address",
+      "label": "GB importer address"
+    }
+  ],
+  "required_evidence": [],
+  "channel_mappings": {},
+  "effective_from": "2021-01-01",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Placing manufactured products on the market in Great Britain — GOV.UK",
+      "url": "https://www.gov.uk/guidance/placing-manufactured-goods-on-the-market-in-great-britain",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted from GOV.UK guidance. Importer-marking duties sit in sector regulations rather than one instrument; the per-regime detail is NOT yet established."
+    }
+  ],
+  "confidence": "low",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

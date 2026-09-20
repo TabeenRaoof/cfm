@@ -1,0 +1,55 @@
+{
+  "id": "es.epr.packaging-rpp",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Real Decreto 1055/2022 de envases y residuos de envases",
+  "article_ref": "Registro de Productores de Producto (envases); unconfirmed article",
+  "title": "Spain: RPP registration and SCRAP membership",
+  "summary": "A business placing packaging on the Spanish market must be entered in the Registro de Productores de Producto (packaging section) held by MITECO, join a collective scheme (SCRAP) such as Ecoembes or Ecovidrio, and file an annual declaration. There is no volume threshold — the duty applies from the first unit.",
+  "applies_when": {
+    "all": [
+      {
+        "market.iso_country": "ES"
+      },
+      {
+        "product.has_packaging": true
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "packaging.es_rpp_number",
+      "label": "RPP registration number"
+    }
+  ],
+  "required_evidence": [
+    {
+      "type": "epr_certificate",
+      "label": "SCRAP membership confirmation",
+      "expires": true
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2023-01-01",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Packaging EPR in Spain: registration, fees and deadlines",
+      "url": "https://www.repax.io/epr-compliance/packaging-in-spain",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+    },
+    {
+      "title": "MITECO — Registro de Productores de Producto",
+      "url": "https://www.miteco.gob.es/",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Registry identified; the RPP packaging section and the annual declaration deadline of 31 March are from secondary sources and NOT confirmed here."
+    }
+  ],
+  "confidence": "low",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

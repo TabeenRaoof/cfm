@@ -1,0 +1,39 @@
+{
+  "id": "eu.gpsr.manufacturer-identification",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Regulation (EU) 2023/988 (GPSR)",
+  "article_ref": "Art. 9",
+  "title": "Manufacturer identification on the product",
+  "summary": "The manufacturer's name, registered trade name or trade mark and postal address must appear on the product, or on its packaging or an accompanying document where the product is too small.",
+  "applies_when": {
+    "market.jurisdiction": "EU"
+  },
+  "required_data": [
+    {
+      "key": "manufacturer.name",
+      "label": "Manufacturer name"
+    },
+    {
+      "key": "manufacturer.address",
+      "label": "Manufacturer postal address"
+    }
+  ],
+  "required_evidence": [],
+  "channel_mappings": {},
+  "effective_from": "2024-12-13",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Regulation (EU) 2023/988 on general product safety",
+      "url": "https://eur-lex.europa.eu/eli/reg/2023/988/oj",
+      "retrieved_at": null,
+      "verified": false,
+      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+    }
+  ],
+  "confidence": "high",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

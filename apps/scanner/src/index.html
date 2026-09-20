@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EU compliance gap scanner — check your SKUs</title>
+<meta name="description" content="Upload your product spreadsheet and see what compliance evidence each SKU is missing for each EU market. Your file never leaves your computer.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!--DRAFT_BANNER-->
+
+<header class="hero">
+  <p class="eyebrow">Free · no account · nothing uploaded</p>
+  <h1>What is missing from your EU product files?</h1>
+  <p class="lede">
+    Drop in your product spreadsheet. We will tell you, per SKU and per market, which compliance
+    requirements apply, which ones you cannot answer yet, and the fewest questions that would
+    resolve the most of them.
+  </p>
+  <p class="privacy">
+    <strong>Your file never leaves your computer.</strong> The check runs entirely in this
+    browser tab. Nothing is uploaded, stored or sent anywhere — you can turn off your wifi after
+    this page loads and it will still work.
+  </p>
+</header>
+
+<main>
+  <section class="panel" aria-labelledby="setup-heading">
+    <h2 id="setup-heading">1 · Where do you sell?</h2>
+    <fieldset>
+      <legend class="sr-only">Markets</legend>
+      <div class="choices"><!--MARKET_OPTIONS--></div>
+    </fieldset>
+
+    <label class="field">
+      <span>Sales channel</span>
+      <select id="channel">
+        <option value="amazon">Amazon</option>
+        <option value="bol">bol.com</option>
+        <option value="etsy">Etsy</option>
+        <option value="ebay">eBay</option>
+        <option value="shopify">My own shop (Shopify, WooCommerce…)</option>
+        <option value="">Not sure / several</option>
+      </select>
+    </label>
+  </section>
+
+  <section class="panel" aria-labelledby="upload-heading">
+    <h2 id="upload-heading">2 · Your product list</h2>
+    <div id="drop" class="drop" tabindex="0" role="button" aria-describedby="drop-help">
+      <p><strong>Drop a CSV here</strong>, or choose a file</p>
+      <input type="file" id="file" accept=".csv,text/csv" aria-label="Product spreadsheet (CSV)">
+    </div>
+    <p id="drop-help" class="hint">
+      An Amazon inventory report, a Shopify export, or any sheet with a SKU column.
+      We look for columns such as SKU, country of origin, contains battery, packaging.
+      Up to 500 rows.
+    </p>
+    <p><button type="button" id="sample" class="link">Or try it with a sample file</button></p>
+    <p id="error" class="error" role="alert" hidden></p>
+  </section>
+
+  <section id="results" class="panel results" aria-labelledby="results-heading" hidden>
+    <h2 id="results-heading">3 · What we found</h2>
+    <div id="summary" class="summary"></div>
+
+    <div id="questions-block">
+      <h3>Answer these and we can decide more</h3>
+      <p class="hint">Each answer applies to your whole catalog. Most-unblocking first.</p>
+      <ul id="questions" class="questions"></ul>
+    </div>
+
+    <div id="diagnostics-block">
+      <h3>About your file</h3>
+      <ul id="diagnostics" class="diagnostics"></ul>
+    </div>
+
+    <h3>Per SKU</h3>
+    <div class="table-scroll">
+      <table id="table">
+        <thead><tr><th scope="col">SKU</th><th scope="col">Market</th><th scope="col">Outstanding</th><th scope="col">Undecidable</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="hint" id="truncation" hidden></p>
+
+    <div class="cta">
+      <h3>Want to know when this changes?</h3>
+      <p>
+        These rules move, and the first most sellers hear of it is a suppressed listing.
+        One email a month on what changed and who it affects.
+      </p>
+      <p><a class="submit" href="waitlist.html">Get the monthly digest →</a></p>
+      <p class="hint">Opens a separate page. Nothing from your file is carried across.</p>
+    </div>
+  </section>
+
+  <section class="panel disclaimer" aria-labelledby="disclaimer-heading">
+    <h2 id="disclaimer-heading">What this is, and is not</h2>
+    <p>
+      This is an information tool. It reports what a versioned, source-cited requirement catalog
+      says may apply to a product, and what evidence is missing. It is
+      <strong>not legal advice, not a certification, and not a guarantee of compliance</strong>.
+      Every requirement shown links to its primary source so you can check it yourself, and you
+      remain responsible for what you place on the market.
+    </p>
+    <p class="hint">
+      Where we cannot tell whether a requirement applies, we say so rather than guessing.
+      "Undecidable" never counts as ready.
+      Catalog version <code>__CATALOG_VERSION__</code>.
+      <a href="privacy.html">Privacy notice</a>.
+    </p>
+  </section>
+</main>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

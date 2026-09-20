@@ -1,0 +1,42 @@
+{
+  "id": "eu.flag.weee-registration",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Directive 2012/19/EU (WEEE)",
+  "article_ref": "Art. 16 (registration)",
+  "title": "Electrical goods: WEEE producer registration per member state",
+  "summary": "A producer placing electrical or electronic equipment on the market of a member state must be registered in that state's WEEE register, usually through a compliance scheme. Registration is per country, not EU-wide. Flagged in v1; the full module is v2.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "EU"
+      },
+      {
+        "product.is_electrical": true
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "product.weee_producer_registration_number",
+      "label": "WEEE producer registration number for this market"
+    }
+  ],
+  "required_evidence": [],
+  "channel_mappings": {},
+  "effective_from": "2014-02-14",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Directive 2012/19/EU on waste electrical and electronic equipment",
+      "url": "https://eur-lex.europa.eu/eli/dir/2012/19/oj",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Directive identified; Art. 16 is the registration article per its structure but has NOT been read. National implementations differ and none is modelled."
+    }
+  ],
+  "confidence": "low",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

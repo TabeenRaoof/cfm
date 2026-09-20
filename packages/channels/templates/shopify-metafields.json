@@ -1,0 +1,74 @@
+{
+  "id": "shopify_metafields",
+  "label": "Shopify product CSV (compliance metafields)",
+  "template_version": "2026-09",
+  "verified": false,
+  "source": {
+    "title": "Shopify Help Center \u2014 Using CSV files to import and export products",
+    "url": "https://help.shopify.com/en/manual/products/import-export/using-csv",
+    "retrieved_at": "2026-09-13"
+  },
+  "columns": [
+    {
+      "header": "Handle",
+      "source": {
+        "kind": "sku"
+      },
+      "note": "Shopify keys rows by Handle, not SKU. If the seller's handles differ from their SKUs this column must be remapped before import."
+    },
+    {
+      "header": "Title",
+      "source": {
+        "kind": "title"
+      }
+    },
+    {
+      "header": "EU responsible person (product.metafields.compliance.eu_responsible_person)",
+      "source": {
+        "kind": "fact",
+        "path": "rp.name"
+      }
+    },
+    {
+      "header": "EU responsible person address (product.metafields.compliance.eu_rp_address)",
+      "source": {
+        "kind": "fact",
+        "path": "rp.address"
+      }
+    },
+    {
+      "header": "EU responsible person contact (product.metafields.compliance.eu_rp_contact)",
+      "source": {
+        "kind": "fact",
+        "path": "rp.contact"
+      }
+    },
+    {
+      "header": "Manufacturer (product.metafields.compliance.manufacturer_name)",
+      "source": {
+        "kind": "fact",
+        "path": "manufacturer.name"
+      }
+    },
+    {
+      "header": "Manufacturer address (product.metafields.compliance.manufacturer_address)",
+      "source": {
+        "kind": "fact",
+        "path": "manufacturer.address"
+      }
+    },
+    {
+      "header": "Country of origin (product.metafields.compliance.country_of_origin)",
+      "source": {
+        "kind": "fact",
+        "path": "manufacturer.country"
+      }
+    }
+  ],
+  "notes": [
+    "Column header format `Name (product.metafields.<namespace>.<key>)` is from Shopify's own documentation, read 13 Sept 2026.",
+    "Each metafield must be DEFINED first under Settings > Custom data > Products, or the column is ignored on import.",
+    "Variant metafields are not supported by product CSV import/export; these are product-level only.",
+    "verified stays false until someone has run this file through a real Shopify import and seen the values land."
+  ]
+}

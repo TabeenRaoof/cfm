@@ -1,0 +1,48 @@
+{
+  "id": "de.epr.packaging-lucid",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Verpackungsgesetz (VerpackG)",
+  "article_ref": "§ 9, § 7",
+  "title": "Germany: LUCID registration and dual-system contract",
+  "summary": "Packaging subject to system participation must be registered in the LUCID packaging register before it is placed on the German market, and a contract with a dual system must be in place.",
+  "applies_when": {
+    "all": [
+      {
+        "market.iso_country": "DE"
+      },
+      {
+        "product.has_packaging": true
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "packaging.lucid_number",
+      "label": "LUCID registration number"
+    }
+  ],
+  "required_evidence": [
+    {
+      "type": "epr_certificate",
+      "label": "Dual-system participation confirmation",
+      "expires": true
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2019-01-01",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Zentrale Stelle Verpackungsregister — LUCID",
+      "url": "https://www.verpackungsregister.org/",
+      "retrieved_at": null,
+      "verified": false,
+      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+    }
+  ],
+  "confidence": "medium",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

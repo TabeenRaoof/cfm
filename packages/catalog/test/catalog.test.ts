@@ -1,0 +1,122 @@
+import { describe, expect, it } from "vitest";
+import { buildCatalog, inForce } from "../src/catalog.ts";
+import type { Requirement } from "../src/types.ts";
+import { loadRealCatalog } from "./fixtures.ts";
+
+const draft = (overrides: Partial<Requirement> = {}): Requirement =>
+  ({
+    id: "eu.test.example",
+    version: "2026.09",
+    state: "draft",
+    jurisdiction: "EU",
+    regulation: "Example Regulation",
+    article_ref: "Art. 1",
+    title: "Example",
+    summary: "An example requirement used by the tests.",
+    applies_when: { always: true },
+    required_data: [],
+    required_evidence: [],
+    channel_mappings: {},
+    effective_from: "2020-01-01",
+    effective_to: null,
+    sources: [{ title: "Example", url: "https://example.org", retrieved_at: null, verified: false }],
+    confidence: "medium",
+    last_reviewed_at: null,
+    reviewer: null,
+    ...overrides,
+  }) as Requirement;
+
+const build = (requirements: Requirement[], includeDrafts = false) =>
+  buildCatalog(
+    requirements.map((r, i) => ({ file: `${r.id}-${i}.json`, data: r })),
+    { version: "test", includeDrafts },
+  );
+
+describe("the publish gate", () => {
+  it("withholds drafts from the live catalog", () => {
+    const result = build([draft()]);
+    expect(result.catalog.requirements).toHaveLength(0);
+    expect(result.withheldDrafts).toEqual(["eu.test.example"]);
+    expect(result.issues).toEqual([]);
+  });
+
+  it("lets drafts through only when a caller explicitly asks", () => {
+    expect(build([draft()], true).catalog.requirements).toHaveLength(1);
+  });
+
+  it("refuses to publish a requirement nobody has reviewed", () => {
+    const result = build([draft({ state: "published" })]);
+    const paths = result.issues.map((i) => i.path);
+    expect(paths).toContain("reviewer");
+    expect(paths).toContain("last_reviewed_at");
+    expect(paths).toContain("sources");
+  });
+
+  it("publishes once a named human has read a dated primary source", () => {
+    const result = build([
+      draft({
+        state: "published",
+        reviewer: "TR",
+        last_reviewed_at: "2026-09-12",
+        sources: [
+          { title: "EUR-Lex", url: "https://eur-lex.europa.eu/x", retrieved_at: "2026-09-12", verified: true },
+        ],
+      }),
+    ]);
+    expect(result.issues).toEqual([]);
+    expect(result.catalog.requirements).toHaveLength(1);
+  });
+});
+
+describe("validation", () => {
+  it("rejects an empty condition array rather than silently applying to everything", () => {
+    // `{ all: [] }` is vacuously true, so this would switch a requirement on for every SKU.
+    const result = build([draft({ applies_when: { all: [] } })], true);
+    expect(result.issues.map((i) => i.message).join(" ")).toMatch(/non-empty array/);
+  });
+
+  it("catches a misspelled fact path, which would otherwise be unknown forever", () => {
+    const result = build([draft({ applies_when: { "prodcut.is_toy": true } })], true);
+    expect(result.issues.map((i) => i.message).join(" ")).toMatch(/Unrecognised fact path/);
+  });
+
+  it("rejects a requirement with no source at all", () => {
+    const result = build([draft({ sources: [] })], true);
+    expect(result.issues.map((i) => i.path)).toContain("sources");
+  });
+
+  it("rejects duplicate ids", () => {
+    const result = build([draft(), draft()], true);
+    expect(result.issues.map((i) => i.message).join(" ")).toMatch(/Duplicate requirement id/);
+  });
+});
+
+describe("effective dates", () => {
+  it("excludes a requirement that is not yet in force", () => {
+    expect(inForce(draft({ effective_from: "2027-01-01" }), "2026-09-12")).toBe(false);
+  });
+
+  it("excludes a requirement that has been withdrawn", () => {
+    expect(inForce(draft({ effective_to: "2026-01-01" }), "2026-09-12")).toBe(false);
+  });
+
+  it("includes one in force today", () => {
+    expect(inForce(draft(), "2026-09-12")).toBe(true);
+  });
+});
+
+describe("the requirement files in this repository", () => {
+  it("all validate", async () => {
+    const { issues } = await loadRealCatalog(true);
+    expect(issues).toEqual([]);
+  });
+
+  it("are all still drafts, so the live catalog is empty", async () => {
+    // Every entry was drafted from the technical plan's own article references, which that
+    // plan says must be verified against EUR-Lex before publishing. Until Tabeen has done
+    // that, nothing is customer-facing. This test is expected to change when review happens.
+    const { catalog, withheldDrafts } = await loadRealCatalog(false);
+    expect(catalog.requirements).toHaveLength(0);
+    expect(withheldDrafts.length).toBeGreaterThan(0);
+  });
+});

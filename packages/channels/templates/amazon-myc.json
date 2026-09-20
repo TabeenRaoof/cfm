@@ -1,0 +1,69 @@
+{
+  "id": "amazon_myc",
+  "label": "Amazon Manage Your Compliance bulk upload",
+  "template_version": "PLACEHOLDER",
+  "verified": false,
+  "source": null,
+  "columns": [
+    {
+      "header": "sku",
+      "source": {
+        "kind": "sku"
+      },
+      "note": "PLACEHOLDER HEADER. Replace with the exact header from a downloaded template."
+    },
+    {
+      "header": "marketplace",
+      "source": {
+        "kind": "market"
+      },
+      "note": "PLACEHOLDER HEADER."
+    },
+    {
+      "header": "responsible_person_name",
+      "source": {
+        "kind": "fact",
+        "path": "rp.name"
+      },
+      "note": "PLACEHOLDER HEADER."
+    },
+    {
+      "header": "responsible_person_address",
+      "source": {
+        "kind": "fact",
+        "path": "rp.address"
+      },
+      "note": "PLACEHOLDER HEADER."
+    },
+    {
+      "header": "responsible_person_contact",
+      "source": {
+        "kind": "fact",
+        "path": "rp.contact"
+      },
+      "note": "PLACEHOLDER HEADER."
+    },
+    {
+      "header": "manufacturer_name",
+      "source": {
+        "kind": "fact",
+        "path": "manufacturer.name"
+      },
+      "note": "PLACEHOLDER HEADER."
+    },
+    {
+      "header": "manufacturer_address",
+      "source": {
+        "kind": "fact",
+        "path": "manufacturer.address"
+      },
+      "note": "PLACEHOLDER HEADER."
+    }
+  ],
+  "notes": [
+    "THIS TEMPLATE IS A PLACEHOLDER AND WILL BE REJECTED BY AMAZON IF UPLOADED AS-IS.",
+    "The real column headers are only obtainable by downloading the current bulk template from Seller Central > Manage Your Compliance. They are not published, and they change.",
+    "To make this real: download the template, replace every header below with the exact string from row 1 (Amazon templates often carry two header rows - use the one the importer reads), delete columns nothing fills, set template_version to the template's own version, and set verified to true.",
+    "02- section 8.1 says to re-check channel templates monthly. Put it in the monthly runbook, not in someone's memory."
+  ]
+}

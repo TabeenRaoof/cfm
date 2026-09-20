@@ -1,0 +1,62 @@
+{
+  "id": "uk.marking.ukca-or-ce",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "UK",
+  "regulation": "UK conformity assessment regime (UKCA / continued CE recognition)",
+  "article_ref": "Sector regulations; see GOV.UK guidance",
+  "title": "United Kingdom: UKCA or CE marking for regulated product categories",
+  "summary": "A product in a regulated category placed on the GB market must carry either UKCA or CE marking, supported by a conformity assessment and a declaration of conformity. GB continues to recognise CE marking for most categories; which applies depends on the sector. Flagged in v1; category depth is v2.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "UK"
+      },
+      {
+        "any": [
+          {
+            "product.is_toy": true
+          },
+          {
+            "product.is_electrical": true
+          }
+        ]
+      }
+    ]
+  },
+  "required_data": [],
+  "required_evidence": [
+    {
+      "type": "declaration_of_conformity",
+      "label": "Declaration of conformity (UK or EU)",
+      "expires": false
+    },
+    {
+      "type": "test_report",
+      "label": "Conformity assessment / test evidence",
+      "expires": true
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2021-01-01",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Placing UKCA or CE marked products on the market in Great Britain — GOV.UK",
+      "url": "https://www.gov.uk/guidance/placing-ukca-or-ce-marked-products-on-the-market-in-great-britain",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted 13 Sept 2026 from the cited GOV.UK guidance found by search. The guidance was read; the underlying statutory reference has NOT been checked, and guidance is a secondary source. Verify against legislation.gov.uk before publishing."
+    },
+    {
+      "title": "Using the UKCA marking — GOV.UK",
+      "url": "https://www.gov.uk/guidance/using-the-ukca-marking",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted 13 Sept 2026 from the cited GOV.UK guidance found by search. The guidance was read; the underlying statutory reference has NOT been checked, and guidance is a secondary source. Verify against legislation.gov.uk before publishing."
+    }
+  ],
+  "confidence": "low",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

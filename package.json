@@ -1,0 +1,31 @@
+{
+  "name": "cfm",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "catalog:check": "npm run -w @cfm/catalog check",
+    "smoke": "node --experimental-strip-types scripts/smoke.ts",
+    "scanner:build": "npm run -w @cfm/scanner-app build",
+    "scanner:preview": "npm run -w @cfm/scanner-app build:preview",
+    "catalog:publish": "node --experimental-strip-types packages/catalog/src/cli/publish.ts",
+    "catalog:status": "node --experimental-strip-types packages/catalog/src/cli/status.ts",
+    "smoke:anthropic": "node --env-file-if-exists=.env.local --experimental-strip-types scripts/smoke-anthropic.ts",
+    "smoke:anthropic:extract": "node --env-file-if-exists=.env.local --experimental-strip-types scripts/smoke-anthropic-extract.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.127.0"
+  }
+}

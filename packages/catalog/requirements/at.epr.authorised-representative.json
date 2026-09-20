@@ -1,0 +1,51 @@
+{
+  "id": "at.epr.authorised-representative",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Verpackungsverordnung (VVO)",
+  "article_ref": "Unconfirmed",
+  "title": "Austria: Austrian-based authorised representative for foreign sellers",
+  "summary": "Since 1 January 2023 a company without an Austrian establishment, including online retailers selling into Austria, must appoint an Austrian-based authorised representative to hold its packaging obligations. There is no distance-selling carve-out from the underlying registration and system-participation duties.",
+  "applies_when": {
+    "all": [
+      {
+        "market.iso_country": "AT"
+      },
+      {
+        "product.has_packaging": true
+      },
+      {
+        "organisation.established_in_market": false
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "packaging.at_authorised_representative_name",
+      "label": "Austrian authorised representative"
+    }
+  ],
+  "required_evidence": [
+    {
+      "type": "ar_mandate",
+      "label": "Signed appointment of the authorised representative",
+      "expires": true
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2023-01-01",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "EPR compliance in Austria — authorised representative",
+      "url": "https://licensing.interzero.at/en/epr-compliance-in-austria/",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+    }
+  ],
+  "confidence": "low",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

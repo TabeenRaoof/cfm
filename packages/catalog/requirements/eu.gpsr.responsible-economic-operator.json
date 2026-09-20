@@ -1,0 +1,65 @@
+{
+  "id": "eu.gpsr.responsible-economic-operator",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Regulation (EU) 2023/988 (GPSR)",
+  "article_ref": "Art. 16",
+  "title": "EU-established responsible economic operator",
+  "summary": "A product manufactured outside the EU may only be placed on the EU market if an economic operator established in the Union is responsible for it, named on the product or its packaging and reachable by authorities.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "EU"
+      },
+      {
+        "manufacturer.country_in_eu": false
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "rp.name",
+      "label": "Responsible person name"
+    },
+    {
+      "key": "rp.address",
+      "label": "Postal address in the EU"
+    },
+    {
+      "key": "rp.contact",
+      "label": "Email address or URL"
+    }
+  ],
+  "required_evidence": [
+    {
+      "type": "rp_mandate",
+      "label": "Signed mandate appointing the responsible person",
+      "expires": true
+    }
+  ],
+  "channel_mappings": {
+    "amazon": {
+      "attribute_group": "compliance",
+      "note": "Pull exact attribute keys from the Product Type Definitions API; never hard-code them."
+    },
+    "shopify": {
+      "metafield_namespace": "compliance",
+      "key": "eu_responsible_person"
+    }
+  },
+  "effective_from": "2024-12-13",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Regulation (EU) 2023/988 on general product safety",
+      "url": "https://eur-lex.europa.eu/eli/reg/2023/988/oj",
+      "retrieved_at": null,
+      "verified": false,
+      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+    }
+  ],
+  "confidence": "high",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

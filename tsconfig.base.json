@@ -1,0 +1,60 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": [
+      "ES2023"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@cfm/catalog": [
+        "packages/catalog/src/index.ts"
+      ],
+      "@cfm/import": [
+        "packages/import/src/index.ts"
+      ],
+      "@cfm/ai": [
+        "packages/ai/src/index.ts"
+      ],
+      "@cfm/catalog/node": [
+        "packages/catalog/src/node.ts"
+      ],
+      "@cfm/scanner": [
+        "packages/scanner/src/index.ts"
+      ],
+      "@cfm/techfile": [
+        "packages/techfile/src/index.ts"
+      ],
+      "@cfm/channels": [
+        "packages/channels/src/index.ts"
+      ],
+      "@cfm/channels/node": [
+        "packages/channels/src/node.ts"
+      ],
+      "@cfm/documents": [
+        "packages/documents/src/index.ts"
+      ],
+      "@cfm/supplier-request": [
+        "packages/supplier-request/src/index.ts"
+      ],
+      "@cfm/supplier-request/node": [
+        "packages/supplier-request/src/node.ts"
+      ]
+    },
+    "erasableSyntaxOnly": true
+  }
+}

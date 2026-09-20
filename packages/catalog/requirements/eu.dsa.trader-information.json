@@ -1,0 +1,50 @@
+{
+  "id": "eu.dsa.trader-information",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Regulation (EU) 2022/2065 (DSA)",
+  "article_ref": "Art. 30",
+  "title": "Trader traceability information for marketplaces",
+  "summary": "An online platform allowing distance contracts with consumers must obtain and verify the trader's identity, contact details, payment account, trade register entry and a self-certification that only compliant products are offered.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "EU"
+      },
+      {
+        "channel.is_marketplace": true
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "organisation.legal_name",
+      "label": "Registered legal name"
+    },
+    {
+      "key": "organisation.trade_register_number",
+      "label": "Trade register number"
+    },
+    {
+      "key": "organisation.vat_number",
+      "label": "VAT identification number"
+    }
+  ],
+  "required_evidence": [],
+  "channel_mappings": {},
+  "effective_from": "2024-02-17",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Regulation (EU) 2022/2065 on a Single Market For Digital Services",
+      "url": "https://eur-lex.europa.eu/eli/reg/2022/2065/oj",
+      "retrieved_at": null,
+      "verified": false,
+      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+    }
+  ],
+  "confidence": "medium",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

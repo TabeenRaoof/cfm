@@ -1,0 +1,46 @@
+{
+  "id": "eu.gpsr.distance-selling-information",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Regulation (EU) 2023/988 (GPSR)",
+  "article_ref": "Art. 19",
+  "title": "Product safety information shown in the listing",
+  "summary": "An offer made at a distance must clearly show the manufacturer's identity and contact details, the responsible person where one is required, product identification and any warnings or safety information.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "EU"
+      },
+      {
+        "channel.is_marketplace": true
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "product.gtin",
+      "label": "Product identifier (GTIN/EAN)"
+    },
+    {
+      "key": "rp.name",
+      "label": "Responsible person shown in the listing"
+    }
+  ],
+  "required_evidence": [],
+  "channel_mappings": {},
+  "effective_from": "2024-12-13",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Regulation (EU) 2023/988 on general product safety",
+      "url": "https://eur-lex.europa.eu/eli/reg/2023/988/oj",
+      "retrieved_at": null,
+      "verified": false,
+      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+    }
+  ],
+  "confidence": "medium",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

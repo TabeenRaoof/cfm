@@ -1,0 +1,42 @@
+{
+  "id": "eu.flag.battery-registration",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Regulation (EU) 2023/1542 (Batteries Regulation)",
+  "article_ref": "Art. 56",
+  "title": "Batteries: producer registration required",
+  "summary": "A producer making batteries available on the market of a member state, including batteries incorporated into products, must be registered in that member state. Flagged in v1; the full module is v2.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "EU"
+      },
+      {
+        "product.has_battery": true
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "product.battery_producer_registration_number",
+      "label": "Battery producer registration number"
+    }
+  ],
+  "required_evidence": [],
+  "channel_mappings": {},
+  "effective_from": "2024-08-18",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Regulation (EU) 2023/1542 concerning batteries and waste batteries",
+      "url": "https://eur-lex.europa.eu/eli/reg/2023/1542/oj",
+      "retrieved_at": null,
+      "verified": false,
+      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+    }
+  ],
+  "confidence": "low",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

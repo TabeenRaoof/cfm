@@ -1,0 +1,43 @@
+{
+  "id": "uk.gpsr.general-safety-requirement",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "UK",
+  "regulation": "General Product Safety Regulations 2005 (SI 2005/1803)",
+  "article_ref": "reg. 5 (general safety requirement)",
+  "title": "United Kingdom: products must be safe",
+  "summary": "A producer may only place a consumer product on the GB market if it is safe in normal or reasonably foreseeable use. Where a producer knows a product poses a risk incompatible with that requirement, they must notify an enforcement authority in writing.",
+  "applies_when": {
+    "market.jurisdiction": "UK"
+  },
+  "required_data": [],
+  "required_evidence": [
+    {
+      "type": "risk_assessment",
+      "label": "Documented assessment that the product is safe in foreseeable use",
+      "expires": false
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2005-10-01",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "The General Product Safety Regulations 2005",
+      "url": "https://www.legislation.gov.uk/uksi/2005/1803/contents",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Regulation number not yet confirmed against the instrument; GOV.UK guidance describes the general safety requirement but the reg. number here is unverified."
+    },
+    {
+      "title": "General Product Safety Regulations 2005: Great Britain — GOV.UK",
+      "url": "https://www.gov.uk/government/publications/general-product-safety-regulations-2005/general-product-safety-regulations-2005-great-britain",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted 13 Sept 2026 from the cited GOV.UK guidance found by search. The guidance was read; the underlying statutory reference has NOT been checked, and guidance is a secondary source. Verify against legislation.gov.uk before publishing."
+    }
+  ],
+  "confidence": "medium",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

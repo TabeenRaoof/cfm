@@ -1,0 +1,48 @@
+{
+  "id": "eu.ppwr.producer-registration",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Regulation (EU) 2025/40 (PPWR)",
+  "article_ref": "Art. 44",
+  "title": "Packaging producer registration in each member state",
+  "summary": "A producer must be entered in the packaging producer register of every member state where it first makes packaging available, and may not supply packaged goods there without a registration number.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "EU"
+      },
+      {
+        "product.has_packaging": true
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "packaging.producer_registration_number",
+      "label": "Producer registration number for this market"
+    }
+  ],
+  "required_evidence": [
+    {
+      "type": "epr_certificate",
+      "label": "Proof of registration in the national packaging register",
+      "expires": true
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2026-08-12",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Regulation (EU) 2025/40 on packaging and packaging waste",
+      "url": "https://eur-lex.europa.eu/eli/reg/2025/40/oj",
+      "retrieved_at": null,
+      "verified": false,
+      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+    }
+  ],
+  "confidence": "medium",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

@@ -1,0 +1,55 @@
+{
+  "id": "it.epr.packaging-conai",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "D.Lgs. 152/2006 (Testo Unico Ambientale) — CONAI system",
+  "article_ref": "Unconfirmed",
+  "title": "Italy: CONAI membership and environmental contribution",
+  "summary": "A business placing packaging on the Italian market generally joins the CONAI consortium and pays the environmental contribution (CAC) on the packaging it places, reporting through the material consortium for each packaging type.",
+  "applies_when": {
+    "all": [
+      {
+        "market.iso_country": "IT"
+      },
+      {
+        "product.has_packaging": true
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "packaging.it_conai_number",
+      "label": "CONAI membership number"
+    }
+  ],
+  "required_evidence": [
+    {
+      "type": "epr_certificate",
+      "label": "CONAI membership confirmation",
+      "expires": true
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2006-04-29",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "CONAI — Consorzio Nazionale Imballaggi",
+      "url": "https://www.conai.org/",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+    },
+    {
+      "title": "List of EU packaging producer responsibility organisations",
+      "url": "https://www.compliancegate.com/epr-organisations-european-union/",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+    }
+  ],
+  "confidence": "low",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

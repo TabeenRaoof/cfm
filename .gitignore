@@ -1,0 +1,14 @@
+node_modules/
+dist/
+apps/*/dist/
+*.tsbuildinfo
+.env
+.env.local
+.DS_Store
+coverage/
+
+# Never committed — see AGENTS.md "Never commit".
+# Customer and design-partner documents, and anything derived from them.
+golden-set/documents/
+/uploads/
+*.pdf

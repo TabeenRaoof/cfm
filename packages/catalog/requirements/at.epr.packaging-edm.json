@@ -1,0 +1,55 @@
+{
+  "id": "at.epr.packaging-edm",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Verpackungsverordnung (VVO)",
+  "article_ref": "Unconfirmed",
+  "title": "Austria: EDM registration and collection-system participation",
+  "summary": "A business placing packaging on the Austrian market must register in the EDM portal (edm.gv.at) and contract with a licensed collection and recovery system such as ARA, then report packaging volumes and materials.",
+  "applies_when": {
+    "all": [
+      {
+        "market.iso_country": "AT"
+      },
+      {
+        "product.has_packaging": true
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "packaging.at_edm_number",
+      "label": "EDM registration number"
+    }
+  ],
+  "required_evidence": [
+    {
+      "type": "epr_certificate",
+      "label": "Collection-system participation confirmation",
+      "expires": true
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2015-01-01",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "EDM — Elektronisches Datenmanagement (Umweltbundesamt)",
+      "url": "https://edm.gv.at/",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+    },
+    {
+      "title": "Austria EPR guide — packaging compliance, registration and reporting",
+      "url": "https://regsurance.com/austria-epr-guide/",
+      "retrieved_at": "2026-09-13",
+      "verified": false,
+      "note": "Drafted 13 Sept 2026 from secondary sources (compliance-provider guidance) found by search. The scheme, registry and obligation shape were consistent across several, but NO primary source has been read. Verify against the national registry and the implementing law before publishing. See review/epr-national-schemes.md."
+    }
+  ],
+  "confidence": "low",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

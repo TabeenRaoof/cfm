@@ -1,0 +1,51 @@
+{
+  "id": "eu.ppwr.authorised-representative",
+  "version": "2026.09",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "Regulation (EU) 2025/40 (PPWR)",
+  "article_ref": "Art. 45",
+  "title": "Authorised representative for packaging in each member state",
+  "summary": "A producer not established in a member state where it makes packaging available must appoint an authorised representative for extended producer responsibility in that member state.",
+  "applies_when": {
+    "all": [
+      {
+        "market.jurisdiction": "EU"
+      },
+      {
+        "product.has_packaging": true
+      },
+      {
+        "organisation.established_in_market": false
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "packaging.authorised_representative_name",
+      "label": "Authorised representative in this market"
+    }
+  ],
+  "required_evidence": [
+    {
+      "type": "ar_mandate",
+      "label": "Signed mandate appointing the authorised representative",
+      "expires": true
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2026-08-12",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "Regulation (EU) 2025/40 on packaging and packaging waste",
+      "url": "https://eur-lex.europa.eu/eli/reg/2025/40/oj",
+      "retrieved_at": null,
+      "verified": false,
+      "note": "Article reference inherited from 02-technical-plan §5.1/§5.2, which itself states that article numbers must be verified against EUR-Lex before publishing. Not yet verified."
+    }
+  ],
+  "confidence": "medium",
+  "last_reviewed_at": null,
+  "reviewer": null
+}
