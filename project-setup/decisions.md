@@ -932,6 +932,31 @@ requirements, controller placeholders), deployed to prove the pipeline works —
 public page. Moving to the actual production build needs `CONTROLLER_NAME` and `CONTACT_EMAIL`
 (D-043 §5 decision 5), which only Tabeen can supply.
 
+---
+
+### D-046 · Solo registration deferred to the OPT trigger date, not incorporated early
+**Status:** Accepted (Tabeen, 26 September 2026) · Plan in `06-solo-registration-plan.md`
+
+Confirms `01-` §9's existing line explicitly, after a same-conversation discussion of whether
+Canadian citizenship changes the F-1 unauthorized-employment analysis (it doesn't — the
+restriction attaches to immigration status and where work is physically performed, not
+nationality; TN status is a real Canadian-specific option but generally requires an
+employer-employee relationship, not self-employment, so it doesn't cleanly fit founding one's
+own company). Tabeen's decision: register as a sole proprietorship the moment authorization
+actually starts, not before, and not evade it.
+
+**A real gap surfaced and flagged, not resolved:** nothing in this repo records whether Form
+I-765 (the OPT application itself) has been filed. "12 December 2026" from `01-` §9 is a working
+assumption; the actual trigger is the start date on an approved EAD, which depends on I-765
+being filed within its window and USCIS processing time. This needs confirming with the DSO
+before any date in this plan is treated as fixed.
+
+`06-solo-registration-plan.md` separates what's safe to prepare now (city/licence research, an
+explicit DSO/attorney answer on whether an EIN application itself can be filed pre-authorization,
+continuing the free scanner and Q-6b's naming search) from what waits for the confirmed trigger
+(EIN filing if not already cleared, business licence, bank account, merchant-of-record, updating
+the live site's controller identity, Gate 3).
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
