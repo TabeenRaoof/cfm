@@ -16,13 +16,12 @@ original assumption. This still isn't a confirmed trigger:
   varies — this is exactly why Tabeen flagged it might not be approved by 4 January.
 - The real trigger for everything in this plan is **the start date printed on the approved EAD
   card**, whenever that turns out to be — not 4 January, and not 12 December.
-- **A consequence worth naming plainly:** `01-` §10's Gate 3 ("≥8 paying customers by 31 January
-  2027") was built on a 12 December billing-enable date — roughly 7 weeks of runway to convert
-  design partners. At a 4 January start, that runway shrinks to about 4 weeks; if approval lands
-  any later, it shrinks further. This doesn't change Gate 3's own date (an immutable-document
-  edit isn't warranted for one filing update), but it changes how much slack there is to hit it —
-  worth having design partners primed to convert immediately once billing can legally turn on,
-  rather than starting outreach from zero on day one of authorization.
+- **A consequence worth naming plainly:** the current Gate 3 is D-025's revision — **5 paying
+  customers by 28 February 2027** (it superseded `01-` §10's original "≥8 by 31 January"). It was
+  sized on a 12 December billing-enable date, ~11 weeks of runway. At a 4 January start that's ~8
+  weeks; if approval lands later, less. Gate 3's date isn't changed here, but the slack behind it
+  is smaller — worth having design partners primed to convert immediately once billing can
+  legally turn on, rather than starting outreach from zero on day one of authorization.
 
 Nothing below should be scheduled against any specific calendar date until the EAD is approved.
 

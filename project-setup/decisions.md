@@ -967,6 +967,17 @@ per D-011 — but the slack behind it is materially smaller than the original pl
 weighing when deciding how much design-partner conversion work to front-load before billing can
 legally turn on.
 
+**Correction, found in review the same day — the paragraph above measured against the wrong
+gates.** D-025 (accepted 13 September) had already moved the gates in time: **8 conversations by
+2 November; 100 scans or 60 waitlist signups by 20 December; 5 paying by 28 February 2027.** D-043
+and the paragraph above both cited `01-`'s original dates (Gate 2 by 15 November, Gate 3 ≥8 paying
+by 31 January), which D-025 superseded. Recomputed against D-025: the post-authorization runway to
+Gate 3 goes from ~11 weeks (12 December → 28 February) to ~8 weeks (4 January → 28 February) — a
+real reduction, not the ~7→~4 weeks stated above. D-025's own line "the 12 December charging date
+is fixed by OPT and does not move" is also superseded by the I-765 filing: the charging date is now
+the approved EAD start, requested 4 January 2027. D-043's "Gate 2, by 15 November" should read
+"D-025's revised Gate 2, by 20 December."
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
