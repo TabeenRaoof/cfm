@@ -168,7 +168,7 @@ marking superseded entries rather than deleting them.
 ---
 
 ### D-012 · v1 is re-cut into a Gate-2 slice and a Gate-3 slice
-**Status:** Proposed · **Date:** 2026-09-12 · **Source:** `03-plan-review.md` §S-1, §S-2, §S-4
+**Status:** Accepted (Tabeen, 26 September 2026 — see D-048) · **Date:** 2026-09-12 · **Source:** `03-plan-review.md` §S-1, §S-2, §S-4
 
 The twelve-week plan in `02-` §10.1 is roughly 3–5× the 60–100 hours available before 12 December,
 and its serial dependency chain means extra hours would not fix the date anyway. Two of its items
@@ -191,7 +191,7 @@ surface for a date that can actually be hit.
 ---
 
 ### D-013 · Privacy artefacts are due before the first real upload, not before the first charge
-**Status:** Proposed · **Date:** 2026-09-12 · **Source:** `03-plan-review.md` §S-3
+**Status:** Accepted (Tabeen, 26 September 2026 — see D-048) · **Date:** 2026-09-12 · **Source:** `03-plan-review.md` §S-3
 
 Design partners upload real documents containing third-party personal data from week 6. GDPR
 obligations attach then, not on 12 December. `02-` §15.4 has the right list against the wrong
@@ -1014,6 +1014,44 @@ Not fixed, deliberately left for later:
 - There's no rate limiting beyond the honeypot.
 - The Functions have no automated tests.
 - The consent version is a hardcoded "v1".
+
+---
+
+### D-048 · Slice B stack: Cloudflare hosting + Supabase (Postgres, Auth, RLS) + a React SPA
+**Status:** Accepted (Tabeen, 26 September 2026) · **Deviates from:** `02-` §2–§3 (not edited, per D-011)
+
+Slice B is the product sold at Gate 3: login, organisations, document upload, extraction for
+`rp_mandate` and `epr_certificate`, evidence linking, assessment recompute, technical-file export
+(D-012, accepted the same day). Every existing package imports nothing Node-only outside its
+`node.ts` entry, so any runtime could host them; the choice was about isolation, vendors and cost.
+
+1. **Hosting on Cloudflare (Pages + Functions); data and login on Supabase** — Postgres in the EU
+   region, Supabase Auth, row-level security. Chosen over the plan's Vercel + Supabase + Inngest
+   (three new vendors, ~$45/month; Vercel Hobby forbids commercial use) and over all-Cloudflare
+   with D1 (no RLS, so tenant isolation would live only in application code, and login would be
+   code we own). The product will hold other companies' compliance documents; RLS makes the
+   database itself refuse a cross-organisation read even if application code has a bug. That
+   second layer is the reason for the extra vendor. Expected cost ~$30/month: Workers Paid $5,
+   Supabase Pro $25 once design partners are real (free projects pause after 7 days of low
+   activity — checked 26 September).
+2. **Frontend: React single-page app + Pages Functions for server work**, the same deploy model
+   as the scanner. Not Next.js: a logged-in dashboard doesn't need server rendering, and Next.js
+   is a poorer fit on Cloudflare. Cost: Tabeen knows Next.js better.
+3. **Background jobs: Cloudflare Queues**, not Inngest — included in Workers Paid, no new vendor
+   or DPA. No PDF page-rendering worker in this slice: text layer first (`@cfm/documents`),
+   otherwise the PDF goes to the model directly (`@cfm/ai`'s Anthropic adapter already accepts
+   PDFs), inside the task's existing token budget.
+4. **A neutral, non-brand domain for the app and its email**, bought now. Magic-link login needs a
+   verified sending domain, and the brand is deferred (Q-6b). Tabeen buys it — a purchase and an
+   account action, not something done from here.
+5. **D-012 (Slice B scope) and D-013 (privacy artefacts before the first real upload) accepted.**
+   D-013 is the gate before any design partner uploads a real document: customer DPA,
+   design-partner agreement, written deletion procedure, and signed DPAs with Supabase,
+   Cloudflare and Anthropic.
+
+**Also carried over from `02-`:** Tailwind + shadcn/ui is deferred — the shell uses plain CSS
+until there's enough UI for a component library to earn its weight. `02-`'s "AI gateway = Vercel
+AI SDK" was already superseded by `@cfm/ai` (D-014/D-016).
 
 ## Open questions
 
