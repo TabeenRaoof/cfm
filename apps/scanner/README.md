@@ -84,18 +84,29 @@ was just applied to), so every write 500s with "no such table". Leaving it off l
 pages dev` read the `[[d1_databases]]` binding from `wrangler.toml` — the same named database
 (`cfm-waitlist`) the migration targeted — which is what makes local dev actually work.
 
-### Deploying for real (needs Tabeen's Cloudflare login — not run from here)
+### Deployed status (26 September 2026)
 
+- D1 database `cfm-waitlist` created in region **EEUR** and migrated. Empty and ready for real
+  traffic (a test signup and a test scan made during verification were both deleted afterward).
+- Pages project **`cfm-scanner`** created, live at `https://cfm-scanner.pages.dev` — confirmed
+  against the actual deployed URL: homepage 200s, `/catalog/DE.json` serves and counts the scan
+  in the real database, `/api/subscribe` stores a real signup and redirects correctly.
+- **Not yet done — needs Tabeen:**
+  - `npx wrangler pages secret put UNSUB_SECRET --project-name=cfm-scanner` (a long random
+    value — `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` — never
+    reuse the local `.dev.vars` one). Blocked by this session's own permission settings when
+    attempted automatically; needs to be run by hand or the permission granted.
+  - A **production** build and redeploy with `CONTROLLER_NAME` and `CONTACT_EMAIL` set (see
+    "Building for production" below) — the live site currently only has the `--include-drafts`
+    preview build up (draft banner visible, unreviewed requirements included, controller
+    placeholders unfilled), which was deployed to verify the pipeline itself, not to be the
+    real public page.
+  - A custom domain, if wanted — `cfm-scanner.pages.dev` works today with no domain purchase.
+
+Redeploy any time with:
 ```bash
-npx wrangler login
-npx wrangler d1 create cfm-waitlist --jurisdiction=eu   # copy the printed database_id into wrangler.toml
-npx wrangler d1 migrations apply cfm-waitlist --remote
-npx wrangler pages secret put UNSUB_SECRET              # a long random value; never reuse the local dev one
 npx wrangler pages deploy dist --project-name=cfm-scanner
 ```
-
-Then set `WAITLIST_ACTION=/api/subscribe` and `WAITLIST_PROCESSOR=cloudflare` for
-`npm run scanner:build` (see "Building for production" below) and redeploy `dist/`.
 
 ### Operator scripts
 

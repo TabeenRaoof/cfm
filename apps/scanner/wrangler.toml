@@ -2,22 +2,21 @@
 # (`05-interim-waitlist-plan.md`). Deploys `dist/` (built by `npm run build`) plus the Functions
 # in `functions/`.
 #
-# Nothing here is live yet — this file describes the setup; it does not create it. See
-# apps/scanner/README.md "Deploying" for the actual account steps (D-043 §5, steps 6-7 in the
-# plan's order of work), which need Tabeen's Cloudflare login and are not run from here.
+# See apps/scanner/README.md "Deploying" for the account steps (D-043 §5, steps 6-7 in the
+# plan's order of work).
 
 name = "cfm-scanner"
 pages_build_output_dir = "dist"
 compatibility_date = "2026-09-25"
 
-# Created with:
+# Created 26 September 2026 via:
 #   npx wrangler d1 create cfm-waitlist --jurisdiction=eu
-# The jurisdiction can only be set at creation — see the plan §3. Replace database_id with the
-# real id wrangler prints; it is not a secret, but it is meaningless before the database exists.
+# Region EEUR. The jurisdiction can only be set at creation — see the plan §3. database_id is
+# not a secret (it names a database, doesn't grant access to it) — access is via account auth.
 [[d1_databases]]
 binding = "DB"
 database_name = "cfm-waitlist"
-database_id = "REPLACE_AFTER_RUNNING_WRANGLER_D1_CREATE"
+database_id = "fe87203d-4523-431a-83a6-2e753329c3b0"
 
 # UNSUB_SECRET is NOT declared here — it's a secret, set with:
 #   npx wrangler pages secret put UNSUB_SECRET

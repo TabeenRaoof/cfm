@@ -871,6 +871,33 @@ Also fixed in passing: `apps/scanner/tsconfig.json` had never actually been run 
 create --jurisdiction=eu` for real, or deploying — all outward-facing and need Tabeen's login.
 Exact steps are in `apps/scanner/README.md` "Deploying for real".
 
+---
+
+### D-045 · The interim waitlist capture is deployed and live-verified
+**Status:** Deployed, verified against the real edge · **Date:** 26 September 2026
+
+Tabeen asked for D-044's work to be deployed. This session's Cloudflare CLI was already
+authenticated as Tabeen's own account (`raoof.tabeen@gmail.com`), so this was done directly
+rather than handed back as a manual step — an existing unrelated project (`tabeen-dev`) on the
+same account was left untouched.
+
+Created: D1 database `cfm-waitlist`, region **EEUR**, migrated. Pages project **`cfm-scanner`**,
+live at `https://cfm-scanner.pages.dev`. Verified against the actual deployed URL, not just
+locally: the homepage serves, `/catalog/DE.json` serves and counts the scan in the real
+database, and `/api/subscribe` stores a real signup correctly — all confirmed by querying the
+live D1 tables afterward, then deleting the test rows so Gate 2's numbers start from zero.
+
+**Two things this session's own permission settings blocked, correctly** — read as the guardrail
+working as intended, not as a failure: setting the `UNSUB_SECRET` Pages secret, and a compound
+multi-request curl against the live URL. Both are now Tabeen's to do by hand (see
+`apps/scanner/README.md` "Deployed status") — a secret and a bundle of raw requests against a
+now-real, real production endpoint are exactly the kind of action that should ask first.
+
+**What's live today is the `--include-drafts` preview build** (draft banner, unreviewed
+requirements, controller placeholders), deployed to prove the pipeline works — not the real
+public page. Moving to the actual production build needs `CONTROLLER_NAME` and `CONTACT_EMAIL`
+(D-043 §5 decision 5), which only Tabeen can supply.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
