@@ -552,6 +552,27 @@ domain uses "Attesta," until a formal search of the three registries and a real 
 registrar check (not a search-engine proxy for either) has been done. That search is a task for
 Tabeen or a lawyer, not something achievable from this environment.
 
+**26 September 2026 — name settled on "Attesta Compliance"; a real collision surfaced.** Tabeen
+chose the fuller name **Attesta Compliance** (the `attestacompliance@gmail.com` contact address
+set up the same day already reflected this). A same-turn check, same limits as above:
+
+- `attestacompliance.com`, `.io`, `.co.uk`, and `attesta-compliance.com` all return no DNS record
+  — a positive-but-unconfirmed signal, not a WHOIS check.
+- **A real, live collision, verified by fetching the actual page (not just the search snippet,
+  learning from the Valesta false positive above):** **attestagrc.com** sells a product branded
+  "**Attesta**" (full name "Attesta GRC") — a GRC/compliance-management platform for ISO 27001,
+  NCA ECC and SAMA CSF engagements, priced $399–$1,799/month, targeting consultants and
+  enterprises in KSA/UAE/Pakistan/SE Asia. Different vertical and geography from this product
+  (Gulf-region multi-framework GRC vs. EU/UK physical-goods product compliance), but the same
+  word, in the same broad category — "a compliance software product called Attesta" — live and
+  commercially active today. This is materially different from the earlier Valesta near-miss:
+  that one wasn't actually named Attesta; this one is.
+
+**This raises the bar Q-6b already set, it doesn't clear it.** Nothing is renamed. "CFM" stays
+the working label until Tabeen or a lawyer runs the actual trademark and domain-registrar
+search — and that search now has a specific, concrete prior hit to weigh, not just an absence of
+evidence either way. Q-6b's own 30 September deadline is four days out at the time of this entry.
+
 ---
 
 ### D-036 · The churn-target arithmetic is corrected to match the stated $50–75 blend
@@ -918,4 +939,4 @@ Genuinely undecided. Kept here so they do not silently harden into assumptions.
 | # | Question | Why it blocks something | Needed by |
 |---|---|---|---|
 | Q-3 | Is the paid-audit services bridge acceptable in 2027? (`01-` §12.3) | Optional, revenue-side fallback only — does not block any code or gate | **Deferred by Tabeen, 19 September 2026** — revisit only if SaaS growth in 2027 makes the services bridge worth considering |
-| Q-6b | Formal EUIPO/UKIPO/USPTO search and a real domain-registrar check for "Attesta" (D-035) | The name is chosen but not yet verified; nothing may be renamed to it until this is done | Before 30 September, or the launch keeps "CFM" |
+| Q-6b | Formal EUIPO/UKIPO/USPTO search and a real domain-registrar check for "Attesta Compliance" (D-035) — now weighing a confirmed live collision, **attestagrc.com**'s "Attesta GRC," not just an absence of evidence | The name is chosen but not yet verified; nothing may be renamed to it until this is done | Before 30 September, or the launch keeps "CFM" |
