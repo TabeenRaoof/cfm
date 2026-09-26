@@ -7,15 +7,26 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header class="hero">
-  <p class="eyebrow"><a href="index.html">← back to the scanner</a></p>
-  <h1>Privacy notice</h1>
-  <p class="lede">Last updated __PRIVACY_UPDATED__. Plain English, because a privacy notice
-  nobody reads protects nobody.</p>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html">Gap scanner</a>
+    <nav class="nav" aria-label="Site">
+      <a href="index.html">Check SKUs</a>
+      <a href="waitlist.html">Digest</a>
+      <a href="privacy.html" aria-current="page">Privacy</a>
+    </nav>
+  </div>
 </header>
 
-<main>
+<header class="hero">
+  <p class="eyebrow">Last updated __PRIVACY_UPDATED__</p>
+  <h1>Privacy notice</h1>
+  <p class="lede">Plain English, because a privacy notice nobody reads protects nobody.</p>
+</header>
+
+<main id="main">
   <section class="panel">
+    <p class="step">In brief</p>
     <h2>The short version</h2>
     <p>
       <strong>The scanner collects nothing.</strong> Your spreadsheet is read and checked inside
@@ -30,14 +41,13 @@
   </section>
 
   <section class="panel">
+    <p class="step">Controller</p>
     <h2>Who is responsible</h2>
-    <p>
-      __CONTROLLER_NAME__, __CONTROLLER_ADDRESS__, is the data controller for the waitlist.
-      Questions, or any request below: <a href="mailto:__CONTACT_EMAIL__">__CONTACT_EMAIL__</a>.
-    </p>
+    <!--CONTROLLER_STATEMENT-->
   </section>
 
   <section class="panel">
+    <p class="step">The check</p>
     <h2>The scanner</h2>
     <p>
       The compliance check runs entirely in your browser. Your file is read with your browser's
@@ -46,10 +56,15 @@
       could not retrieve it if we wanted to.
     </p>
     <p>
-      Our hosting provider records ordinary web-server information when your browser requests a
-      page — IP address, time, which files were requested — as every web server does. We use
-      that only to count how many checks are run and for which markets. It is not linked to any
-      email address and we do not attempt to identify anyone from it.
+      Our hosting provider processes ordinary web-server information when your browser requests a
+      page — IP address, time, which files were requested — as every web server does, in order
+      to serve the page. We do not use it and do not attempt to identify anyone from it.
+    </p>
+    <p>
+      To know whether the scanner is useful, our server keeps two daily tallies: how many checks
+      were completed, and which markets were checked. Each tally stores only the date and, for
+      markets, the market code — no IP address, no identifier, nothing from your file, and
+      nothing that links to the waitlist.
     </p>
     <p class="hint">
       The scanner sets no cookies and contains no analytics, advertising or tracking scripts.
@@ -59,6 +74,7 @@
   </section>
 
   <section class="panel">
+    <p class="step">The list</p>
     <h2>The waitlist</h2>
     <p><strong>What we collect:</strong> your email address, and an approximate SKU count if you
     choose to give one.</p>
@@ -67,34 +83,22 @@
     <p><strong>Lawful basis:</strong> your consent, given by ticking the box on the form. You can
     withdraw it at any time, and withdrawing it is as easy as giving it — use the unsubscribe
     link in any email, or write to us.</p>
-    <p><strong>How long:</strong> until you unsubscribe, or after two years with no engagement,
-    whichever comes first. Then it is deleted.</p>
+    <p><strong>How long:</strong> until you unsubscribe or ask us to delete it, and in any case no
+    longer than two years from the day you signed up. Then it is deleted — you are welcome to
+    sign up again.</p>
     <p><strong>What we never do:</strong> sell your address, share it for anyone else's
     marketing, or add you to anything you did not ask for.</p>
   </section>
 
   <section class="panel">
+    <p class="step">Processors</p>
     <h2>Who else processes your email address</h2>
-    <p>
-      We use <strong>MailerLite</strong> to store the list and send the emails. MailerLite, Inc.
-      is established in the United States and stores subscriber data in data centres in the
-      European Union (Germany and the Netherlands). Its data processing agreement forms part of
-      its terms of service and applies to our use of it.
-    </p>
-    <p>
-      Because the provider is established outside the EEA and the UK, your address may be
-      accessible from the United States. That transfer relies on the safeguards in the
-      provider's data processing terms.
-    </p>
-    <p>
-      MailerLite records whether emails are delivered and opened, which we use only to judge
-      whether the digest is worth writing. Our website host serves these pages and sees the
-      ordinary request information described above.
-    </p>
+    <!--PROCESSOR_SECTION-->
   </section>
 
   <section class="panel">
-    <h2>Your rights</h2>
+    <p class="step">Your rights</p>
+    <h2>What you can ask us to do</h2>
     <p>
       Under the UK GDPR and the EU GDPR you may ask us for a copy of the personal data we hold
       about you, ask us to correct or delete it, object to or restrict how we use it, ask for it
@@ -114,6 +118,7 @@
   </section>
 
   <section class="panel">
+    <p class="step">Updates</p>
     <h2>Changes</h2>
     <p>
       If this notice changes materially we will update the date at the top, and tell waitlist
@@ -121,5 +126,16 @@
     </p>
   </section>
 </main>
+
+<footer class="site-footer">
+  <div class="bar">
+    <p>An information tool, not legal advice.</p>
+    <nav class="nav" aria-label="Footer">
+      <a href="index.html">Check SKUs</a>
+      <a href="waitlist.html">Digest</a>
+      <a href="privacy.html" aria-current="page">Privacy</a>
+    </nav>
+  </div>
+</footer>
 </body>
 </html>

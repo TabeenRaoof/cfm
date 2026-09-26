@@ -1,0 +1,24 @@
+# Cloudflare Pages project config for the interim waitlist capture
+# (`05-interim-waitlist-plan.md`). Deploys `dist/` (built by `npm run build`) plus the Functions
+# in `functions/`.
+#
+# See apps/scanner/README.md "Deploying" for the account steps (D-043 §5, steps 6-7 in the
+# plan's order of work).
+
+name = "cfm-scanner"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-09-25"
+
+# Created 26 September 2026 via:
+#   npx wrangler d1 create cfm-waitlist --jurisdiction=eu
+# Region EEUR. The jurisdiction can only be set at creation — see the plan §3. database_id is
+# not a secret (it names a database, doesn't grant access to it) — access is via account auth.
+[[d1_databases]]
+binding = "DB"
+database_name = "cfm-waitlist"
+database_id = "fe87203d-4523-431a-83a6-2e753329c3b0"
+
+# UNSUB_SECRET is NOT declared here — it's a secret, set with:
+#   npx wrangler pages secret put UNSUB_SECRET
+# A plaintext value in this file would be committed to git, which defeats the point of it being
+# a secret. Local dev reads it from `.dev.vars` (gitignored) instead — see the README.

@@ -8,6 +8,17 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html">Gap scanner</a>
+    <nav class="nav" aria-label="Site">
+      <a href="index.html" aria-current="page">Check SKUs</a>
+      <a href="waitlist.html">Digest</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</header>
+
 <!--DRAFT_BANNER-->
 
 <header class="hero">
@@ -25,29 +36,37 @@
   </p>
 </header>
 
-<main>
+<main id="main">
   <section class="panel" aria-labelledby="setup-heading">
-    <h2 id="setup-heading">1 · Where do you sell?</h2>
-    <fieldset>
-      <legend class="sr-only">Markets</legend>
-      <div class="choices"><!--MARKET_OPTIONS--></div>
-    </fieldset>
-
-    <label class="field">
-      <span>Sales channel</span>
-      <select id="channel">
-        <option value="amazon">Amazon</option>
-        <option value="bol">bol.com</option>
-        <option value="etsy">Etsy</option>
-        <option value="ebay">eBay</option>
-        <option value="shopify">My own shop (Shopify, WooCommerce…)</option>
-        <option value="">Not sure / several</option>
-      </select>
-    </label>
+    <p class="step">Step 1</p>
+    <h2 id="setup-heading">Where do you sell?</h2>
+    <div class="nests">
+      <div class="nest">
+        <p class="nest-label">Markets</p>
+        <fieldset>
+          <legend class="sr-only">Markets</legend>
+          <div class="choices"><!--MARKET_OPTIONS--></div>
+        </fieldset>
+      </div>
+      <div class="nest">
+        <label class="field">
+          <span>Sales channel</span>
+          <select id="channel">
+            <option value="amazon">Amazon</option>
+            <option value="bol">bol.com</option>
+            <option value="etsy">Etsy</option>
+            <option value="ebay">eBay</option>
+            <option value="shopify">My own shop (Shopify, WooCommerce…)</option>
+            <option value="">Not sure / several</option>
+          </select>
+        </label>
+      </div>
+    </div>
   </section>
 
   <section class="panel" aria-labelledby="upload-heading">
-    <h2 id="upload-heading">2 · Your product list</h2>
+    <p class="step">Step 2</p>
+    <h2 id="upload-heading">Your product list</h2>
     <div id="drop" class="drop" tabindex="0" role="button" aria-describedby="drop-help">
       <p><strong>Drop a CSV here</strong>, or choose a file</p>
       <input type="file" id="file" accept=".csv,text/csv" aria-label="Product spreadsheet (CSV)">
@@ -57,46 +76,52 @@
       We look for columns such as SKU, country of origin, contains battery, packaging.
       Up to 500 rows.
     </p>
-    <p><button type="button" id="sample" class="link">Or try it with a sample file</button></p>
+    <p class="actions"><button type="button" id="sample" class="link">Or try it with a sample file</button></p>
     <p id="error" class="error" role="alert" hidden></p>
   </section>
 
   <section id="results" class="panel results" aria-labelledby="results-heading" hidden>
-    <h2 id="results-heading">3 · What we found</h2>
-    <div id="summary" class="summary"></div>
+    <p class="step">Step 3</p>
+    <h2 id="results-heading">What we found</h2>
+    <div class="blocks">
+      <div id="summary" class="summary"></div>
 
-    <div id="questions-block">
-      <h3>Answer these and we can decide more</h3>
-      <p class="hint">Each answer applies to your whole catalog. Most-unblocking first.</p>
-      <ul id="questions" class="questions"></ul>
-    </div>
+      <div id="questions-block" class="nest">
+        <h3>Answer these and we can decide more</h3>
+        <p class="hint">Each answer applies to your whole catalog. Most-unblocking first.</p>
+        <ul id="questions" class="questions"></ul>
+      </div>
 
-    <div id="diagnostics-block">
-      <h3>About your file</h3>
-      <ul id="diagnostics" class="diagnostics"></ul>
-    </div>
+      <div id="diagnostics-block" class="nest">
+        <h3>About your file</h3>
+        <ul id="diagnostics" class="diagnostics"></ul>
+      </div>
 
-    <h3>Per SKU</h3>
-    <div class="table-scroll">
-      <table id="table">
-        <thead><tr><th scope="col">SKU</th><th scope="col">Market</th><th scope="col">Outstanding</th><th scope="col">Undecidable</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-    <p class="hint" id="truncation" hidden></p>
+      <div class="nest">
+        <h3>Per SKU</h3>
+        <div class="table-scroll">
+          <table id="table">
+            <thead><tr><th scope="col">SKU</th><th scope="col">Market</th><th scope="col">Outstanding</th><th scope="col">Undecidable</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="hint" id="truncation" hidden></p>
+      </div>
 
-    <div class="cta">
-      <h3>Want to know when this changes?</h3>
-      <p>
-        These rules move, and the first most sellers hear of it is a suppressed listing.
-        One email a month on what changed and who it affects.
-      </p>
-      <p><a class="submit" href="waitlist.html">Get the monthly digest →</a></p>
-      <p class="hint">Opens a separate page. Nothing from your file is carried across.</p>
+      <div class="cta">
+        <h3>Want to know when this changes?</h3>
+        <p>
+          These rules move, and the first most sellers hear of it is a suppressed listing.
+          One email a month on what changed and who it affects.
+        </p>
+        <p><a class="submit" href="waitlist.html">Get the monthly digest →</a></p>
+        <p class="hint">Opens a separate page. Nothing from your file is carried across.</p>
+      </div>
     </div>
   </section>
 
   <section class="panel disclaimer" aria-labelledby="disclaimer-heading">
+    <p class="step">About this tool</p>
     <h2 id="disclaimer-heading">What this is, and is not</h2>
     <p>
       This is an information tool. It reports what a versioned, source-cited requirement catalog
@@ -109,10 +134,20 @@
       Where we cannot tell whether a requirement applies, we say so rather than guessing.
       "Undecidable" never counts as ready.
       Catalog version <code>__CATALOG_VERSION__</code>.
-      <a href="privacy.html">Privacy notice</a>.
     </p>
   </section>
 </main>
+
+<footer class="site-footer">
+  <div class="bar">
+    <p>An information tool, not legal advice.</p>
+    <nav class="nav" aria-label="Footer">
+      <a href="index.html" aria-current="page">Check SKUs</a>
+      <a href="waitlist.html">Digest</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</footer>
 
 <script type="module" src="app.js"></script>
 </body>

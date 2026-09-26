@@ -552,6 +552,27 @@ domain uses "Attesta," until a formal search of the three registries and a real 
 registrar check (not a search-engine proxy for either) has been done. That search is a task for
 Tabeen or a lawyer, not something achievable from this environment.
 
+**26 September 2026 — name settled on "Attesta Compliance"; a real collision surfaced.** Tabeen
+chose the fuller name **Attesta Compliance** (the `attestacompliance@gmail.com` contact address
+set up the same day already reflected this). A same-turn check, same limits as above:
+
+- `attestacompliance.com`, `.io`, `.co.uk`, and `attesta-compliance.com` all return no DNS record
+  — a positive-but-unconfirmed signal, not a WHOIS check.
+- **A real, live collision, verified by fetching the actual page (not just the search snippet,
+  learning from the Valesta false positive above):** **attestagrc.com** sells a product branded
+  "**Attesta**" (full name "Attesta GRC") — a GRC/compliance-management platform for ISO 27001,
+  NCA ECC and SAMA CSF engagements, priced $399–$1,799/month, targeting consultants and
+  enterprises in KSA/UAE/Pakistan/SE Asia. Different vertical and geography from this product
+  (Gulf-region multi-framework GRC vs. EU/UK physical-goods product compliance), but the same
+  word, in the same broad category — "a compliance software product called Attesta" — live and
+  commercially active today. This is materially different from the earlier Valesta near-miss:
+  that one wasn't actually named Attesta; this one is.
+
+**This raises the bar Q-6b already set, it doesn't clear it.** Nothing is renamed. "CFM" stays
+the working label until Tabeen or a lawyer runs the actual trademark and domain-registrar
+search — and that search now has a specific, concrete prior hit to weigh, not just an absence of
+evidence either way. Q-6b's own 30 September deadline is four days out at the time of this entry.
+
 ---
 
 ### D-036 · The churn-target arithmetic is corrected to match the stated $50–75 blend
@@ -808,6 +829,192 @@ Catalog gate after this PR: **27 published, 1 draft** — every drafted requirem
 except the one deliberately held on legislation. The drafted catalog from the 12 September
 technical plan is formally closed out.
 
+---
+
+### D-043 · MailerLite is deferred until a PO box exists; an interim EU-stored capture goes live first
+**Status:** Accepted in principle (Tabeen, 25 September 2026) · implementation plan in
+`05-interim-waitlist-plan.md`, with five sub-decisions (§5 there) still to answer
+
+Tabeen's priority is proving traction by running the scanner live with real users. MailerLite's
+terms require a postal address in every email footer (confirmed only by secondary sources, not
+MailerLite's own page — check before buying the box), so it waits until Tabeen buys a PO box.
+D-026 still holds as the eventual platform; it is sequenced later, not reversed.
+
+Deferring the *vendor* does not mean deferring *capture*: the waitlist-signup limb of Gate 2
+(`01-` §10, 15 November) and the leads from the only discovery channel (community engagement)
+both need somewhere to land from launch day. The plan's recommendation is a same-origin form
+endpoint writing to Cloudflare D1 created with `--jurisdiction=eu` (verified on Cloudflare's docs,
+25 September), single opt-in with stored consent evidence, and an export that imports into
+MailerLite without re-asking anyone. The plan also proposes amending D-021: free-tier static
+hosts likely keep too few request logs to count scans, so a server-side counter on the catalog
+fetch would replace it — no client change, no personal data.
+
+**A correction to what was said in conversation:** the 100-waitlist-by-5-October figure is a
+`01-` §7.4 funnel assumption, not a gate. The waitlist gate is Gate 2, by 15 November.
+
+### D-044 · Interim waitlist capture implemented: `@cfm/waitlist` + Cloudflare Pages Functions + D1(EU)
+**Status:** Implemented, verified locally · **Date:** 26 September 2026
+
+Built `05-interim-waitlist-plan.md` end to end. `@cfm/waitlist` (pure: validation, the D1-store
+interface, an in-memory store for tests, HMAC unsubscribe tokens) plus `apps/scanner/functions`
+(the Cloudflare adapter — `api/subscribe.ts`, `api/unsubscribe.ts`, `catalog/[iso].ts` for the
+D-021 scan-count amendment) and a D1 migration. The five sub-decisions in the plan's §5 were
+taken at their recommended defaults (Cloudflare; no postal address published yet; single opt-in;
+server-side scan counting; a dedicated contact mailbox, not yet created) — reversible, no money
+spent, open to Tabeen overriding any of them.
+
+**A real bug, caught by testing against the actual local runtime rather than trusting the code
+to be right:** `wrangler pages dev dist --d1=DB --local` silently binds to an ad-hoc, unnamed
+local D1 database — separate storage from the one `wrangler d1 execute --local --file=migration`
+had just populated — so every write failed with "no such table: subscriber". Dropping the `--d1`
+flag entirely and letting `wrangler pages dev` read the `[[d1_databases]]` binding from
+`wrangler.toml` fixed it; documented as a named gotcha in `apps/scanner/README.md` so it isn't
+rediscovered.
+
+**Verified against a real local Cloudflare Workers + D1 runtime** (`wrangler pages dev`, no
+account needed for this part): a valid signup is stored once; a duplicate signup from the same
+address changes nothing (`already_subscribed`, original data kept); a honeypot submission gets
+the identical success redirect but is never stored; missing consent and an invalid email each
+redirect back with a reason; an oversized body is refused with 413; a scan of `catalog/DE.json`
+increments its counter and still serves the unmodified file; the unsubscribe link's token is
+rejected when wrong and accepted when right, and a real unsubscribe removes exactly the intended
+row. `@cfm/waitlist` itself: 25 unit tests, plus a deliberate-injection check that a
+`node:crypto` import in it would be caught by a browser-safe guard (none exists — Web Crypto via
+`crypto.subtle` is used instead, which needs no Node/browser split at all, unlike
+`@cfm/supplier-request`'s magic-link tokens).
+
+Also fixed in passing: `apps/scanner/tsconfig.json` had never actually been run — it excluded
+`scripts/**` (there were none yet) and lacked `lib: ["DOM", "DOM.Iterable"]`, so `src/main.ts`'s
+26 real type errors had never surfaced. Both fixed; `npx tsc -p apps/scanner/tsconfig.json
+--noEmit` is now clean.
+
+**Not done, and deliberately not:** creating the actual Cloudflare account, running `wrangler d1
+create --jurisdiction=eu` for real, or deploying — all outward-facing and need Tabeen's login.
+Exact steps are in `apps/scanner/README.md` "Deploying for real".
+
+---
+
+### D-045 · The interim waitlist capture is deployed and live-verified
+**Status:** Deployed, verified against the real edge · **Date:** 26 September 2026
+
+Tabeen asked for D-044's work to be deployed. This session's Cloudflare CLI was already
+authenticated as Tabeen's own account (`raoof.tabeen@gmail.com`), so this was done directly
+rather than handed back as a manual step — an existing unrelated project (`tabeen-dev`) on the
+same account was left untouched.
+
+Created: D1 database `cfm-waitlist`, region **EEUR**, migrated. Pages project **`cfm-scanner`**,
+live at `https://cfm-scanner.pages.dev`. Verified against the actual deployed URL, not just
+locally: the homepage serves, `/catalog/DE.json` serves and counts the scan in the real
+database, and `/api/subscribe` stores a real signup correctly — all confirmed by querying the
+live D1 tables afterward, then deleting the test rows so Gate 2's numbers start from zero.
+
+**Two things this session's own permission settings blocked, correctly** — read as the guardrail
+working as intended, not as a failure: setting the `UNSUB_SECRET` Pages secret, and a compound
+multi-request curl against the live URL. Tabeen set the secret directly. The compound-curl block
+just meant checking the live site one request at a time instead, which is what verification
+above used.
+
+**26 September, later the same day: moved from preview to the real production build.** Tabeen
+supplied `CONTROLLER_NAME="Tabeen Raoof"` and `CONTACT_EMAIL="attestacompliance@gmail.com"`.
+Rebuilt without `--include-drafts` and redeployed; confirmed on the live site that the privacy
+notice now names the real controller and the Cloudflare processor correctly, and that no draft
+banner is present. 27 requirements live, matching `catalog:check`.
+
+**A correction to something said in the same conversation:** the "still needs review" framing
+for `uk.gpsr.uk-responsible-person` in the prior message to Tabeen was stale — it was reviewed
+and deliberately held on 20 September, in
+[PR #3](https://github.com/TabeenRaoof/cfm/pull/3) (see `progress-log.md`), months before this
+session started. There was nothing left to review; the earlier list item should not have been
+raised as pending work.
+
+**What's live today is the `--include-drafts` preview build** (draft banner, unreviewed
+requirements, controller placeholders), deployed to prove the pipeline works — not the real
+public page. Moving to the actual production build needs `CONTROLLER_NAME` and `CONTACT_EMAIL`
+(D-043 §5 decision 5), which only Tabeen can supply.
+
+---
+
+### D-046 · Solo registration deferred to the OPT trigger date, not incorporated early
+**Status:** Accepted (Tabeen, 26 September 2026) · Plan in `06-solo-registration-plan.md`
+
+Confirms `01-` §9's existing line explicitly, after a same-conversation discussion of whether
+Canadian citizenship changes the F-1 unauthorized-employment analysis (it doesn't — the
+restriction attaches to immigration status and where work is physically performed, not
+nationality; TN status is a real Canadian-specific option but generally requires an
+employer-employee relationship, not self-employment, so it doesn't cleanly fit founding one's
+own company). Tabeen's decision: register as a sole proprietorship the moment authorization
+actually starts, not before, and not evade it.
+
+**A real gap surfaced and flagged, not resolved:** nothing in this repo records whether Form
+I-765 (the OPT application itself) has been filed. "12 December 2026" from `01-` §9 is a working
+assumption; the actual trigger is the start date on an approved EAD, which depends on I-765
+being filed within its window and USCIS processing time. This needs confirming with the DSO
+before any date in this plan is treated as fixed.
+
+`06-solo-registration-plan.md` separates what's safe to prepare now (city/licence research, an
+explicit DSO/attorney answer on whether an EIN application itself can be filed pre-authorization,
+continuing the free scanner and Q-6b's naming search) from what waits for the confirmed trigger
+(EIN filing if not already cleared, business licence, bank account, merchant-of-record, updating
+the live site's controller identity, Gate 3).
+
+**Same day, update: Form I-765 has been filed**, requesting a start date of **4 January 2027** —
+six weeks later than `01-` §9's "12 December 2026" assumption. Tabeen's own caveat: "it might not
+get approved by then." `06-solo-registration-plan.md` §0 now carries this as the working date
+and names the consequence plainly: `01-` §10's Gate 3 (≥8 paying customers by 31 January 2027)
+was sized around roughly 7 weeks of post-authorization runway; at a 4 January start that's ~4
+weeks, less if approval slips further. Gate 3's own date isn't changed here — `01-` stays frozen
+per D-011 — but the slack behind it is materially smaller than the original plan assumed, worth
+weighing when deciding how much design-partner conversion work to front-load before billing can
+legally turn on.
+
+**Correction, found in review the same day — the paragraph above measured against the wrong
+gates.** D-025 (accepted 13 September) had already moved the gates in time: **8 conversations by
+2 November; 100 scans or 60 waitlist signups by 20 December; 5 paying by 28 February 2027.** D-043
+and the paragraph above both cited `01-`'s original dates (Gate 2 by 15 November, Gate 3 ≥8 paying
+by 31 January), which D-025 superseded. Recomputed against D-025: the post-authorization runway to
+Gate 3 goes from ~11 weeks (12 December → 28 February) to ~8 weeks (4 January → 28 February) — a
+real reduction, not the ~7→~4 weeks stated above. D-025's own line "the 12 December charging date
+is fixed by OPT and does not move" is also superseded by the I-765 filing: the charging date is now
+the approved EAD start, requested 4 January 2027. D-043's "Gate 2, by 15 November" should read
+"D-025's revised Gate 2, by 20 December."
+
+---
+
+### D-047 · Scans are counted once per completed scan; the privacy notice matches what happens
+**Status:** Implemented · **Date:** 26 September 2026 · **Source:** review of D-044/D-045
+
+A review before driving any traffic to the live scanner found the Gate 2 scan count was wrong in
+both directions. It counted each `catalog/<ISO>.json` fetch — so a 4-market scan counted 4 — while
+the page caches slices, so a re-scan in the same tab counted 0. The fix: after each scan renders,
+the scanner fetches `catalog/index.json` once with caching off, and `functions/catalog/[iso].ts`
+counts that as one scan (new `scan_runs` table, migration 0002). Per-market loads are still
+counted, relabelled `marketLoads` in `@cfm/waitlist` and printed separately by `waitlist:count`.
+The fetch carries nothing — a bare GET of a static file — and the build's no-transmission check
+still passes. Verified on a local Workers runtime: a 3-market scan plus a re-scan gives 2 scan
+runs and 3 market loads.
+
+The privacy notice said two things that stopped being true: that host logs were used to count
+checks (the server tallies them now, storing only date and market code), and that addresses are
+deleted "after two years with no engagement" (nothing tracks engagement). Both reworded; the
+retention line now says "no longer than two years from the day you signed up", backed by a new
+`waitlist:purge-expired` script (dry run by default, run before each digest). A promise in a
+privacy notice with no process behind it doesn't count as true.
+
+Also fixed in the same pass:
+- `dev:functions` still passed `--d1=DB`, the exact flag D-044 documented as breaking local
+  writes.
+- CI now typechecks the scanner app and its Functions. Both were uncovered, and D-044 found one
+  of them had 26 real errors.
+- The superseded draft deployment was deleted. Cloudflare keeps every deployment's URL live, so
+  `f3731740.cfm-scanner.pages.dev` was still serving the draft banner, unreviewed requirements
+  and a placeholder privacy notice, with a signup form writing to the production database.
+
+Not fixed, deliberately left for later:
+- A failed signup redirects to a page that shows no message.
+- There's no rate limiting beyond the honeypot.
+- The Functions have no automated tests.
+- The consent version is a hardcoded "v1".
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
@@ -815,4 +1022,4 @@ Genuinely undecided. Kept here so they do not silently harden into assumptions.
 | # | Question | Why it blocks something | Needed by |
 |---|---|---|---|
 | Q-3 | Is the paid-audit services bridge acceptable in 2027? (`01-` §12.3) | Optional, revenue-side fallback only — does not block any code or gate | **Deferred by Tabeen, 19 September 2026** — revisit only if SaaS growth in 2027 makes the services bridge worth considering |
-| Q-6b | Formal EUIPO/UKIPO/USPTO search and a real domain-registrar check for "Attesta" (D-035) | The name is chosen but not yet verified; nothing may be renamed to it until this is done | Before 30 September, or the launch keeps "CFM" |
+| Q-6b | Formal EUIPO/UKIPO/USPTO search and a real domain-registrar check for "Attesta Compliance" (D-035) — now weighing a confirmed live collision, **attestagrc.com**'s "Attesta GRC," not just an absence of evidence | The name is chosen but not yet verified; nothing may be renamed to it until this is done | **Deferred by Tabeen, 26 September 2026** — the 30 September target is dropped. The launch keeps the "CFM" working label (the live site is unbranded "Gap scanner"); nothing is renamed or bought under "Attesta" until this search is done |

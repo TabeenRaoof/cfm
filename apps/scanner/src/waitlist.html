@@ -8,8 +8,19 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html">Gap scanner</a>
+    <nav class="nav" aria-label="Site">
+      <a href="index.html">Check SKUs</a>
+      <a href="waitlist.html" aria-current="page">Digest</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</header>
+
 <header class="hero">
-  <p class="eyebrow"><a href="index.html">← back to the scanner</a></p>
+  <p class="eyebrow">One email a month</p>
   <h1>What changed this month, and does it affect you?</h1>
   <p class="lede">
     GPSR, packaging EPR, PPWR and the UK regime all move, and the first most sellers hear of it
@@ -18,12 +29,15 @@
   </p>
 </header>
 
-<main>
+<main id="main">
   <section class="panel">
+    <p class="step">Subscribe</p>
+    <h2>Get the digest</h2>
     <!--WAITLIST_FORM-->
   </section>
 
   <section class="panel disclaimer">
+    <p class="step">How we use it</p>
     <h2>What we do with your address</h2>
     <p>
       We use it to send you the monthly digest and to tell you when the full product opens. That
@@ -33,9 +47,19 @@
     <p class="hint">
       <strong>Your scan stays on your computer.</strong> Nothing from the file you checked is
       attached to this form or sent with it — this page and the scanner do not share data.
-      See the <a href="privacy.html">privacy notice</a>.
     </p>
   </section>
 </main>
+
+<footer class="site-footer">
+  <div class="bar">
+    <p>An information tool, not legal advice.</p>
+    <nav class="nav" aria-label="Footer">
+      <a href="index.html">Check SKUs</a>
+      <a href="waitlist.html" aria-current="page">Digest</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</footer>
 </body>
 </html>

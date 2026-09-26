@@ -4,6 +4,10 @@ apps/*/dist/
 *.tsbuildinfo
 .env
 .env.local
+.dev.vars
+.wrangler/
+apps/*/.wrangler/
+apps/scanner/exports/
 .DS_Store
 coverage/
 
