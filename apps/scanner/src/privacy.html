@@ -7,15 +7,26 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header class="hero">
-  <p class="eyebrow"><a href="index.html">← back to the scanner</a></p>
-  <h1>Privacy notice</h1>
-  <p class="lede">Last updated __PRIVACY_UPDATED__. Plain English, because a privacy notice
-  nobody reads protects nobody.</p>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html">Gap scanner</a>
+    <nav class="nav" aria-label="Site">
+      <a href="index.html">Check SKUs</a>
+      <a href="waitlist.html">Digest</a>
+      <a href="privacy.html" aria-current="page">Privacy</a>
+    </nav>
+  </div>
 </header>
 
-<main>
+<header class="hero">
+  <p class="eyebrow">Last updated __PRIVACY_UPDATED__</p>
+  <h1>Privacy notice</h1>
+  <p class="lede">Plain English, because a privacy notice nobody reads protects nobody.</p>
+</header>
+
+<main id="main">
   <section class="panel">
+    <p class="step">In brief</p>
     <h2>The short version</h2>
     <p>
       <strong>The scanner collects nothing.</strong> Your spreadsheet is read and checked inside
@@ -30,6 +41,7 @@
   </section>
 
   <section class="panel">
+    <p class="step">Controller</p>
     <h2>Who is responsible</h2>
     <p>
       __CONTROLLER_NAME__, __CONTROLLER_ADDRESS__, is the data controller for the waitlist.
@@ -38,6 +50,7 @@
   </section>
 
   <section class="panel">
+    <p class="step">The check</p>
     <h2>The scanner</h2>
     <p>
       The compliance check runs entirely in your browser. Your file is read with your browser's
@@ -59,6 +72,7 @@
   </section>
 
   <section class="panel">
+    <p class="step">The list</p>
     <h2>The waitlist</h2>
     <p><strong>What we collect:</strong> your email address, and an approximate SKU count if you
     choose to give one.</p>
@@ -74,6 +88,7 @@
   </section>
 
   <section class="panel">
+    <p class="step">Processors</p>
     <h2>Who else processes your email address</h2>
     <p>
       We use <strong>MailerLite</strong> to store the list and send the emails. MailerLite, Inc.
@@ -94,7 +109,8 @@
   </section>
 
   <section class="panel">
-    <h2>Your rights</h2>
+    <p class="step">Your rights</p>
+    <h2>What you can ask us to do</h2>
     <p>
       Under the UK GDPR and the EU GDPR you may ask us for a copy of the personal data we hold
       about you, ask us to correct or delete it, object to or restrict how we use it, ask for it
@@ -114,6 +130,7 @@
   </section>
 
   <section class="panel">
+    <p class="step">Updates</p>
     <h2>Changes</h2>
     <p>
       If this notice changes materially we will update the date at the top, and tell waitlist
@@ -121,5 +138,16 @@
     </p>
   </section>
 </main>
+
+<footer class="site-footer">
+  <div class="bar">
+    <p>An information tool, not legal advice.</p>
+    <nav class="nav" aria-label="Footer">
+      <a href="index.html">Check SKUs</a>
+      <a href="waitlist.html">Digest</a>
+      <a href="privacy.html" aria-current="page">Privacy</a>
+    </nav>
+  </div>
+</footer>
 </body>
 </html>
