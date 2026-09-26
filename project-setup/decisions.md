@@ -957,6 +957,16 @@ continuing the free scanner and Q-6b's naming search) from what waits for the co
 (EIN filing if not already cleared, business licence, bank account, merchant-of-record, updating
 the live site's controller identity, Gate 3).
 
+**Same day, update: Form I-765 has been filed**, requesting a start date of **4 January 2027** —
+six weeks later than `01-` §9's "12 December 2026" assumption. Tabeen's own caveat: "it might not
+get approved by then." `06-solo-registration-plan.md` §0 now carries this as the working date
+and names the consequence plainly: `01-` §10's Gate 3 (≥8 paying customers by 31 January 2027)
+was sized around roughly 7 weeks of post-authorization runway; at a 4 January start that's ~4
+weeks, less if approval slips further. Gate 3's own date isn't changed here — `01-` stays frozen
+per D-011 — but the slack behind it is materially smaller than the original plan assumed, worth
+weighing when deciding how much design-partner conversion work to front-load before billing can
+legally turn on.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.

@@ -1,25 +1,30 @@
 # 06 · Solo registration: staged so nothing happens before it's authorized
 
-**Status:** Plan · **Written:** 26 September 2026 · **Decision:** D-046
-**Trigger:** Tabeen's OPT (EAD) start date — treat this as unconfirmed until Form I-765 is filed
-and an actual approved start date exists. "12 December 2026" in `01-` §9 is the plan's working
-assumption, not a confirmed date.
+**Status:** Plan · **Written:** 26 September 2026, updated same day · **Decision:** D-046
+**Trigger:** Tabeen's actual approved EAD start date — **not** a calendar date picked in advance.
+Form I-765 has now been filed, requesting a start date of **4 January 2027**. Treat that date as
+requested, not confirmed: Tabeen's own words, "it might not get approved by then." `01-` §9's
+"12 December 2026" was the original plan's assumption and is now superseded by this filing — the
+frozen `01-`/`02-` text is not edited (D-011); this file and `decisions.md` carry the correction.
 
 ## 0. The one fact this whole plan depends on
 
-Nothing in this repo records whether **Form I-765** (the OPT work-authorization application)
-has actually been filed. This matters more than any step below:
+Form I-765 is filed, with a requested start of 4 January 2027 — six weeks later than `01-`'s
+original assumption. This still isn't a confirmed trigger:
 
-- OPT must be requested within a specific window relative to the academic program's end date
-  (up to 90 days before, no later than 60 days after) — filing late can mean no valid start date
-  on 12 December at all.
-- USCIS processing time is not instant — historically weeks to a few months, and it varies.
+- USCIS can approve with a different (later) start date than requested, and processing time
+  varies — this is exactly why Tabeen flagged it might not be approved by 4 January.
 - The real trigger for everything in this plan is **the start date printed on the approved EAD
-  card**, not the calendar date 12 December. If I-765 hasn't been filed yet, find out from the
-  DSO exactly when it needs to be, and treat that filing itself as the most time-sensitive item
-  in this whole project — ahead of any code, any catalog work, any of it.
+  card**, whenever that turns out to be — not 4 January, and not 12 December.
+- **A consequence worth naming plainly:** `01-` §10's Gate 3 ("≥8 paying customers by 31 January
+  2027") was built on a 12 December billing-enable date — roughly 7 weeks of runway to convert
+  design partners. At a 4 January start, that runway shrinks to about 4 weeks; if approval lands
+  any later, it shrinks further. This doesn't change Gate 3's own date (an immutable-document
+  edit isn't warranted for one filing update), but it changes how much slack there is to hit it —
+  worth having design partners primed to convert immediately once billing can legally turn on,
+  rather than starting outreach from zero on day one of authorization.
 
-Nothing below should be scheduled against 12 December until this is confirmed with the DSO.
+Nothing below should be scheduled against any specific calendar date until the EAD is approved.
 
 ## 1. What's already safe today, unchanged
 
