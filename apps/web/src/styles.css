@@ -1,0 +1,52 @@
+/* Plain CSS until there is enough UI for a component library to earn its weight (D-048). */
+:root {
+  --bg: #fbfbf9;
+  --panel: #ffffff;
+  --ink: #1d1f23;
+  --muted: #62666d;
+  --line: #e2e3e0;
+  --accent: #2f5d8a;
+  --bad: #a3312b;
+  --unknown: #8a5a00;
+  --radius: 10px;
+  color-scheme: light dark;
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15171a; --panel: #1d2024; --ink: #e9eaec; --muted: #a0a4ab;
+    --line: #2e3237; --accent: #7fb0e0; --bad: #f08a82; --unknown: #e0b25a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); }
+a { color: var(--accent); }
+code { font-size: 0.9em; }
+
+.topbar { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.spacer { flex: 1; }
+.page { max-width: 1040px; margin: 0 auto; padding: 24px 20px 64px; }
+.page.narrow { max-width: 440px; padding-top: 12vh; }
+
+.muted { color: var(--muted); }
+.error { color: var(--bad); }
+.notice { padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+
+.card { margin-top: 24px; padding: 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+.card h2, .card h3 { margin-top: 0; }
+.stack { display: grid; gap: 12px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.field { display: grid; gap: 4px; }
+.field > span { font-size: 0.875rem; color: var(--muted); }
+.list { padding-left: 1.2em; }
+
+input, select { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; }
+button { justify-self: start; padding: 8px 14px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
+button:disabled { opacity: 0.6; cursor: default; }
+button.link { background: none; color: var(--accent); padding: 0; }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: var(--panel); }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+th { font-size: 0.8125rem; color: var(--muted); font-weight: 600; }
+td.unknown { color: var(--unknown); }

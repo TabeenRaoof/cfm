@@ -1053,6 +1053,60 @@ Slice B is the product sold at Gate 3: login, organisations, document upload, ex
 until there's enough UI for a component library to earn its weight. `02-`'s "AI gateway = Vercel
 AI SDK" was already superseded by `@cfm/ai` (D-014/D-016).
 
+---
+
+### D-049 · Slice B increment 1: the tenancy schema, proven, and the app shell
+**Status:** Implemented · **Date:** 26 September 2026 · **Builds on:** D-048
+
+`apps/web` exists: a React SPA (sign-in by magic link, organisations, products) on the tenancy
+schema in `supabase/migrations/20260926000001_tenancy.sql`. What the schema guarantees, and why:
+
+- **Isolation in the database, not only in the app.** Every tenant table has RLS. Supabase's
+  default grants to `anon` and `authenticated` are revoked first and granted back per column, so
+  `organisation_id` and `user_id` can't be updated.
+- **No self-service joining.** There is no client insert path into `membership`; members arrive
+  through an invitation function (next increment).
+- **The owner role is guarded.** Only owners grant, change or remove it, and an organisation can
+  never lose its last owner. A trigger skips this for system actions, so cascades still work.
+- **No delete button.** Organisations can't be deleted from the app — deletion is D-013's
+  written procedure.
+- **The hard rule, one layer further down.** Product yes/no facts have no default; NULL means
+  unknown, and the UI's selects start at "Unknown".
+- **An audit log that stays written.** Organisation, membership and product changes are logged
+  with the actor. Only owners and admins can read it, and a trigger refuses update, delete and
+  truncate even for the database owner.
+
+Verified three ways, each shown to fail on a real violation before being trusted:
+
+1. **26 RLS tests** run the real migration on PGlite (in-process Postgres 17, Supabase's major
+   version) with a shim of Supabase's `auth` pieces, acting as owner, admin, member, viewer,
+   outsider and anonymous. Four injected breaks were each caught, then reverted: product reads
+   opened to all, owner guard removed, `has_battery default false`, and direct membership
+   inserts allowed. Runs in `npm test` and CI; no Docker, no account.
+2. **A 12-check end-to-end script** (`npm run -w @cfm/web e2e:local`) runs against a local
+   Supabase stack in Docker, using real GoTrue sign-in and real PostgREST. It makes the app's
+   exact calls: the RPC, the membership query with the organisation embedded, the product
+   insert, and a magic-link email arriving in the local mail catcher. It refuses any non-localhost
+   URL. With product reads opened, it failed on the cross-tenant check; after restoring, it
+   passed.
+3. **A build gate** refuses any bundle containing an Anthropic key, a Supabase secret key or a
+   service-role JWT. A synthetic key was injected and the build refused.
+
+Also fixed: the root README never listed `@cfm/waitlist` — documentation drift from PR #9.
+
+**Not done yet, and blocked on Tabeen:**
+- the neutral domain
+- `npx supabase login` and creating the EU project
+- Auth URLs and custom SMTP on that domain
+- D-013's paperwork before any real upload
+
+**Next increments:**
+1. invitations
+2. CSV import into `product` via `@cfm/import`
+3. assessments from `@cfm/catalog`
+4. then document upload (R2), extraction via Queues + `@cfm/ai`, evidence linking and
+   technical-file export
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.

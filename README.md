@@ -19,7 +19,7 @@ are immutable; corrections to them are in `project-setup/03-plan-review.md`.
 
 ```bash
 npm install
-npm test               # 465 tests
+npm test               # 533 tests, including row-level security against the real migrations
 npm run typecheck
 npm run catalog:check  # the requirement publish gate
 npm run smoke          # runs the deterministic path on a bare Node, no build step
@@ -52,4 +52,6 @@ See `tabeen_AGENTS.md` and `packages/catalog/README.md`.
 | `@cfm/ai` | The provider seam — the only place that may | Only when code cannot answer |
 | `@cfm/supplier-request` | The supplier magic-link request lifecycle, reminder scheduling, EN/ZH email templates | **Never** |
 | `@cfm/evidence` | Links an accepted extraction to the catalog requirement(s) it satisfies, market-scoped | **Never** |
-| `apps/scanner` | The static page, its waitlist and its privacy notice | **Never** |
+| `@cfm/waitlist` | Waitlist signup validation, the storage seam, unsubscribe tokens | **Never** |
+| `apps/scanner` | The live public scanner (cfm-scanner.pages.dev): static page, waitlist, privacy notice, Cloudflare Functions + D1 | **Never** |
+| `apps/web` | The logged-in product (Slice B, D-048): React SPA on Cloudflare Pages, Supabase Postgres/Auth/RLS. See its README | Not yet — extraction lands in a later increment |
