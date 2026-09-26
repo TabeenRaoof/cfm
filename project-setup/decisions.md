@@ -808,6 +808,29 @@ Catalog gate after this PR: **27 published, 1 draft** — every drafted requirem
 except the one deliberately held on legislation. The drafted catalog from the 12 September
 technical plan is formally closed out.
 
+---
+
+### D-043 · MailerLite is deferred until a PO box exists; an interim EU-stored capture goes live first
+**Status:** Accepted in principle (Tabeen, 25 September 2026) · implementation plan in
+`05-interim-waitlist-plan.md`, with five sub-decisions (§5 there) still to answer
+
+Tabeen's priority is proving traction by running the scanner live with real users. MailerLite's
+terms require a postal address in every email footer (confirmed only by secondary sources, not
+MailerLite's own page — check before buying the box), so it waits until Tabeen buys a PO box.
+D-026 still holds as the eventual platform; it is sequenced later, not reversed.
+
+Deferring the *vendor* does not mean deferring *capture*: the waitlist-signup limb of Gate 2
+(`01-` §10, 15 November) and the leads from the only discovery channel (community engagement)
+both need somewhere to land from launch day. The plan's recommendation is a same-origin form
+endpoint writing to Cloudflare D1 created with `--jurisdiction=eu` (verified on Cloudflare's docs,
+25 September), single opt-in with stored consent evidence, and an export that imports into
+MailerLite without re-asking anyone. The plan also proposes amending D-021: free-tier static
+hosts likely keep too few request logs to count scans, so a server-side counter on the catalog
+fetch would replace it — no client change, no personal data.
+
+**A correction to what was said in conversation:** the 100-waitlist-by-5-October figure is a
+`01-` §7.4 funnel assumption, not a gate. The waitlist gate is Gate 2, by 15 November.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
