@@ -48,17 +48,27 @@ describe("MemoryStore.removeByEmail", () => {
   });
 });
 
-describe("MemoryStore scan counting", () => {
-  it("counts scans per market per day independently", async () => {
+describe("MemoryStore usage counting", () => {
+  it("counts market slice loads per market per day independently", async () => {
     const store = new MemoryStore();
-    await store.incrementScan("DE", "2026-09-25");
-    await store.incrementScan("DE", "2026-09-25");
-    await store.incrementScan("FR", "2026-09-25");
-    await store.incrementScan("DE", "2026-09-26");
+    await store.incrementMarketLoad("DE", "2026-09-25");
+    await store.incrementMarketLoad("DE", "2026-09-25");
+    await store.incrementMarketLoad("FR", "2026-09-25");
+    await store.incrementMarketLoad("DE", "2026-09-26");
 
-    const counts = await store.scanCounts();
+    const counts = await store.marketLoads();
     expect(counts).toContainEqual({ iso: "DE", day: "2026-09-25", n: 2 });
     expect(counts).toContainEqual({ iso: "FR", day: "2026-09-25", n: 1 });
     expect(counts).toContainEqual({ iso: "DE", day: "2026-09-26", n: 1 });
+  });
+
+  it("counts scan runs separately from market loads — a 3-market scan is one scan", async () => {
+    const store = new MemoryStore();
+    // One scan across three markets: three slice loads, one scan run.
+    for (const iso of ["DE", "FR", "NL"]) await store.incrementMarketLoad(iso, "2026-09-26");
+    await store.incrementScanRun("2026-09-26");
+
+    expect(await store.scanRuns()).toEqual([{ day: "2026-09-26", n: 1 }]);
+    expect((await store.marketLoads()).reduce((sum, c) => sum + c.n, 0)).toBe(3);
   });
 });

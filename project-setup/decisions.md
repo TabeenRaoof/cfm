@@ -978,6 +978,43 @@ is fixed by OPT and does not move" is also superseded by the I-765 filing: the c
 the approved EAD start, requested 4 January 2027. D-043's "Gate 2, by 15 November" should read
 "D-025's revised Gate 2, by 20 December."
 
+---
+
+### D-047 · Scans are counted once per completed scan; the privacy notice matches what happens
+**Status:** Implemented · **Date:** 26 September 2026 · **Source:** review of D-044/D-045
+
+A review before driving any traffic to the live scanner found the Gate 2 scan count was wrong in
+both directions. It counted each `catalog/<ISO>.json` fetch — so a 4-market scan counted 4 — while
+the page caches slices, so a re-scan in the same tab counted 0. The fix: after each scan renders,
+the scanner fetches `catalog/index.json` once with caching off, and `functions/catalog/[iso].ts`
+counts that as one scan (new `scan_runs` table, migration 0002). Per-market loads are still
+counted, relabelled `marketLoads` in `@cfm/waitlist` and printed separately by `waitlist:count`.
+The fetch carries nothing — a bare GET of a static file — and the build's no-transmission check
+still passes. Verified on a local Workers runtime: a 3-market scan plus a re-scan gives 2 scan
+runs and 3 market loads.
+
+The privacy notice said two things that stopped being true: that host logs were used to count
+checks (the server tallies them now, storing only date and market code), and that addresses are
+deleted "after two years with no engagement" (nothing tracks engagement). Both reworded; the
+retention line now says "no longer than two years from the day you signed up", backed by a new
+`waitlist:purge-expired` script (dry run by default, run before each digest). A promise in a
+privacy notice with no process behind it doesn't count as true.
+
+Also fixed in the same pass:
+- `dev:functions` still passed `--d1=DB`, the exact flag D-044 documented as breaking local
+  writes.
+- CI now typechecks the scanner app and its Functions. Both were uncovered, and D-044 found one
+  of them had 26 real errors.
+- The superseded draft deployment was deleted. Cloudflare keeps every deployment's URL live, so
+  `f3731740.cfm-scanner.pages.dev` was still serving the draft banner, unreviewed requirements
+  and a placeholder privacy notice, with a signup form writing to the production database.
+
+Not fixed, deliberately left for later:
+- A failed signup redirects to a page that shows no message.
+- There's no rate limiting beyond the honeypot.
+- The Functions have no automated tests.
+- The consent version is a hardcoded "v1".
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.

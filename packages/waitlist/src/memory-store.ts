@@ -1,10 +1,17 @@
-import type { AddSubscriberResult, RemoveSubscriberResult, ScanCount, WaitlistStore } from "./store.ts";
+import type {
+  AddSubscriberResult,
+  MarketLoadCount,
+  RemoveSubscriberResult,
+  ScanRunCount,
+  WaitlistStore,
+} from "./store.ts";
 import type { ValidSubscription } from "./validate.ts";
 
 /** The `WaitlistStore` used by every test in this repo, and a reference for the D1 adapter's behaviour. */
 export class MemoryStore implements WaitlistStore {
   private readonly subscribers = new Map<string, ValidSubscription>();
-  private readonly scans = new Map<string, number>(); // key: `${iso}|${day}`
+  private readonly loads = new Map<string, number>(); // key: `${iso}|${day}`
+  private readonly runs = new Map<string, number>(); // key: day
 
   async addSubscriber(subscription: ValidSubscription): Promise<AddSubscriberResult> {
     if (this.subscribers.has(subscription.email)) return "already_subscribed";
@@ -24,15 +31,23 @@ export class MemoryStore implements WaitlistStore {
     return this.subscribers.size;
   }
 
-  async incrementScan(iso: string, day: string): Promise<void> {
+  async incrementMarketLoad(iso: string, day: string): Promise<void> {
     const key = `${iso}|${day}`;
-    this.scans.set(key, (this.scans.get(key) ?? 0) + 1);
+    this.loads.set(key, (this.loads.get(key) ?? 0) + 1);
   }
 
-  async scanCounts(): Promise<readonly ScanCount[]> {
-    return [...this.scans.entries()].map(([key, n]) => {
+  async marketLoads(): Promise<readonly MarketLoadCount[]> {
+    return [...this.loads.entries()].map(([key, n]) => {
       const [iso, day] = key.split("|") as [string, string];
       return { iso, day, n };
     });
+  }
+
+  async incrementScanRun(day: string): Promise<void> {
+    this.runs.set(day, (this.runs.get(day) ?? 0) + 1);
+  }
+
+  async scanRuns(): Promise<readonly ScanRunCount[]> {
+    return [...this.runs.entries()].map(([day, n]) => ({ day, n }));
   }
 }

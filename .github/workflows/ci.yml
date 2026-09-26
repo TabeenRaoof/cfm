@@ -20,6 +20,15 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      # The root typecheck covers packages/* only. The scanner app (browser code + operator
+      # scripts) and its Cloudflare Functions each need their own lib/types, so they are checked
+      # separately — apps/scanner's tsconfig once went unrun with 26 real errors in it (D-044).
+      - name: Typecheck scanner app
+        run: npm run -w @cfm/scanner-app typecheck
+
+      - name: Typecheck scanner Functions
+        run: npm run -w @cfm/scanner-app typecheck:functions
+
       - name: Tests
         run: npm test
 

@@ -9,7 +9,14 @@
  * `@cfm/catalog`'s Node entry point separate from its pure one, pointed at a different runtime.
  */
 
-import type { AddSubscriberResult, RemoveSubscriberResult, ScanCount, ValidSubscription, WaitlistStore } from "@cfm/waitlist";
+import type {
+  AddSubscriberResult,
+  MarketLoadCount,
+  RemoveSubscriberResult,
+  ScanRunCount,
+  ValidSubscription,
+  WaitlistStore,
+} from "@cfm/waitlist";
 
 interface SubscriberRow {
   readonly email: string;
@@ -61,7 +68,9 @@ export class D1Store implements WaitlistStore {
     return row?.n ?? 0;
   }
 
-  async incrementScan(iso: string, day: string): Promise<void> {
+  // The table keeps its 0001 name, scan_counts; it has always held per-market slice loads, and a
+  // rename migration would buy nothing but risk. The method name is what says what it counts.
+  async incrementMarketLoad(iso: string, day: string): Promise<void> {
     await this.db
       .prepare(
         `INSERT INTO scan_counts (iso, day, n) VALUES (?, ?, 1)
@@ -71,8 +80,22 @@ export class D1Store implements WaitlistStore {
       .run();
   }
 
-  async scanCounts(): Promise<readonly ScanCount[]> {
-    const { results } = await this.db.prepare(`SELECT iso, day, n FROM scan_counts ORDER BY day, iso`).all<ScanCount>();
+  async marketLoads(): Promise<readonly MarketLoadCount[]> {
+    const { results } = await this.db
+      .prepare(`SELECT iso, day, n FROM scan_counts ORDER BY day, iso`)
+      .all<MarketLoadCount>();
+    return results;
+  }
+
+  async incrementScanRun(day: string): Promise<void> {
+    await this.db
+      .prepare(`INSERT INTO scan_runs (day, n) VALUES (?, 1) ON CONFLICT (day) DO UPDATE SET n = n + 1`)
+      .bind(day)
+      .run();
+  }
+
+  async scanRuns(): Promise<readonly ScanRunCount[]> {
+    const { results } = await this.db.prepare(`SELECT day, n FROM scan_runs ORDER BY day`).all<ScanRunCount>();
     return results;
   }
 }

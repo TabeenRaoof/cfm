@@ -7,13 +7,15 @@
     "build": "node --experimental-strip-types build.ts",
     "build:preview": "node --experimental-strip-types build.ts --include-drafts",
     "serve": "node --experimental-strip-types serve.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "typecheck:functions": "tsc -p functions/tsconfig.json --noEmit",
-    "dev:functions": "wrangler pages dev dist --d1=DB --local",
+    "dev:functions": "wrangler pages dev dist --local",
     "d1:migrate:local": "wrangler d1 migrations apply cfm-waitlist --local",
     "d1:migrate:remote": "wrangler d1 migrations apply cfm-waitlist --remote",
     "waitlist:count": "node --experimental-strip-types scripts/waitlist-count.ts",
     "waitlist:export": "node --experimental-strip-types scripts/waitlist-export.ts",
-    "waitlist:delete": "node --experimental-strip-types scripts/waitlist-delete.ts"
+    "waitlist:delete": "node --experimental-strip-types scripts/waitlist-delete.ts",
+    "waitlist:purge-expired": "node --experimental-strip-types scripts/waitlist-purge-expired.ts"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250101.0",

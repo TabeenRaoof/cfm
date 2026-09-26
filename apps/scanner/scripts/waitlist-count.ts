@@ -1,23 +1,25 @@
 /**
  * `npm run waitlist:count` — `05-interim-waitlist-plan.md` §7. Prints the two Gate 2 numbers
- * (`01-` §10): total waitlist signups, and scans per market by week.
+ * (D-025's revision of `01-` §10: 100 scans or 60 waitlist signups by 20 December 2026):
+ * waitlist signups, and completed scans (D-047). Market slice loads are printed separately and
+ * labelled as such — they show which markets people check, not how many scans ran.
  */
 
 import { runD1 } from "./wrangler-d1.ts";
 
-const totalRow = runD1<{ n: number }>("SELECT COUNT(*) AS n FROM subscriber");
-console.log(`Waitlist signups: ${totalRow[0]?.n ?? 0}`);
+const signups = runD1<{ n: number }>("SELECT COUNT(*) AS n FROM subscriber")[0]?.n ?? 0;
+console.log(`Waitlist signups: ${signups}`);
 
-const scanRows = runD1<{ iso: string; week: string; n: number }>(
-  `SELECT iso, strftime('%Y-W%W', day) AS week, SUM(n) AS n
-   FROM scan_counts GROUP BY iso, week ORDER BY week, iso`,
+const runs = runD1<{ week: string; n: number }>(
+  `SELECT strftime('%Y-W%W', day) AS week, SUM(n) AS n FROM scan_runs GROUP BY week ORDER BY week`,
 );
-console.log(`\nScans by market and week:`);
-if (scanRows.length === 0) {
-  console.log("  (none yet)");
-} else {
-  for (const row of scanRows) console.log(`  ${row.week}  ${row.iso}: ${row.n}`);
-}
+const totalScans = runs.reduce((sum, row) => sum + row.n, 0);
+console.log(`Completed scans: ${totalScans}`);
+for (const row of runs) console.log(`  ${row.week}: ${row.n}`);
 
-const totalScans = scanRows.reduce((sum, row) => sum + row.n, 0);
-console.log(`\nTotal scans: ${totalScans}`);
+const loads = runD1<{ iso: string; n: number }>(
+  `SELECT iso, SUM(n) AS n FROM scan_counts GROUP BY iso ORDER BY n DESC`,
+);
+console.log(`\nMarkets checked (slice loads — not a scan count; one scan can load several):`);
+if (loads.length === 0) console.log("  (none yet)");
+for (const row of loads) console.log(`  ${row.iso}: ${row.n}`);

@@ -14,8 +14,15 @@ import type { ValidSubscription } from "./validate.ts";
 export type AddSubscriberResult = "added" | "already_subscribed";
 export type RemoveSubscriberResult = "removed" | "not_found";
 
-export interface ScanCount {
+/** How often a market's catalog slice was loaded — which markets people check, not how many scans. */
+export interface MarketLoadCount {
   readonly iso: string;
+  readonly day: string; // YYYY-MM-DD, UTC
+  readonly n: number;
+}
+
+/** Completed scans per day — the Gate 2 number (decisions.md D-047). */
+export interface ScanRunCount {
   readonly day: string; // YYYY-MM-DD, UTC
   readonly n: number;
 }
@@ -26,6 +33,12 @@ export interface WaitlistStore {
   removeByEmail(email: string): Promise<RemoveSubscriberResult>;
   listSubscribers(): Promise<readonly ValidSubscription[]>;
   countSubscribers(): Promise<number>;
-  incrementScan(iso: string, day: string): Promise<void>;
-  scanCounts(): Promise<readonly ScanCount[]>;
+  /**
+   * Not a scan count: one scan can load several markets, and the scanner caches slices for the
+   * page's lifetime, so a re-scan loads none. Use `incrementScanRun` for scans.
+   */
+  incrementMarketLoad(iso: string, day: string): Promise<void>;
+  marketLoads(): Promise<readonly MarketLoadCount[]>;
+  incrementScanRun(day: string): Promise<void>;
+  scanRuns(): Promise<readonly ScanRunCount[]>;
 }

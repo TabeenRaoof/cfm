@@ -84,6 +84,17 @@ async function runScan(csvText: string): Promise<void> {
   });
 
   render(report);
+  countScan();
+}
+
+/**
+ * One request per completed scan, so the Gate 2 scan count is one per scan (decisions.md D-047).
+ * The slice fetches above can't serve that purpose: one scan may load several markets, and a
+ * re-scan in the same tab loads none (they're cached). This GET carries nothing — no query, no
+ * body, nothing from the visitor's file — and a failure never affects the scan itself.
+ */
+function countScan(): void {
+  fetch("catalog/index.json", { cache: "no-store" }).catch(() => undefined);
 }
 
 function render(report: ScanReport): void {

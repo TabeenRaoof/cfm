@@ -39,15 +39,20 @@ place obligations quietly disappear.
 
 ## Counting Gate-2 usage
 
-D-021 originally planned to count scans from the static host's own request logs. In practice,
-free-tier static hosts keep few or no request logs, so `05-interim-waitlist-plan.md` amends this
-(D-043 §5 decision 4): `functions/catalog/[iso].ts` counts each `catalog/<ISO>.json` fetch in D1
-before serving the exact same static file unchanged — no client-side tracking, and nothing about
-the visitor's spreadsheet is involved (this fires before the browser has read anything). See
-"Interim waitlist capture" below.
+D-021 originally planned to count scans from the static host's own request logs. Free-tier static
+hosts keep few or no request logs, so the count is kept server-side instead (D-043, D-047), by
+`functions/catalog/[iso].ts`, which adds to a counter and then serves the exact same static file:
 
-That's "≥150 scanner uses". The other half of Gate 2, "≥100 waitlist signups", is the waitlist
-page — see the same section.
+- **Completed scans** — after each scan renders, `src/main.ts` fetches `catalog/index.json` once,
+  with caching off. That request carries nothing (no query, no body, nothing from the file). One
+  fetch = one scan. This is the Gate 2 number.
+- **Market slice loads** — each `catalog/<ISO>.json` fetch. Useful for which markets people check,
+  but **not** a scan count: one scan can load several markets, and slices are cached for the
+  page's lifetime, so a re-scan in the same tab loads none. (The first version counted these as
+  scans — wrong in both directions; D-047.)
+
+Gate 2 (D-025's revision): 100 scans or 60 waitlist signups by 20 December 2026.
+`npm run -w @cfm/scanner-app waitlist:count` prints both.
 
 ## Interim waitlist capture (Cloudflare)
 
@@ -60,7 +65,8 @@ in `../../project-setup/05-interim-waitlist-plan.md`; D-043 in `decisions.md`.
 functions/
   api/subscribe.ts       onRequestPost  — validates, stores, redirects to waitlist-thanks.html
   api/unsubscribe.ts     onRequestGet/Post — GET shows a confirm page, POST removes
-  catalog/[iso].ts       onRequestGet — counts the scan, then falls through to the static file
+  catalog/[iso].ts       onRequestGet — counts a scan (index.json) or a market load (<ISO>.json),
+                         then falls through to the unchanged static file
   lib/store.ts           D1Store implementing @cfm/waitlist's WaitlistStore
 ```
 
@@ -118,6 +124,7 @@ already knows about — never printed by these scripts or anywhere else.
 | `npm run -w @cfm/scanner-app waitlist:count` | Prints total signups and scans by market/week — the two Gate 2 numbers. |
 | `npm run -w @cfm/scanner-app waitlist:export` | Writes a CSV to `apps/scanner/exports/` (gitignored) — importable into MailerLite once the PO box exists, with original consent dates preserved. |
 | `npm run -w @cfm/scanner-app waitlist:delete -- <email>` | Handles an erasure request made by email or letter, rather than through the self-serve unsubscribe link. |
+| `npm run -w @cfm/scanner-app waitlist:purge-expired [-- --confirm]` | Deletes signups older than two years — the mechanism behind the privacy notice's retention promise. Run before each digest. Dry run without `--confirm`. |
 
 ## Known gaps
 
