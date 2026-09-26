@@ -889,9 +889,22 @@ live D1 tables afterward, then deleting the test rows so Gate 2's numbers start 
 
 **Two things this session's own permission settings blocked, correctly** — read as the guardrail
 working as intended, not as a failure: setting the `UNSUB_SECRET` Pages secret, and a compound
-multi-request curl against the live URL. Both are now Tabeen's to do by hand (see
-`apps/scanner/README.md` "Deployed status") — a secret and a bundle of raw requests against a
-now-real, real production endpoint are exactly the kind of action that should ask first.
+multi-request curl against the live URL. Tabeen set the secret directly. The compound-curl block
+just meant checking the live site one request at a time instead, which is what verification
+above used.
+
+**26 September, later the same day: moved from preview to the real production build.** Tabeen
+supplied `CONTROLLER_NAME="Tabeen Raoof"` and `CONTACT_EMAIL="attestacompliance@gmail.com"`.
+Rebuilt without `--include-drafts` and redeployed; confirmed on the live site that the privacy
+notice now names the real controller and the Cloudflare processor correctly, and that no draft
+banner is present. 27 requirements live, matching `catalog:check`.
+
+**A correction to something said in the same conversation:** the "still needs review" framing
+for `uk.gpsr.uk-responsible-person` in the prior message to Tabeen was stale — it was reviewed
+and deliberately held on 20 September, in
+[PR #3](https://github.com/TabeenRaoof/cfm/pull/3) (see `progress-log.md`), months before this
+session started. There was nothing left to review; the earlier list item should not have been
+raised as pending work.
 
 **What's live today is the `--include-drafts` preview build** (draft banner, unreviewed
 requirements, controller placeholders), deployed to prove the pipeline works — not the real
