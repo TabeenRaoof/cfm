@@ -253,4 +253,7 @@ input[type="email"], input[type="text"] { width: 100%; max-width: 380px; padding
 .consent { align-items: flex-start; border-radius: var(--radius); padding: 10px 12px; margin-bottom: 14px; }
 .consent span { font-size: 0.9rem; line-height: 1.45; }
 fieldset[disabled] { opacity: .55; }
+/* Honeypot: off-screen for people, present for form-filling bots. Not display:none — some bots
+   skip fields hidden that way, and this one has to actually be reachable to do its job. */
+.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; margin: 0; }
 .eyebrow a { color: inherit; }

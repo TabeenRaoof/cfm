@@ -831,6 +831,46 @@ fetch would replace it — no client change, no personal data.
 **A correction to what was said in conversation:** the 100-waitlist-by-5-October figure is a
 `01-` §7.4 funnel assumption, not a gate. The waitlist gate is Gate 2, by 15 November.
 
+### D-044 · Interim waitlist capture implemented: `@cfm/waitlist` + Cloudflare Pages Functions + D1(EU)
+**Status:** Implemented, verified locally · **Date:** 26 September 2026
+
+Built `05-interim-waitlist-plan.md` end to end. `@cfm/waitlist` (pure: validation, the D1-store
+interface, an in-memory store for tests, HMAC unsubscribe tokens) plus `apps/scanner/functions`
+(the Cloudflare adapter — `api/subscribe.ts`, `api/unsubscribe.ts`, `catalog/[iso].ts` for the
+D-021 scan-count amendment) and a D1 migration. The five sub-decisions in the plan's §5 were
+taken at their recommended defaults (Cloudflare; no postal address published yet; single opt-in;
+server-side scan counting; a dedicated contact mailbox, not yet created) — reversible, no money
+spent, open to Tabeen overriding any of them.
+
+**A real bug, caught by testing against the actual local runtime rather than trusting the code
+to be right:** `wrangler pages dev dist --d1=DB --local` silently binds to an ad-hoc, unnamed
+local D1 database — separate storage from the one `wrangler d1 execute --local --file=migration`
+had just populated — so every write failed with "no such table: subscriber". Dropping the `--d1`
+flag entirely and letting `wrangler pages dev` read the `[[d1_databases]]` binding from
+`wrangler.toml` fixed it; documented as a named gotcha in `apps/scanner/README.md` so it isn't
+rediscovered.
+
+**Verified against a real local Cloudflare Workers + D1 runtime** (`wrangler pages dev`, no
+account needed for this part): a valid signup is stored once; a duplicate signup from the same
+address changes nothing (`already_subscribed`, original data kept); a honeypot submission gets
+the identical success redirect but is never stored; missing consent and an invalid email each
+redirect back with a reason; an oversized body is refused with 413; a scan of `catalog/DE.json`
+increments its counter and still serves the unmodified file; the unsubscribe link's token is
+rejected when wrong and accepted when right, and a real unsubscribe removes exactly the intended
+row. `@cfm/waitlist` itself: 25 unit tests, plus a deliberate-injection check that a
+`node:crypto` import in it would be caught by a browser-safe guard (none exists — Web Crypto via
+`crypto.subtle` is used instead, which needs no Node/browser split at all, unlike
+`@cfm/supplier-request`'s magic-link tokens).
+
+Also fixed in passing: `apps/scanner/tsconfig.json` had never actually been run — it excluded
+`scripts/**` (there were none yet) and lacked `lib: ["DOM", "DOM.Iterable"]`, so `src/main.ts`'s
+26 real type errors had never surfaced. Both fixed; `npx tsc -p apps/scanner/tsconfig.json
+--noEmit` is now clean.
+
+**Not done, and deliberately not:** creating the actual Cloudflare account, running `wrangler d1
+create --jurisdiction=eu` for real, or deploying — all outward-facing and need Tabeen's login.
+Exact steps are in `apps/scanner/README.md` "Deploying for real".
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.

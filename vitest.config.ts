@@ -21,6 +21,7 @@ export default defineConfig({
       ),
       "@cfm/supplier-request": pkg("supplier-request"),
       "@cfm/evidence": pkg("evidence"),
+      "@cfm/waitlist": pkg("waitlist"),
     },
   },
   test: {

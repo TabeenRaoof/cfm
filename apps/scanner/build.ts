@@ -51,16 +51,38 @@ const includeDrafts = process.argv.includes("--include-drafts");
 const waitlistAction = process.env.WAITLIST_ACTION ?? "";
 
 /**
- * Identity details for the privacy notice. A privacy notice shipped with "[YOUR ADDRESS]" in it
- * is worse than none — it tells every reader the operator was not paying attention — so a
- * production build refuses while any of these is unset. A draft preview is allowed through with
- * a warning, so the page can be read and edited before the details exist.
+ * Which processor's disclosure the privacy notice renders (`05-interim-waitlist-plan.md` §4.4).
+ * "cloudflare" is the interim capture (D-043); "mailerlite" is D-026's eventual platform, once a
+ * PO box exists. A production build with a form action but no declared processor refuses,
+ * because the notice would otherwise describe nobody — worse than describing the wrong one.
+ */
+const waitlistProcessor = process.env.WAITLIST_PROCESSOR ?? "";
+if (waitlistAction && !includeDrafts && waitlistProcessor !== "cloudflare" && waitlistProcessor !== "mailerlite") {
+  throw new Error(
+    `WAITLIST_ACTION is set but WAITLIST_PROCESSOR is not "cloudflare" or "mailerlite". The ` +
+      `privacy notice must name the actual processor — set WAITLIST_PROCESSOR explicitly.`,
+  );
+}
+
+/**
+ * Identity details for the privacy notice. CONTROLLER_NAME and CONTACT_EMAIL are always
+ * required in production — a notice shipped with "[YOUR ADDRESS]"-style placeholders intact is
+ * worse than none, because it tells every reader the operator was not paying attention.
+ * CONTROLLER_ADDRESS is optional (D-043 §5 decision 2): unset, the notice offers the postal
+ * address on request instead of publishing one before the PO box exists. A draft preview is
+ * allowed through with a warning either way, so the page can be read and edited before the
+ * details exist.
  */
 const CONTROLLER = {
   __CONTROLLER_NAME__: process.env.CONTROLLER_NAME ?? "",
   __CONTROLLER_ADDRESS__: process.env.CONTROLLER_ADDRESS ?? "",
   __CONTACT_EMAIL__: process.env.CONTACT_EMAIL ?? "",
 } as const;
+/** Placeholders a production build must never ship unfilled. CONTROLLER_ADDRESS is not one. */
+const CONTROLLER_REQUIRED: readonly (keyof typeof CONTROLLER)[] = [
+  "__CONTROLLER_NAME__",
+  "__CONTACT_EMAIL__",
+];
 
 const WAITLIST_NOT_CONFIGURED = `<div class="banner" role="alert">
   <strong>Not wired up yet.</strong> No email platform has been configured, so this form is
@@ -78,6 +100,37 @@ const DRAFT_BANNER = `<div class="banner" role="alert">
   sources yet. Do not publish this, and do not rely on the result.
 </div>`;
 
+const MAILERLITE_PROCESSOR_SECTION = `<p>
+      We use <strong>MailerLite</strong> to store the list and send the emails. MailerLite, Inc.
+      is established in the United States and stores subscriber data in data centres in the
+      European Union (Germany and the Netherlands). Its data processing agreement forms part of
+      its terms of service and applies to our use of it.
+    </p>
+    <p>
+      Because the provider is established outside the EEA and the UK, your address may be
+      accessible from the United States. That transfer relies on the safeguards in the
+      provider's data processing terms.
+    </p>
+    <p>
+      MailerLite records whether emails are delivered and opened, which we use only to judge
+      whether the digest is worth writing. Our website host serves these pages and sees the
+      ordinary request information described above.
+    </p>`;
+
+const CLOUDFLARE_PROCESSOR_SECTION = `<p>
+      We use <strong>Cloudflare</strong> to host this site and to store the waitlist, in a
+      database created to keep data in the European Union. Cloudflare, Inc. is established in
+      the United States; the database itself runs and stores data only in the EU, though
+      Cloudflare's infrastructure can access it from elsewhere to operate the service.
+    </p>
+    <p>
+      This is an interim arrangement while a dedicated mailing-list provider is set up. We do
+      not currently record whether digest emails are delivered or opened. Digests are sent to
+      each address individually, and every one carries its own working unsubscribe link.
+    </p>`;
+
+const PROCESSOR_NOT_CONFIGURED = `<p><em>No email platform has been configured for this build.
+    This section will name whichever processor actually handles the waitlist once one is set.</em></p>`;
 
 const manifest = JSON.parse(
   await readFile(join(repoRoot, "packages/catalog/catalog.json"), "utf8"),
@@ -145,22 +198,28 @@ let privacy = (await readFile(join(appRoot, "src/privacy.html"), "utf8")).replac
   "__PRIVACY_UPDATED__",
   new Date().toISOString().slice(0, 10),
 );
-const unset = Object.entries(CONTROLLER).filter(([, value]) => value === "");
+
+const missingRequired = CONTROLLER_REQUIRED.filter((token) => CONTROLLER[token] === "");
 for (const [token, value] of Object.entries(CONTROLLER)) {
   privacy = privacy.replaceAll(token, value || token);
 }
-if (unset.length > 0) {
-  const names = unset.map(([token]) => token.replace(/^__|__$/g, "")).join(", ");
+if (missingRequired.length > 0) {
+  const names = missingRequired.map((token) => token.replace(/^__|__$/g, "")).join(", ");
   if (!includeDrafts) {
     throw new Error(
-      `The privacy notice still has unfilled placeholders (${names}). Set CONTROLLER_NAME, ` +
-        `CONTROLLER_ADDRESS and CONTACT_EMAIL at build time — a notice published with its ` +
-        `placeholders intact is worse than none.`,
+      `The privacy notice still has unfilled placeholders (${names}). Set CONTROLLER_NAME and ` +
+        `CONTACT_EMAIL at build time — a notice published with its placeholders intact is worse ` +
+        `than none.`,
     );
   }
-  console.log(`  privacy: ${unset.length} placeholder(s) unfilled — preview only`);
+  console.log(`  privacy: ${missingRequired.length} required placeholder(s) unfilled — preview only`);
 }
+
+privacy = privacy.replace("<!--CONTROLLER_STATEMENT-->", controllerStatement(process.env.CONTROLLER_ADDRESS ?? ""));
+privacy = privacy.replace("<!--PROCESSOR_SECTION-->", processorSection(waitlistProcessor));
 await writeFile(join(dist, "privacy.html"), privacy);
+await cp(join(appRoot, "src/waitlist-thanks.html"), join(dist, "waitlist-thanks.html"));
+await cp(join(appRoot, "src/unsubscribed.html"), join(dist, "unsubscribed.html"));
 
 const waitlist = (await readFile(join(appRoot, "src/waitlist.html"), "utf8")).replace(
   "<!--WAITLIST_FORM-->",
@@ -235,10 +294,36 @@ function waitlistForm(action: string): string {
         <input type="checkbox" name="consent" required>
         <span>Yes, email me the monthly digest and tell me when the product opens. I can unsubscribe at any time.</span>
       </label>
+      <p class="hp-field" aria-hidden="true">
+        <label for="company_website">Leave this field empty</label>
+        <input type="text" id="company_website" name="company_website" tabindex="-1" autocomplete="off">
+      </p>
       <p><button type="submit" class="submit">Send me the digest</button></p>
     </form>`;
 }
 
+
+/**
+ * Renders the "Who is responsible" statement. When CONTROLLER_ADDRESS is unset (D-043 §5
+ * decision 2 — no postal address published before the PO box exists), the address clause is
+ * replaced with an offer to provide it on request, and the required fields still fall back to
+ * their raw placeholder token so an unreviewed preview build is visibly unfinished.
+ */
+function controllerStatement(rawAddress: string): string {
+  const name = CONTROLLER.__CONTROLLER_NAME__ || "__CONTROLLER_NAME__";
+  const email = CONTROLLER.__CONTACT_EMAIL__ || "__CONTACT_EMAIL__";
+  const mailto = `<a href="mailto:${email}">${email}</a>`;
+  const addressClause = rawAddress
+    ? `, ${rawAddress},`
+    : ` (postal address available on request — write to ${mailto})`;
+  return `<p>${name}${addressClause} is the data controller for the waitlist. Questions, or any request below: ${mailto}.</p>`;
+}
+
+function processorSection(processor: string): string {
+  if (processor === "mailerlite") return MAILERLITE_PROCESSOR_SECTION;
+  if (processor === "cloudflare") return CLOUDFLARE_PROCESSOR_SECTION;
+  return PROCESSOR_NOT_CONFIGURED;
+}
 
 function marketCheckbox(market: { iso: string; name: string }): string {
   return (

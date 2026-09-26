@@ -1,0 +1,3 @@
+# Copy to .dev.vars (gitignored) for `npx wrangler pages dev`. Never commit a filled-in copy.
+# In production this is a secret: `npx wrangler pages secret put UNSUB_SECRET`, not this file.
+UNSUB_SECRET=

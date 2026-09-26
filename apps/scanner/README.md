@@ -37,24 +37,86 @@ else, returns a decided `false`. Anything merely undecidable stays in every slic
 slice never changes an answer — narrowing has to be invisible, or the build step becomes a
 place obligations quietly disappear.
 
-## Counting Gate-2 usage without any telemetry
+## Counting Gate-2 usage
 
-There is no analytics in the page, and adding some would trip the privacy check above. It is
-also not needed: **a scan is a fetch of `catalog/<ISO>.json`**, so the static host's own request
-logs count scans by market, with no client-side tracking and no personal data beyond ordinary
-web serving.
+D-021 originally planned to count scans from the static host's own request logs. In practice,
+free-tier static hosts keep few or no request logs, so `05-interim-waitlist-plan.md` amends this
+(D-043 §5 decision 4): `functions/catalog/[iso].ts` counts each `catalog/<ISO>.json` fetch in D1
+before serving the exact same static file unchanged — no client-side tracking, and nothing about
+the visitor's spreadsheet is involved (this fires before the browser has read anything). See
+"Interim waitlist capture" below.
 
-That covers "≥150 scanner uses". The other half of Gate 2 — "≥100 waitlist signups" — needs an
-email capture, which cannot live on this page without breaking its guarantee. It belongs on a
-separate page. Not built yet; see the note in the session summary.
+That's "≥150 scanner uses". The other half of Gate 2, "≥100 waitlist signups", is the waitlist
+page — see the same section.
+
+## Interim waitlist capture (Cloudflare)
+
+MailerLite (D-026) is deferred until a PO box exists — its terms require a postal address in
+every footer. Until then, `waitlist.html`'s form posts same-origin to `/api/subscribe`, a
+Cloudflare Pages Function backed by a D1 database created with `--jurisdiction=eu`. Full design
+in `../../project-setup/05-interim-waitlist-plan.md`; D-043 in `decisions.md`.
+
+```
+functions/
+  api/subscribe.ts       onRequestPost  — validates, stores, redirects to waitlist-thanks.html
+  api/unsubscribe.ts     onRequestGet/Post — GET shows a confirm page, POST removes
+  catalog/[iso].ts       onRequestGet — counts the scan, then falls through to the static file
+  lib/store.ts           D1Store implementing @cfm/waitlist's WaitlistStore
+```
+
+All the deterministic logic (email/consent/honeypot validation, the unsubscribe token) lives in
+`@cfm/waitlist`, tested with no Cloudflare runtime at all. The Functions above are thin: parse
+the request, call the logic, map the result to a response.
+
+### Local development (no Cloudflare account needed)
+
+```bash
+npm run -w @cfm/scanner-app build:preview        # produces dist/
+cp apps/scanner/.dev.vars.example apps/scanner/.dev.vars   # then fill in UNSUB_SECRET
+cd apps/scanner
+npx wrangler d1 execute cfm-waitlist --local --file=migrations/0001_init.sql
+npx wrangler pages dev dist --local
+```
+
+Do **not** add `--d1=DB` to that last command — a real gotcha found while building this: `--d1
+DB` creates an ad-hoc, unnamed local D1 database (separate storage from the one the migration
+was just applied to), so every write 500s with "no such table". Leaving it off lets `wrangler
+pages dev` read the `[[d1_databases]]` binding from `wrangler.toml` — the same named database
+(`cfm-waitlist`) the migration targeted — which is what makes local dev actually work.
+
+### Deploying for real (needs Tabeen's Cloudflare login — not run from here)
+
+```bash
+npx wrangler login
+npx wrangler d1 create cfm-waitlist --jurisdiction=eu   # copy the printed database_id into wrangler.toml
+npx wrangler d1 migrations apply cfm-waitlist --remote
+npx wrangler pages secret put UNSUB_SECRET              # a long random value; never reuse the local dev one
+npx wrangler pages deploy dist --project-name=cfm-scanner
+```
+
+Then set `WAITLIST_ACTION=/api/subscribe` and `WAITLIST_PROCESSOR=cloudflare` for
+`npm run scanner:build` (see "Building for production" below) and redeploy `dist/`.
+
+### Operator scripts
+
+Each shells out to `wrangler d1 execute --remote`, so they need Cloudflare credentials wrangler
+already knows about — never printed by these scripts or anywhere else.
+
+| Script | Does |
+|---|---|
+| `npm run -w @cfm/scanner-app waitlist:count` | Prints total signups and scans by market/week — the two Gate 2 numbers. |
+| `npm run -w @cfm/scanner-app waitlist:export` | Writes a CSV to `apps/scanner/exports/` (gitignored) — importable into MailerLite once the PO box exists, with original consent dates preserved. |
+| `npm run -w @cfm/scanner-app waitlist:delete -- <email>` | Handles an erasure request made by email or letter, rather than through the self-serve unsubscribe link. |
 
 ## Known gaps
 
 - **GB slices to a single requirement.** Correct — no EU requirement applies there — but it
   makes the UK view nearly empty, and the UK requirement is the catalog's least worked-through
   (`confidence: low`). Worth deciding whether to offer GB at launch at all.
-- **Nothing is published**, so only `scanner:preview` builds today. Requirement review is on
-  the critical path to Gate 2.
+- **Nothing is deployed yet.** The Functions above are built and verified against a local
+  `wrangler pages dev` + local D1, but no Cloudflare account has been created — see "Deploying
+  for real" above.
+- **Digest sending is manual** until MailerLite. See `05-interim-waitlist-plan.md` §6.
 
 ## Building for production
 
@@ -64,16 +126,31 @@ Four gates must pass, each verified against a real failing case before being tru
 |---|---|
 | Catalog | no requirement is published — the scanner would tell every seller they are fine |
 | Slices | any offered market resolves to zero requirements |
-| Privacy notice | controller name, address or contact email is still a placeholder |
+| Privacy notice | controller name or contact email is still a placeholder (`CONTROLLER_ADDRESS` is optional — see D-043) |
+| Waitlist processor | `WAITLIST_ACTION` is set but `WAITLIST_PROCESSOR` isn't `cloudflare` or `mailerlite` |
 | Bundle | `app.js` contains any way to transmit the visitor's file |
+
+Interim (Cloudflare, D-043 — see above):
+
+```bash
+CONTROLLER_NAME="…" \
+CONTACT_EMAIL="…" \
+WAITLIST_ACTION="/api/subscribe" \
+WAITLIST_PROCESSOR="cloudflare" \
+  npm run scanner:build
+```
+
+Later (MailerLite, D-026, once the PO box exists):
 
 ```bash
 CONTROLLER_NAME="…" \
 CONTROLLER_ADDRESS="…" \
 CONTACT_EMAIL="…" \
 WAITLIST_ACTION="https://assets.mailerlite.com/jsonp/<account>/forms/<form>/subscribe" \
+WAITLIST_PROCESSOR="mailerlite" \
   npm run scanner:build
 ```
 
-`WAITLIST_ACTION` is the MailerLite hosted-form endpoint (D-026). Unset, the form renders
-visibly disabled rather than discarding addresses.
+`CONTROLLER_ADDRESS` unset renders "postal address available on request" instead of failing the
+build. Unset entirely, `WAITLIST_ACTION` renders the form visibly disabled rather than
+discarding addresses.
