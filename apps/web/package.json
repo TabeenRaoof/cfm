@@ -8,18 +8,32 @@
     "build": "vite build",
     "build:preview": "vite build --mode preview",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "e2e:local": "node --experimental-strip-types scripts/e2e-local.ts"
+    "e2e:local": "node --experimental-strip-types scripts/e2e-local.ts",
+    "typecheck:worker": "tsc -p worker/tsconfig.json --noEmit",
+    "e2e:worker": "vite-node scripts/e2e-worker.ts"
   },
   "dependencies": {
+    "@cfm/ai": "*",
+    "@cfm/catalog": "*",
+    "@cfm/documents": "*",
+    "@cfm/evidence": "*",
+    "@cfm/import": "*",
+    "@cfm/scanner": "*",
+    "@cfm/techfile": "*",
     "@supabase/supabase-js": "^2.117.2",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "unpdf": "^1.8.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260927.1",
     "@electric-sql/pglite": "^0.5.8",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
-    "vite": "^8.3.1"
+    "pdf-lib": "^1.17.1",
+    "vite": "^8.3.1",
+    "vite-node": "^3.2.4",
+    "wrangler": "^4.141.0"
   }
 }

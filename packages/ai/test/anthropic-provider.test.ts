@@ -6,7 +6,8 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { AnthropicProvider, SpendLimitExceededError } from "../src/providers/anthropic.ts";
+import { AnthropicProvider, PDF_TOKENS_PER_PAGE, SpendLimitExceededError } from "../src/providers/anthropic.ts";
+import type { GenerationRequest } from "../src/provider.ts";
 
 function stubClient(create: (params: unknown) => Promise<unknown>) {
   return { messages: { create } };
@@ -186,5 +187,21 @@ describe("content shaping", () => {
         maxOutputTokens: 10,
       }),
     ).rejects.toThrow(/contained no text block/);
+  });
+});
+
+describe("pre-send token estimate", () => {
+  const provider = new AnthropicProvider({ apiKey: "test" });
+  const request = (parts: GenerationRequest["parts"]): GenerationRequest => ({
+    model: "claude-haiku-4-5", system: "", parts, schema: { type: "object" }, maxOutputTokens: 10,
+  });
+
+  it("charges a PDF per page, so a long PDF can't slip under a budget as if it were one page", () => {
+    const bytes = new Uint8Array([1]);
+    const onePage = provider.estimateInputTokens(request([{ type: "pdf", bytes, pages: 1 }]));
+    const fortyPages = provider.estimateInputTokens(request([{ type: "pdf", bytes, pages: 40 }]));
+    expect(fortyPages).toBe(40 * PDF_TOKENS_PER_PAGE);
+    expect(fortyPages).toBeGreaterThan(30_000); // extract_document's budget — refused before sending
+    expect(onePage).toBe(PDF_TOKENS_PER_PAGE);
   });
 });

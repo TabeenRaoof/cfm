@@ -113,6 +113,27 @@ describe("scans with no text layer", () => {
     ).rejects.toThrow(/budget/);
     expect(provider.calls).toHaveLength(0);
   });
+
+  it("send the PDF itself, with its page count, when there is one", async () => {
+    const { gateway, provider } = await build();
+    const pdf = { bytes: new Uint8Array([37, 80, 68, 70]), pages: 2 };
+    await gateway.runTask(extractDocument, input({ textLayer: "", pdf }));
+    expect(provider.calls[0]?.parts).toEqual([{ type: "pdf", bytes: pdf.bytes, pages: 2 }]);
+  });
+
+  it("a long scanned PDF is refused by the budget, priced per page, before anything is sent", async () => {
+    const { gateway, provider } = await build();
+    await expect(
+      gateway.runTask(extractDocument, input({ textLayer: "", pdf: { bytes: new Uint8Array([1]), pages: 40 } })),
+    ).rejects.toThrow(/budget/);
+    expect(provider.calls).toHaveLength(0);
+  });
+
+  it("never sends the PDF when the text layer is usable — text is the cheap path", async () => {
+    const { gateway, provider } = await build();
+    await gateway.runTask(extractDocument, input({ pdf: { bytes: new Uint8Array([1]), pages: 1 } }));
+    expect(provider.calls[0]?.parts.every((p) => p.type === "text")).toBe(true);
+  });
 });
 
 describe("unknown document types", () => {

@@ -19,7 +19,7 @@ are immutable; corrections to them are in `project-setup/03-plan-review.md`.
 
 ```bash
 npm install
-npm test               # 533 tests, including row-level security against the real migrations
+npm test               # 635 tests, including row-level security against the real migrations
 npm run typecheck
 npm run catalog:check  # the requirement publish gate
 npm run smoke          # runs the deterministic path on a bare Node, no build step
@@ -45,7 +45,7 @@ See `tabeen_AGENTS.md` and `packages/catalog/README.md`.
 |---|---|---|
 | `@cfm/catalog` | Requirement catalog and the deterministic evaluator | **Never** |
 | `@cfm/import` | CSV to facts. Where "we were not told" stays distinct from "no" | **Never** |
-| `@cfm/scanner` | The free public scanner: spreadsheet in, gap list out | **Never** |
+| `@cfm/scanner` | The free public scanner: spreadsheet in, gap list out. Its `assessProducts` also drives readiness in `apps/web` | **Never** |
 | `@cfm/techfile` | The per-SKU technical file a seller would hand to an authority | **Never** |
 | `@cfm/channels` | Channel exports — template-driven, plus a neutral export that cannot be wrong | **Never** |
 | `@cfm/documents` | Extraction schemas, deterministic patterns, validators, the confidence gate | **Never** |
@@ -54,4 +54,4 @@ See `tabeen_AGENTS.md` and `packages/catalog/README.md`.
 | `@cfm/evidence` | Links an accepted extraction to the catalog requirement(s) it satisfies, market-scoped | **Never** |
 | `@cfm/waitlist` | Waitlist signup validation, the storage seam, unsubscribe tokens | **Never** |
 | `apps/scanner` | The live public scanner (cfm-scanner.pages.dev): static page, waitlist, privacy notice, Cloudflare Functions + D1 | **Never** |
-| `apps/web` | The logged-in product (Slice B, D-048): React SPA on Cloudflare Pages, Supabase Postgres/Auth/RLS. See its README | Not yet — extraction lands in a later increment |
+| `apps/web` | The logged-in product (Slice B, D-048–D-051): organisations, members, CSV import, documents and evidence, readiness per product × market, technical files. React SPA + one Cloudflare Worker (API, document queue), Supabase Postgres/Auth/RLS | Only to read documents, through `@cfm/ai`, after the deterministic pass |

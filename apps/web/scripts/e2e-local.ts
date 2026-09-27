@@ -112,6 +112,59 @@ try {
   const audit = await alice.client.from("audit_log").select("actor, action, entity").eq("organisation_id", acme).eq("entity", "product");
   check("the product insert is in the audit log with the real actor", !!audit.data?.some((a) => a.actor === alice.id && a.action === "INSERT"));
 
+  // ---- Increment 2 (D-050) ----
+
+  // Import: the exact RPC src/Products.tsx calls, and the response shape it reads
+  const imported = await alice.client.rpc("import_products", {
+    p_organisation_id: acme,
+    p_rows: [
+      { sku: "E2E-1", brand: "Acme", facts: { "rp.name": "EU Rep GmbH" } },
+      { sku: "E2E-2", title: "Toy", is_toy: true, facts: { "rp.name": null } },
+    ],
+  });
+  const counts = (imported.data as { inserted: number; updated: number }[] | null)?.[0];
+  check("import returns [{ inserted, updated }] — 1 new, 1 updated", counts?.inserted === 1 && counts.updated === 1, imported.error?.message ?? JSON.stringify(imported.data));
+  const afterImport = await alice.client.from("product").select("sku, title, brand, is_electrical, facts").eq("organisation_id", acme).eq("sku", "E2E-1");
+  const e2e1 = afterImport.data?.[0] as { title?: string; brand?: string; is_electrical?: boolean; facts?: Record<string, unknown> } | undefined;
+  check(
+    "re-import kept known values (title, electrical) and added new ones (brand, rp.name)",
+    e2e1?.title === "Kettle" && e2e1.is_electrical === true && e2e1.brand === "Acme" && e2e1.facts?.["rp.name"] === "EU Rep GmbH",
+    JSON.stringify(e2e1),
+  );
+  const bobImport = await bob.client.rpc("import_products", { p_organisation_id: acme, p_rows: [{ sku: "PLANTED-2" }] });
+  check("another user cannot import into it", !!bobImport.error, bobImport.error?.message ?? "import was accepted");
+
+  // Organisation details and target markets (src/OrganisationDetails.tsx, src/Readiness.tsx)
+  const details = await alice.client
+    .from("organisation")
+    .update({ facts: { "organisation.vat_number": "GB123", "packaging.lucid_number": null }, target_markets: ["DE", "FR"] })
+    .eq("id", acme)
+    .select("facts, target_markets");
+  const saved = details.data?.[0] as { facts?: Record<string, unknown>; target_markets?: string[] } | undefined;
+  check(
+    "owner saves organisation facts (null kept as null) and target markets",
+    !details.error && saved?.facts?.["packaging.lucid_number"] === null && saved.target_markets?.join() === "DE,FR",
+    details.error?.message,
+  );
+  const derived = await alice.client.from("organisation").update({ facts: { "organisation.established_in_market": true } }).eq("id", acme);
+  check("a derived fact is refused by the database", !!derived.error, derived.error?.message ?? "update was accepted");
+
+  // Invitations: owner invites Bob's address; Bob sees it, accepts, and is in
+  const invited = await alice.client.from("invitation").insert({ organisation_id: acme, email: `bob-${run}@e2e.test`, role: "viewer" });
+  check("owner can invite", !invited.error, invited.error?.message);
+  const pending = await bob.client.rpc("my_invitations");
+  const invitation = (pending.data as { id: string; organisation_name: string }[] | null)?.[0];
+  check("the invitee sees the invitation with the organisation's name", invitation?.organisation_name === `E2E Acme ${run}`, pending.error?.message);
+  const accepted = await bob.client.rpc("accept_invitation", { p_invitation_id: invitation?.id });
+  check("the invitee accepts and gets the organisation id back", accepted.data === acme, accepted.error?.message);
+  const bobNow = await bob.client.from("product").select("sku").eq("organisation_id", acme);
+  check("after accepting, the invitee can read the organisation's products", (bobNow.data?.length ?? 0) >= 2, bobNow.error?.message);
+  const bobWrite = await bob.client.from("product").insert({ organisation_id: acme, sku: "VIEWER-1" });
+  check("…but as a viewer cannot write", bobWrite.error?.code === "42501", bobWrite.error?.message ?? "insert was accepted");
+  const members = await bob.client.rpc("organisation_members", { p_organisation_id: acme });
+  const emails = (members.data as { email: string }[] | null)?.map((m) => m.email).sort();
+  check("members see each other's email addresses", emails?.join() === [`alice-${run}@e2e.test`, `bob-${run}@e2e.test`].sort().join(), members.error?.message);
+
   // Magic link: the exact call src/SignIn.tsx makes, delivered to the local mail catcher
   const magic = await anon.auth.signInWithOtp({ email: `alice-${run}@e2e.test`, options: { emailRedirectTo: "http://localhost:5173" } });
   check("magic-link sign-in request is accepted", !magic.error, magic.error?.message);

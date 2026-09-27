@@ -10,6 +10,7 @@ export default defineConfig({
       "@cfm/catalog/node": fileURLToPath(new URL("./packages/catalog/src/node.ts", import.meta.url)),
       "@cfm/catalog": pkg("catalog"),
       "@cfm/import": pkg("import"),
+      "@cfm/ai/providers/anthropic": fileURLToPath(new URL("./packages/ai/src/providers/anthropic.ts", import.meta.url)),
       "@cfm/ai": pkg("ai"),
       "@cfm/scanner": pkg("scanner"),
       "@cfm/techfile": pkg("techfile"),

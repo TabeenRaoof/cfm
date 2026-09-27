@@ -1107,6 +1107,214 @@ Also fixed: the root README never listed `@cfm/waitlist` — documentation drift
 4. then document upload (R2), extraction via Queues + `@cfm/ai`, evidence linking and
    technical-file export
 
+---
+
+### D-050 · Slice B increment 2: facts storage, invitations, CSV import, and readiness
+**Status:** Implemented · **Date:** 26 September 2026 · **Builds on:** D-049
+
+**Facts are stored so "unknown" and "none" stay different.** The catalog reads a flat bag of
+fact paths: an absent key means unknown, `null` means "we know there is none". Typed nullable
+columns can only hold one of those states, so migration 0002 adds `product.facts` and
+`organisation.facts` (jsonb) for everything the catalog reads beyond the typed columns. A
+`CHECK` constraint keeps each bag scoped: product, manufacturer and rp facts on products;
+organisation and packaging facts on organisations. It also refuses:
+- a key that duplicates a typed column, which stays the only source of truth for its path
+- a key the catalog derives itself, which the evaluator would silently ignore
+- nested values
+
+The one lossy case: the importer's "none" for a typed fact is stored as `NULL` and so reads as
+unknown. That's the conservative direction (unknown is never ready and never "not applicable")
+and it's tested as documented behaviour. `country_of_origin` is renamed `manufacturer_country`
+after the fact it actually holds.
+
+**Invitations.** Owners and admins invite an address with a role; the owner role is never
+invited. The invitee accepts by signing in with that address. There's no token to leak: signing
+in by magic link proves the address, and acceptance also requires `email_confirmed_at`, so it
+holds even if another sign-in method is enabled later. Invitations can't be spoofed
+(`invited_by` and `expires_at` aren't grantable) and can't change an existing member's role.
+Invitation emails wait for the mail domain; until then the inviter tells the invitee to sign in.
+
+**Import.** `import_products` runs with the caller's rights (RLS decides who can import) and is
+all-or-nothing. A blank cell never erases a known value (`COALESCE` for columns, jsonb `||` for
+facts), while a value in the sheet does replace the old one. A repeated SKU or more than 5,000
+rows refuses the whole file.
+
+**Readiness uses the scanner's own logic.** `@cfm/scanner` now exports `assessProducts` (the
+scanner's per-product, per-market assessment over facts from any source), and `scan()` calls it.
+Scanner output is unchanged; its 76 tests and the scanner's privacy check still pass. The app
+runs `assessProducts` over stored facts against the published catalog, bundled at build time with
+drafts excluded. `test/readiness.test.ts` asserts identical statuses and identical "answer these
+first" questions for every product and market from the same CSV, scanned versus imported and
+stored. Readiness is computed in the browser and never stored. The organisation-details form is
+generated from the catalog: each organisation-level fact a published requirement reads, typed by
+how the requirement uses it (a `true`/`false` match means yes/no, `gt`/`gte` means a number).
+
+**Verified:**
+- **Automated tests:** 581 in total, 74 of them for this app. Seven deliberate breaks were each
+  caught and reverted:
+  - an import that overwrites with blanks
+  - an import that replaces facts instead of merging
+  - accepting an invitation without a confirmed email
+  - accepting someone else's invitation
+  - an import that bypasses RLS
+  - facts shadowing typed columns
+  - the app dropping stored facts; three tests caught this, including the scanner-equivalence one
+- **End-to-end:** 23 checks against real local Supabase, with both migrations applied from
+  scratch:
+  - the import's exact response shape and merge behaviour
+  - organisation facts and target markets saving
+  - a derived fact refused
+  - invite → the invitee sees it → accepts → reads but, as a viewer, can't write
+  - members' email addresses visible to fellow members
+
+**Not verified:** the screens haven't been clicked through in a browser. The code typechecks, the
+production build succeeds, and the end-to-end script makes the same calls each screen makes, but
+rendering and interaction are untested until a browser session or automated UI tests exist.
+
+**Also fixed:** `apps/scanner` never declared its dependency on `@cfm/waitlist`, so the package
+wasn't linked into `node_modules` at all. It only worked because wrangler resolved it through
+tsconfig paths. It's now declared and linked, and `apps/web` declares its own workspace
+dependencies.
+
+---
+
+### D-051 · Slice B increment 3: documents, extraction, evidence, and the technical file
+**Status:** Implemented, verified locally · **Date:** 26 September 2026 · **Builds on:** D-048–D-050
+
+This is the half of Slice B that turns "outstanding" into "met". A seller uploads an RP mandate
+or EPR certificate. It's stored, read (deterministic first, then the model only for what's left),
+gated, linked to the requirements it satisfies, and counted in readiness. The technical file
+downloads per product and market.
+
+**Four changes to earlier decisions:**
+
+1. **The web app is one Cloudflare Worker with static assets, not a Pages project (amends D-048
+   §1).** A Pages project can't consume a Queue. A Worker can serve the SPA, the `/api` routes
+   and the queue consumer from one deployable. Same vendor and same $5/month plan; it's also what
+   Cloudflare now recommends over Pages.
+2. **Readiness stays computed live, never stored (revises D-050's "persisted assessments arrive
+   with evidence").** A stored assessment goes stale the moment facts change. A live one can't be
+   forged as long as its inputs can't be. So the inputs that make a cell "met" are rows no client
+   can write: `document` and `extraction` are read-only to every client (migration 0003).
+   Persisting assessments waits for something that needs them, such as expiry alerts or history.
+3. **The uploader declares the document type; there's no classification call.** The person
+   holding the document is the cheapest reliable source of what it is. A wrong declaration fails
+   the extraction gate and comes back for review; it never becomes evidence.
+4. **Scans go to the model as the PDF itself, not as rendered pages.** Rendering needs a native
+   library the Workers runtime doesn't have, and the provider reads PDFs directly.
+
+**A real budget bug, found before it could cost anything.** The Anthropic adapter estimated every
+non-text part at a flat 1,600 tokens. A 40-page PDF passed `extract_document`'s 30,000-token
+budget as if it were one page. It's now priced per page. I first set 3,000 from memory, then
+checked Anthropic's current PDF documentation: 1,500–3,000 tokens of text per page *plus* the
+page image at vision rates. So it's now 5,000 per page. That puts the practical limit for a scan
+with no text layer at about five pages, which is plenty for 1–3 page mandates and certificates.
+PDFs with a text layer only send their text.
+
+**Who wrote what, in the audit log.** The Worker holds the service role but never writes the
+tables directly. It calls four functions only the service role can execute:
+- `register_document`
+- `delete_document`
+- `record_extraction`
+- `set_document_status`
+
+Each re-checks the acting user's role in the database, independently of the Worker's own check,
+and records that verified user as the audit actor. So the log names who uploaded, deleted or
+reviewed a document, not "the system". The pipeline's own extraction is logged as the system,
+which is what it is.
+
+**What else holds:**
+- **One organisation per link.** Links between documents and products stay within one
+  organisation via composite foreign keys, even for someone who belongs to two.
+- **Content decides type.** The file type is read from the file's first bytes; the browser's
+  label is ignored.
+- **Files are addressed by content.** Storage keys are organisation/sha256, and the same file
+  twice is one document.
+- **Queue safety.** A message delivered twice doesn't pay for a second model call. A provider
+  error retries, then marks the document failed after three attempts. A document too long for
+  the budget goes to review with no model call.
+- **Human review has no shortcut.** It passes the same validators and gate as extraction.
+- **Uploads are off by default.** Uploads are refused unless `UPLOADS_ENABLED=true`, which is
+  D-013's gate in code: the first real document can't arrive before its paperwork does.
+- **Spend cap.** The adapter caps spend at $0.10 per document, behind the task's token budget
+  and the account-level limit.
+- **Details as facts.** "Use these details" proposes the facts a document states that a
+  requirement also asks for as data. It's derived from the catalog, so a German LUCID number can
+  only fill Germany's field, never France's or the EU-wide PPWR one. The seller applies them;
+  nothing is copied silently.
+
+**Verified:**
+- **635 automated tests:** 12 on the documents schema and service-only functions, 12 on
+  processing, 8 on evidence, 8 on upload checks, 3 on the Worker boundary, and 3 on scanned
+  PDFs and budgets. Nine breaks were planted and each was caught:
+  - removing the redelivery guard
+  - sending the PDF when its text layer is usable
+  - storing a rejected human review
+  - importing the fake provider into the production Worker
+  - importing a provider SDK in app code (the provider boundary test now covers `apps/` too)
+  - removing content-type sniffing (caught by the end-to-end run)
+  - three earlier database breaks
+- **The definition of done, proven on the real catalog.** The EU responsible-person requirement
+  goes `missing` → `met` only with both the accepted mandate and its applied details. Neither
+  alone reaches `met`.
+- **24 end-to-end checks** (`npm run -w @cfm/web e2e:worker`) ran against the real Worker under
+  `wrangler dev` (local R2 and Queue) and the three migrations on local Supabase, with a fake
+  provider:
+  - upload → queue → accepted
+  - the extraction used the pattern for the date and the model for the rest
+  - audit actors correct
+  - byte-exact download
+  - an outsider gets 404
+  - duplicate → 409, viewer → 403, disguised script → 415
+  - an unreadable photo → review → an impossible date gets 422, a valid review is accepted and
+    stored as human-sourced
+  - "partial" → "met" through the same code the screens use
+  - viewer delete → 403, owner delete → 204, file gone, deleter in the audit log
+- **Bundle sizes:** the Worker is 824 KB gzipped (free-plan limit 3 MB); the app is 164 KB
+  gzipped.
+
+**Not verified:**
+- the screens in a browser (same gap as D-050)
+- a real model call through the deployed Worker
+- anything deployed. The Worker needs the Supabase project, the domain, an R2 bucket and a
+  Queue, created with Tabeen's accounts, and uploads stay off until D-013 is done.
+
+---
+
+### D-052 · The EU Supabase project exists, and the migrations are applied
+**Status:** Done · **Date:** 27 September 2026 · **Builds on:** D-048
+
+Tabeen logged in to Supabase. The account already had one project, "attestacompliance@gmail.com's
+Project", created 27 September in **us-west-2 (Oregon)**. That contradicts the EU-hosting commitment
+in D-048, the plan's GDPR section and the privacy notice. A Supabase project can't change region
+after creation, so it was not linked or used.
+
+Created instead: **`cfm-web`** (ref `qsqhcithnqanqzvsfyez`), free plan, **eu-central-1
+(Frankfurt)** — the plan's region. Its database password was generated locally and written straight
+to the gitignored `.env.local` as `SUPABASE_DB_PASSWORD`, never printed. The repo is linked
+(`supabase link`). Migrations 0001–0003 were applied with `supabase db push`, after a dry run
+showed exactly those three.
+
+Checked on the hosted database: an anonymous request with the publishable key gets `permission
+denied for table organisation`. The revoked default grants hold on hosted Supabase, not only
+locally.
+
+**A process note, stated rather than hidden:** the migrations came from PRs #10–#12, which Tabeen
+hasn't reviewed yet. The live database is therefore ahead of `main` — the same gap D-047 closed for
+the scanner. Low risk: the database is empty and has no users. Any change from review becomes a
+new migration; applied migrations are never edited.
+
+**Checked while setting up (26–27 September):**
+- Cloudflare Queues is on the Workers free plan since February 2026, at 10,000 operations a day.
+- R2 needs a payment method on file to be enabled, even inside its free 10 GB tier.
+- Neither needs the $5 Workers Paid plan at this scale.
+
+**Open, and Tabeen's:**
+- Delete the empty us-west-2 project. It holds one of the free plan's two project slots, and an
+  unused US-region project is a standing chance of someone connecting to the wrong one.
+- Add a payment method so R2 can be enabled.
+- The neutral domain, and D-013's paperwork, as before.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.

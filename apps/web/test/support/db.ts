@@ -21,7 +21,7 @@ const SUPABASE_SHIM = `
   create role service_role nologin bypassrls;
   create schema auth;
   grant usage on schema auth to anon, authenticated, service_role;
-  create table auth.users (id uuid primary key, email text);
+  create table auth.users (id uuid primary key, email text, email_confirmed_at timestamptz);
   create function auth.uid() returns uuid language sql stable as $$
     select coalesce(
       nullif(current_setting('request.jwt.claim.sub', true), ''),
@@ -39,8 +39,18 @@ export async function createDatabase(): Promise<PGlite> {
   return db;
 }
 
-export async function createUser(db: PGlite, id: string, email: string): Promise<void> {
-  await db.query("insert into auth.users (id, email) values ($1, $2)", [id, email]);
+/** Confirmed by default — a magic-link sign-in confirms the address, which is the normal case. */
+export async function createUser(
+  db: PGlite,
+  id: string,
+  email: string,
+  options: { readonly confirmed?: boolean } = {},
+): Promise<void> {
+  await db.query("insert into auth.users (id, email, email_confirmed_at) values ($1, $2, $3)", [
+    id,
+    email,
+    options.confirmed === false ? null : new Date().toISOString(),
+  ]);
 }
 
 type Who = { readonly role: "anon" } | { readonly role: "authenticated"; readonly userId: string };

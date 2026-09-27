@@ -1,0 +1,33 @@
+# LOCAL END-TO-END ONLY (npm run -w @cfm/web e2e:worker). Same Worker, fake AI provider
+# (worker/index.e2e.ts), local R2 and Queue, pointed at the local Supabase stack. Never deployed.
+
+name = "cfm-web-e2e"
+main = "worker/index.e2e.ts"
+compatibility_date = "2026-09-26"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+[[r2_buckets]]
+binding = "DOCS"
+bucket_name = "cfm-documents-e2e"
+
+[[queues.producers]]
+binding = "DOC_QUEUE"
+queue = "cfm-documents-e2e"
+
+[[queues.consumers]]
+queue = "cfm-documents-e2e"
+max_batch_size = 1
+max_retries = 4
+max_batch_timeout = 1
+
+[vars]
+UPLOADS_ENABLED = "true"
+EXTRACT_MODEL = "fake-model"
+SUPABASE_URL = "http://127.0.0.1:54321"
+# SUPABASE_PUBLISHABLE_KEY / SUPABASE_SECRET_KEY: passed by scripts/e2e-worker.ts from `supabase status`.

@@ -30,6 +30,9 @@
       "@cfm/ai": [
         "packages/ai/src/index.ts"
       ],
+      "@cfm/ai/providers/anthropic": [
+        "packages/ai/src/providers/anthropic.ts"
+      ],
       "@cfm/catalog/node": [
         "packages/catalog/src/node.ts"
       ],

@@ -19,6 +19,15 @@ import type {
 } from "../provider.ts";
 
 /**
+ * Per-page PDF cost for the pre-send budget check. Anthropic's PDF guidance (verified 2026-09-26,
+ * platform.claude.com/docs/en/build-with-claude/pdf-support): each page is converted to an image
+ * AND its text extracted — "1,500–3,000 tokens per page" for the text, plus the page image at
+ * vision rates (~1,600 for a typical page). 5,000 covers the top of the text range plus the image.
+ * An over-estimate only refuses sooner; an under-estimate lets a long PDF past the budget.
+ */
+export const PDF_TOKENS_PER_PAGE = 5_000;
+
+/**
  * Capability profiles for the models this product actually routes to (`02-` §6.3):
  * classification on Haiku 4.5, extraction on Sonnet 5. Verified 2026-09-19.
  *
@@ -122,7 +131,10 @@ export class AnthropicProvider implements Provider {
     let total = 0;
     for (const part of request.parts) {
       if (part.type === "text") total += Math.ceil(part.text.length / 4);
-      else total += 1_600; // a rendered page, roughly, per Anthropic's own vision-token guidance
+      // A PDF is billed per page (text + image — see PDF_TOKENS_PER_PAGE). The previous flat
+      // 1,600 per part let a 40-page PDF through a 30K budget as if it were one page (D-051).
+      else if (part.type === "pdf") total += part.pages * PDF_TOKENS_PER_PAGE;
+      else total += 1_600; // one image, roughly, per Anthropic's own vision-token guidance
     }
     return total + Math.ceil(request.system.length / 4);
   }
