@@ -13,8 +13,20 @@
 
 import react from "@vitejs/plugin-react";
 import { defineConfig, loadEnv, type Plugin } from "vite";
+import { AUTH_EMAIL_SENDERS } from "./src/legal/senders.ts";
 
-const REQUIRED = ["VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLISHABLE_KEY"] as const;
+/**
+ * A production build also refuses without the controller's name and contact email — the privacy
+ * policy and DPA must never ship with a blank where the controller belongs (D-053) — and without
+ * a sign-in email sender whose processor text exists (src/legal/senders.ts).
+ */
+const REQUIRED = [
+  "VITE_SUPABASE_URL",
+  "VITE_SUPABASE_PUBLISHABLE_KEY",
+  "VITE_CONTROLLER_NAME",
+  "VITE_CONTACT_EMAIL",
+  "VITE_AUTH_EMAIL_SENDER",
+] as const;
 
 const SECRET_PATTERNS: readonly (readonly [RegExp, string])[] = [
   [/sk-ant-[A-Za-z0-9_-]{8,}/, "an Anthropic API key"],
@@ -46,6 +58,13 @@ export default defineConfig(({ command, mode }) => {
       throw new Error(
         `Production build needs ${missing.join(" and ")} — set them in the environment (see ` +
           `.env.example). Use \`npm run build:preview\` for a build that renders "not configured".`,
+      );
+    }
+    const sender = env.VITE_AUTH_EMAIL_SENDER ?? "";
+    if (!(AUTH_EMAIL_SENDERS as readonly string[]).includes(sender)) {
+      throw new Error(
+        `VITE_AUTH_EMAIL_SENDER is "${sender}", which the privacy policy and DPA don't describe ` +
+          `(known: ${AUTH_EMAIL_SENDERS.join(", ")}). Add its processor text to src/legal/ first.`,
       );
     }
   }

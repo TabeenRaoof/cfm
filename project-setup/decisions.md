@@ -1315,6 +1315,55 @@ new migration; applied migrations are never edited.
 - Add a payment method so R2 can be enabled.
 - The neutral domain, and D-013's paperwork, as before.
 
+---
+
+### D-053 · D-013's four artefacts are drafted; the audit log blocks erasure
+**Status:** Drafted — awaiting legal review and Tabeen's decision on the audit log · **Date:** 27 September 2026 · **Builds on:** D-013, D-005, D-043
+
+The four documents D-013 requires before the first real upload are drafted, indexed in
+`legal/README.md`:
+
+- **Privacy policy** at `/privacy` and **customer DPA** at `/dpa` — public routes in the web app,
+  chosen before the sign-in check, served by the Worker's existing SPA fallback. They share one
+  sub-processor list and one controller identity, so they cannot disagree. Both carry a "draft,
+  not yet in force" banner until `IN_FORCE` is set in `apps/web/src/legal/identity.ts`.
+- **Design partner agreement** — a template in `legal/`, with liability and governing law left
+  for the reviewer.
+- **Deletion procedure** — an internal, manual runbook in `legal/`.
+
+**Guards, each proven against a real injected violation:**
+- A production build refuses without `VITE_CONTROLLER_NAME`, `VITE_CONTACT_EMAIL` and
+  `VITE_AUTH_EMAIL_SENDER` — the scanner's "no blank where the controller belongs" rule (D-043),
+  carried over. The sender must be one `src/legal/senders.ts` has processor text for; `resend` is
+  refused today. Values (already public on the scanner) are in `.env.production`.
+- `apps/web/test/legal.test.ts` fails when a migration adds a table the privacy policy does not
+  account for (tested with an injected `supplier_contact` table), or when either page drops a
+  sub-processor (tested by removing the DPA's table).
+
+**Vendor facts re-verified today** against vendors' own documentation, as D-029 required:
+Anthropic still has no EU option (`inference_geo` is `global` or `us`; workspace data at rest is
+US-only); inputs and outputs are deleted within 30 days (two years if flagged for a usage-policy
+violation) and not used for training; its DPA includes the SCCs and UK addendum. Cloudflare's DPA
+includes the SCCs and UK addendum and gives 30 days' notice of new sub-processors. Supabase's DPA
+includes the SCCs. Supabase's free plan has no automatic backups (Pro: 7 days).
+
+**Two findings that block uploads, beyond legal review:**
+
+1. **The audit log makes erasure impossible, and contradicts D-005.** `private.audit()` stores
+   full `before`/`after` row copies — responsible persons' names and addresses, invitation
+   emails, extracted fields — and the append-only trigger refuses deletion by every role. D-005
+   decided "events and hashes, never content"; the implementation drifted. Options and a
+   recommendation (bring it in line with D-005: record which columns changed, never values) are
+   in `legal/deletion-procedure.md`. **Tabeen's decision.**
+2. **Supabase's built-in email reaches only the project's own team** (2 an hour, no SLA), so
+   design partners cannot sign in. A real sender (D-013 names Resend) must be chosen, its DPA
+   verified, and its text added to `senders.ts` before invitations go out.
+
+Also flagged for the lawyer (full list in `legal/README.md`): whether an Article 27 EU/UK
+representative is needed, since the controller is an individual outside the UK and EU; and
+whether incorporating the SCCs by reference in a click-through DPA covers the transfer that
+creates.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.

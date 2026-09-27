@@ -83,3 +83,12 @@ details summary { cursor: pointer; }
 .status-failed { color: var(--bad); border-color: var(--bad); }
 .status-queued, .status-processing { color: var(--muted); }
 .doc-actions { margin: 8px 0 0; }
+
+/* Legal pages: /privacy and /dpa, public */
+.page.legal { max-width: 760px; line-height: 1.6; }
+.legal h2 { margin-top: 32px; }
+.legal td, .legal tbody th { white-space: normal; vertical-align: top; min-width: 140px; }
+.legal-nav { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
+.legal-footer { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 24px; font-size: 0.8125rem; }
+.legal dt { font-weight: 600; margin-top: 12px; }
+.legal dd { margin-left: 0; }

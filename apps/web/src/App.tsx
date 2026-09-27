@@ -1,10 +1,23 @@
 import type { Session } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
+import { Dpa } from "./legal/Dpa.tsx";
+import { PrivacyPolicy } from "./legal/PrivacyPolicy.tsx";
 import { supabase } from "./lib/supabase.ts";
 import { SignIn } from "./SignIn.tsx";
 import { Workspace } from "./Workspace.tsx";
 
+/**
+ * The legal pages are public and need neither sign-in nor Supabase, so they are chosen before
+ * either. The Worker's SPA fallback serves index.html at /privacy and /dpa (wrangler.toml).
+ */
 export function App() {
+  const path = window.location.pathname.replace(/\/+$/, "");
+  if (path === "/privacy") return <PrivacyPolicy />;
+  if (path === "/dpa") return <Dpa />;
+  return <SignedIn />;
+}
+
+function SignedIn() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
