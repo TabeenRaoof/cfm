@@ -52,9 +52,13 @@ paid plans, you choose whether to move to one, on terms we will send you before 
    authorised representative, notified body or other economic operator under any product law.
    You remain responsible for your products' compliance and for keeping the records the law
    requires of you (including GPSR's ten-year retention).
-2. It is early software. It may change, be unavailable, or contain errors. Keep your own copies
+2. Readiness results, requirement lists and fields read from your documents are aids, not
+   determinations. Confirm each one independently — against the cited source and, where it
+   matters, with your own adviser — before relying on it to list, label, sell or submit anything
+   to an authority or marketplace. We do not guarantee that the catalog is complete or current.
+3. It is early software. It may change, be unavailable, or contain errors. Keep your own copies
    of your original documents.
-3. *Reviewer:* warranty disclaimer wording.
+4. *Reviewer:* warranty disclaimer wording.
 
 ## 6. Confidentiality
 

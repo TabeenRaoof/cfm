@@ -369,7 +369,8 @@ parallel without competing for them. Full arithmetic in `04-capacity-replan.md`.
 Gate 1 and Gate 2 collapse into one activity: answering seller questions in forums produces the
 interviews, the scanner uses, and the catalog roadmap from the same hour. Gates move in time,
 not in ratio: 8 conversations by 2 Nov; 100 scans or 60 waitlist by 20 Dec; 5 paying by 28 Feb.
-The 12 December charging date is fixed by OPT and does not move.
+The 12 December charging date is fixed by OPT and does not move. *(Superseded by D-046: the
+I-765 requests 4 January 2027, and the real trigger is the approved EAD's start date.)*
 
 **Addendum, 19 September 2026:** no warm UK/EU contacts exist (Q-4, now closed). Forum and
 community engagement is therefore the only discovery channel available, not one of several —
@@ -1407,6 +1408,56 @@ needs per-person erasure without closing.
 
 **Next, Tabeen's:** after merge, apply the migration to the live database (`supabase db push`,
 dry run first). The live database has no customers, so nothing is at stake in the change.
+
+---
+
+### D-055 · Two external reviews of PR #14 and the catalog: what changed, what was corrected
+**Status:** Recorded · **Date:** 27 September 2026 · **Builds on:** D-053, D-054
+
+Tabeen brought back two reviews: an architecture/compliance review of PR #14, and a regulatory
+"online review" of the catalog. Each claim was checked against the repo, the live services, or
+the source before acting.
+
+**Acted on:**
+- **Design partner agreement §5.2:** readiness results, requirement lists and extracted fields
+  are aids, not determinations. The partner confirms each independently before relying on it,
+  and there's no guarantee the catalog is complete or current. (The Readiness screen already says
+  "not legal advice or certification — check it against your own situation".)
+
+**Already done:** organisation erasure (D-054). The first review's recommendation matches it.
+
+**Verified live, as the first review asked:** Supabase `cfm-web` is in eu-central-1 (Frankfurt),
+the only project. R2 `cfm-documents` is in the EU jurisdiction (location EEUR, 0 objects).
+
+**Corrected, not adopted:**
+- **OPT date.** Both reviews use `01-`'s 12 December 2026. That was superseded by D-046: the
+  I-765 requests 4 January 2027, and the real trigger is the approved EAD's start date. D-025's
+  "does not move" sentence now points to D-046.
+- **The sign-in email limit is not an immigration safeguard.** It blocks the unpaid
+  design-partner testing that *is* allowed now, and it disappears the moment a real sender is
+  configured. What keeps the project non-commercial is that no billing exists (no Paddle, no
+  invoicing). The email sender stays a pre-upload item (`legal/README.md`); when to switch it on
+  is Tabeen's call.
+- **"Product Regulation and Governance Act 2025"** — the second review's name is wrong. It is the
+  Product Regulation and Metrology Act 2025, as the catalog already says. Its substantive point
+  stands: `uk.gpsr.uk-responsible-person` is held in `draft` at low confidence, because no blanket
+  UK responsible-person duty exists for general consumer goods yet.
+- **PPWR "no grace period"** — the second review calls `01-`'s phrase "completely accurate".
+  It isn't quite. The obligation applies from 12 August 2026. But national registers under
+  Art. 44 are due 18 months after the Art. 44(14) implementing act comes into force. That act was
+  still a Commission draft on 10 August 2026 (packaging-journal.de, citing the draft's own
+  "neither adopted nor endorsed" notice), and a separate tracker reported it unadopted on
+  31 August 2026. Both are secondary sources; the adopted act, if any, is not yet on EUR-Lex. The catalog's timing-risk
+  note on `eu.ppwr.producer-registration` stands. Don't repeat "no grace period" in customer copy.
+  Nothing customer-facing uses it today (checked).
+
+**Confirmed, no change:** DSA Art. 30 — the catalog entry was already checked against the full
+text on 20 September. GPSR's ten-year technical-documentation duty sits with the economic
+operator (D-006), and the GDPR Art. 17(3)(b) legal-obligation exemption belongs to the
+controller, not to CFM.
+
+**Neither review cites a source.** They are useful as checklists, not as verification. The
+catalog's standard stays primary legal text.
 
 ## Open questions
 
