@@ -155,3 +155,65 @@ describe("linking documents to products", () => {
     expect(entities.rows.map((r) => r.entity)).toEqual(["document", "document_product", "extraction"]);
   });
 });
+
+describe("the Worker's write functions", () => {
+  const register = (actor: string, org: string, sha: string, products: string[] = []) =>
+    db.query<{ id: string }>(
+      `select public.register_document($1, $2::uuid, 'epr_certificate', 'cert.pdf', 'application/pdf', 2048, $3, $2::text || '/' || $3, $4::uuid[]) as id`,
+      [actor, org, sha, products],
+    );
+
+  it("no client can call them — not even an owner", async () => {
+    await expect(as(db, user(OWNER), (tx) =>
+      tx.query(`select public.register_document($1, $2::uuid, 'epr_certificate', 'x.pdf', 'application/pdf', 1, $3, $2::text || '/x', '{}')`, [OWNER, acme, "1".repeat(64)]),
+    )).rejects.toThrow(/permission denied/);
+    await expect(as(db, user(OWNER), (tx) => tx.query("select public.delete_document($1, $2)", [OWNER, acmeDoc]))).rejects.toThrow(/permission denied/);
+    await expect(as(db, user(OWNER), (tx) => tx.query("select public.record_extraction(null, '{}'::jsonb, 'accepted')"))).rejects.toThrow(/permission denied/);
+  });
+
+  it("register_document refuses an actor who can't upload to that organisation, even from the service role", async () => {
+    await expect(register(VIEWER, acme, "2".repeat(64))).rejects.toThrow(/not permitted/);
+    await expect(register(BETA_OWNER, acme, "3".repeat(64))).rejects.toThrow(/not permitted/);
+  });
+
+  it("register_document records the uploader, the product links, and the real actor in the audit log", async () => {
+    const id = (await register(MEMBER, acme, "4".repeat(64), [acmeProduct])).rows[0]!.id;
+    const doc = await db.query<{ uploaded_by: string }>("select uploaded_by from public.document where id = $1", [id]);
+    const links = await db.query("select 1 from public.document_product where document_id = $1", [id]);
+    const audit = await db.query<{ actor: string }>("select actor from public.audit_log where entity = 'document' and entity_id = $1 and action = 'INSERT'", [id]);
+    expect(doc.rows[0]?.uploaded_by).toBe(MEMBER);
+    expect(links.rows).toHaveLength(1);
+    expect(audit.rows[0]?.actor).toBe(MEMBER);
+  });
+
+  it("register_document can't link another organisation's product", async () => {
+    await expect(register(BOTH, acme, "5".repeat(64), [betaProduct])).rejects.toThrow(/foreign key/);
+  });
+
+  it("delete_document needs owner or admin, returns the storage key, and logs who deleted", async () => {
+    const id = (await register(MEMBER, acme, "6".repeat(64))).rows[0]!.id;
+    await expect(db.query("select public.delete_document($1, $2)", [MEMBER, id])).rejects.toThrow(/not permitted/);
+    const key = await db.query<{ key: string }>("select public.delete_document($1, $2) as key", [OWNER, id]);
+    expect(key.rows[0]?.key).toBe(`${acme}/${"6".repeat(64)}`);
+    const audit = await db.query<{ actor: string }>("select actor from public.audit_log where entity = 'document' and entity_id = $1 and action = 'DELETE'", [id]);
+    expect(audit.rows[0]?.actor).toBe(OWNER);
+  });
+
+  it("record_extraction stores a human review under the reviewer and moves the status in the same step", async () => {
+    await db.query("select public.record_extraction($1, $2::jsonb, 'accepted')", [MEMBER, JSON.stringify({
+      document_id: acmeDoc, organisation_id: acme, doc_type: "rp_mandate", decision: "accept",
+      verdict: { decision: "accept", fields: [] }, source: "human", reviewed_by: MEMBER, used_model: false,
+    })]);
+    const status = await db.query<{ status: string }>("select status from public.document where id = $1", [acmeDoc]);
+    const audit = await db.query<{ actor: string }>("select actor from public.audit_log where entity = 'extraction' and action = 'INSERT' order by id desc limit 1");
+    expect(status.rows[0]?.status).toBe("accepted");
+    expect(audit.rows[0]?.actor).toBe(MEMBER);
+  });
+
+  it("record_extraction refuses a human review from someone who isn't a member+", async () => {
+    await expect(db.query("select public.record_extraction($1, $2::jsonb, 'accepted')", [VIEWER, JSON.stringify({
+      document_id: acmeDoc, organisation_id: acme, doc_type: "rp_mandate", decision: "accept",
+      verdict: {}, source: "human", reviewed_by: VIEWER, used_model: false,
+    })])).rejects.toThrow(/not permitted/);
+  });
+});

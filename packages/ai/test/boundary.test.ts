@@ -45,7 +45,8 @@ const IMPORT_PATTERN = /(?:from|import)\s*\(?\s*["']([^"']+)["']/g;
 
 describe("provider isolation", () => {
   it("no file outside the adapter directory imports a provider SDK", async () => {
-    const files = await sourceFiles(join(repoRoot, "packages"));
+    // apps/ too: the web Worker reaches the model, and must do it through @cfm/ai like everything else.
+    const files = [...(await sourceFiles(join(repoRoot, "packages"))), ...(await sourceFiles(join(repoRoot, "apps")))];
     expect(files.length).toBeGreaterThan(10);
 
     const offenders: string[] = [];

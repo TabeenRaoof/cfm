@@ -1176,6 +1176,109 @@ wasn't linked into `node_modules` at all. It only worked because wrangler resolv
 tsconfig paths. It's now declared and linked, and `apps/web` declares its own workspace
 dependencies.
 
+---
+
+### D-051 · Slice B increment 3: documents, extraction, evidence, and the technical file
+**Status:** Implemented, verified locally · **Date:** 26 September 2026 · **Builds on:** D-048–D-050
+
+This is the half of Slice B that turns "outstanding" into "met". A seller uploads an RP mandate
+or EPR certificate. It's stored, read (deterministic first, then the model only for what's left),
+gated, linked to the requirements it satisfies, and counted in readiness. The technical file
+downloads per product and market.
+
+**Four changes to earlier decisions:**
+
+1. **The web app is one Cloudflare Worker with static assets, not a Pages project (amends D-048
+   §1).** A Pages project can't consume a Queue. A Worker can serve the SPA, the `/api` routes
+   and the queue consumer from one deployable. Same vendor and same $5/month plan; it's also what
+   Cloudflare now recommends over Pages.
+2. **Readiness stays computed live, never stored (revises D-050's "persisted assessments arrive
+   with evidence").** A stored assessment goes stale the moment facts change. A live one can't be
+   forged as long as its inputs can't be. So the inputs that make a cell "met" are rows no client
+   can write: `document` and `extraction` are read-only to every client (migration 0003).
+   Persisting assessments waits for something that needs them, such as expiry alerts or history.
+3. **The uploader declares the document type; there's no classification call.** The person
+   holding the document is the cheapest reliable source of what it is. A wrong declaration fails
+   the extraction gate and comes back for review; it never becomes evidence.
+4. **Scans go to the model as the PDF itself, not as rendered pages.** Rendering needs a native
+   library the Workers runtime doesn't have, and the provider reads PDFs directly.
+
+**A real budget bug, found before it could cost anything.** The Anthropic adapter estimated every
+non-text part at a flat 1,600 tokens. A 40-page PDF passed `extract_document`'s 30,000-token
+budget as if it were one page. It's now priced per page. I first set 3,000 from memory, then
+checked Anthropic's current PDF documentation: 1,500–3,000 tokens of text per page *plus* the
+page image at vision rates. So it's now 5,000 per page. That puts the practical limit for a scan
+with no text layer at about five pages, which is plenty for 1–3 page mandates and certificates.
+PDFs with a text layer only send their text.
+
+**Who wrote what, in the audit log.** The Worker holds the service role but never writes the
+tables directly. It calls four functions only the service role can execute:
+- `register_document`
+- `delete_document`
+- `record_extraction`
+- `set_document_status`
+
+Each re-checks the acting user's role in the database, independently of the Worker's own check,
+and records that verified user as the audit actor. So the log names who uploaded, deleted or
+reviewed a document, not "the system". The pipeline's own extraction is logged as the system,
+which is what it is.
+
+**What else holds:**
+- **One organisation per link.** Links between documents and products stay within one
+  organisation via composite foreign keys, even for someone who belongs to two.
+- **Content decides type.** The file type is read from the file's first bytes; the browser's
+  label is ignored.
+- **Files are addressed by content.** Storage keys are organisation/sha256, and the same file
+  twice is one document.
+- **Queue safety.** A message delivered twice doesn't pay for a second model call. A provider
+  error retries, then marks the document failed after three attempts. A document too long for
+  the budget goes to review with no model call.
+- **Human review has no shortcut.** It passes the same validators and gate as extraction.
+- **Uploads are off by default.** Uploads are refused unless `UPLOADS_ENABLED=true`, which is
+  D-013's gate in code: the first real document can't arrive before its paperwork does.
+- **Spend cap.** The adapter caps spend at $0.10 per document, behind the task's token budget
+  and the account-level limit.
+- **Details as facts.** "Use these details" proposes the facts a document states that a
+  requirement also asks for as data. It's derived from the catalog, so a German LUCID number can
+  only fill Germany's field, never France's or the EU-wide PPWR one. The seller applies them;
+  nothing is copied silently.
+
+**Verified:**
+- **635 automated tests:** 12 on the documents schema and service-only functions, 12 on
+  processing, 8 on evidence, 8 on upload checks, 3 on the Worker boundary, and 3 on scanned
+  PDFs and budgets. Nine breaks were planted and each was caught:
+  - removing the redelivery guard
+  - sending the PDF when its text layer is usable
+  - storing a rejected human review
+  - importing the fake provider into the production Worker
+  - importing a provider SDK in app code (the provider boundary test now covers `apps/` too)
+  - removing content-type sniffing (caught by the end-to-end run)
+  - three earlier database breaks
+- **The definition of done, proven on the real catalog.** The EU responsible-person requirement
+  goes `missing` → `met` only with both the accepted mandate and its applied details. Neither
+  alone reaches `met`.
+- **24 end-to-end checks** (`npm run -w @cfm/web e2e:worker`) ran against the real Worker under
+  `wrangler dev` (local R2 and Queue) and the three migrations on local Supabase, with a fake
+  provider:
+  - upload → queue → accepted
+  - the extraction used the pattern for the date and the model for the rest
+  - audit actors correct
+  - byte-exact download
+  - an outsider gets 404
+  - duplicate → 409, viewer → 403, disguised script → 415
+  - an unreadable photo → review → an impossible date gets 422, a valid review is accepted and
+    stored as human-sourced
+  - "partial" → "met" through the same code the screens use
+  - viewer delete → 403, owner delete → 204, file gone, deleter in the audit log
+- **Bundle sizes:** the Worker is 824 KB gzipped (free-plan limit 3 MB); the app is 164 KB
+  gzipped.
+
+**Not verified:**
+- the screens in a browser (same gap as D-050)
+- a real model call through the deployed Worker
+- anything deployed. The Worker needs the Supabase project, the domain, an R2 bucket and a
+  Queue, created with Tabeen's accounts, and uploads stay off until D-013 is done.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.

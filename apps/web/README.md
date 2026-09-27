@@ -10,9 +10,13 @@ The logged-in product (D-012, D-048). What's built so far:
     already known.
   - **Organisation details.** The form is generated from the facts the catalog reads.
   - **Members and invitations.**
-
-Still to come: document upload, extraction, evidence linking, persisted assessments and
-technical-file export.
+- **Increment 3 (D-051):**
+  - **Documents.** Upload an RP mandate or EPR certificate. It's read automatically
+    (deterministic first, then the model only for what's left) and accepted by the gate or sent
+    back for review.
+  - **Evidence.** Accepted documents count toward readiness, scoped to the right market.
+  - **Use these details.** A document's stated details can be applied as facts.
+  - **Technical file** per product and market.
 
 ## Facts: unknown is never stored as "no"
 
@@ -33,15 +37,50 @@ through `import_products` and back, and asserts the evaluator sees exactly what 
 `test/readiness.test.ts` asserts the app and the free scanner give identical statuses for every
 product and market from the same CSV.
 
-Readiness is computed in the browser and never stored, so a client can't write itself a "met".
-Persisted assessments come with evidence linking, computed server-side.
+Readiness is computed in the browser and never stored. What can make a cell "met" — documents
+and extractions — lives in rows no client can write (D-051).
 
-- React single-page app built with Vite, deployed to Cloudflare Pages.
-- Supabase for Postgres (EU region), Auth and row-level security. The browser talks to Supabase
-  directly with the publishable key. Row-level security is what limits every read and write to
-  the user's own organisations.
-- Server-only work (extraction through `@cfm/ai`, upload signing) will go in Pages Functions and
-  Cloudflare Queues. It isn't in this increment yet.
+## Architecture
+
+- **One Cloudflare Worker** (`wrangler.toml`, `worker/`) serves three things:
+  - the built SPA, as static assets
+  - the `/api` routes: upload, download, review, delete
+  - the document queue's consumer
+
+  It's a Worker rather than a Pages project because Pages can't consume a Queue (D-051).
+- **Supabase** provides Postgres (EU region), Auth and row-level security. The browser reads and
+  writes its own organisation's data directly with the publishable key, under RLS.
+- **The Worker is the only writer of documents and extractions.** It verifies the caller's session,
+  reads as the caller under RLS, and writes through four service-role-only functions. Those
+  re-check the caller's role in the database and record them as the audit actor.
+- **Originals live in R2** under `organisation/sha256`, in an EU-jurisdiction bucket.
+
+## Documents (D-051)
+
+`worker/process.ts` is the pipeline. It's written against small interfaces, so it's tested
+without Cloudflare, Supabase or a paid model (`test/process.test.ts`). Steps:
+
+1. Take the document type from the uploader; there's no classification call.
+2. Read the PDF's text layer locally with unpdf.
+3. Let `@cfm/documents`' patterns answer what they can.
+4. Ask the model (`@cfm/ai`'s `extract_document`) only for the remaining fields, inside the
+   task's token budget. A scan goes as the PDF itself, priced per page, so a long one is refused
+   before anything is sent.
+5. Let `gateExtraction` decide accept or review. The model never judges its own output.
+
+A human review goes through the same validators and gate.
+
+Guards:
+- Uploads are refused unless `UPLOADS_ENABLED=true`. That's D-013's gate: no real document before
+  its privacy paperwork.
+- Per-document spend is capped at $0.10 by the adapter.
+- The deployable entry (`worker/index.ts`) can't import the fake provider
+  (`test/worker-boundary.test.ts`). Only `worker/index.e2e.ts` does, for local runs.
+
+`npm run -w @cfm/web e2e:worker` (24 checks) runs the real Worker locally with `wrangler dev`,
+local R2 and a local Queue, against local Supabase and a fake provider. It covers upload, queue,
+extraction, audit actors, download, every refusal, human review, and a requirement going from
+"partial" to "met" through the same code the screens use.
 
 ```bash
 npm run -w @cfm/web dev            # needs apps/web/.env.local — see .env.example
@@ -122,8 +161,14 @@ by injecting a synthetic key and watching the build refuse.
    - configure custom SMTP (Resend) on that domain; Supabase's built-in email is rate-limited
      and for development only
 2. `npx supabase link --project-ref <ref>`, then `npx supabase db push`, to apply the migrations.
-3. Build with `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`, and deploy to a Pages
-   project.
+3. Create the storage bucket and queues:
+   - `npx wrangler r2 bucket create cfm-documents --jurisdiction=eu`
+   - `npx wrangler queues create cfm-documents`
+4. Set the Worker's secrets: `npx wrangler secret put SUPABASE_SECRET_KEY` and
+   `npx wrangler secret put ANTHROPIC_API_KEY`.
+5. Fill in `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` in `wrangler.toml`.
+6. Build with `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`, then run
+   `npx wrangler deploy`.
 4. **Before any design partner uploads a real document** (D-013): customer DPA, design-partner
    agreement, written deletion procedure, and signed DPAs with Supabase, Cloudflare and
    Anthropic.

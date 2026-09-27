@@ -1,0 +1,40 @@
+# The web app as one Cloudflare Worker (D-051): the built SPA as static assets, the /api routes,
+# and the document queue's consumer. Not a Pages project — Pages can't consume a Queue.
+#
+# Nothing here is deployed yet: it needs the Supabase project (D-048) and the neutral domain first,
+# and uploads stay refused (UPLOADS_ENABLED) until D-013's paperwork is done.
+
+name = "cfm-web"
+main = "worker/index.ts"
+compatibility_date = "2026-09-26"
+# The Anthropic adapter base64-encodes PDFs with Buffer.
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+# Created with: npx wrangler r2 bucket create cfm-documents --jurisdiction=eu
+[[r2_buckets]]
+binding = "DOCS"
+bucket_name = "cfm-documents"
+jurisdiction = "eu"
+
+[[queues.producers]]
+binding = "DOC_QUEUE"
+queue = "cfm-documents"
+
+[[queues.consumers]]
+queue = "cfm-documents"
+max_batch_size = 1
+# app.ts marks a document failed itself after MAX_ATTEMPTS (3), before this ceiling is reached.
+max_retries = 4
+
+[vars]
+UPLOADS_ENABLED = "false"
+EXTRACT_MODEL = "claude-sonnet-5"
+SUPABASE_URL = ""
+SUPABASE_PUBLISHABLE_KEY = ""
+# Secrets, never here: npx wrangler secret put SUPABASE_SECRET_KEY / ANTHROPIC_API_KEY

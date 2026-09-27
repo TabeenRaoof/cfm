@@ -1,16 +1,28 @@
+import { assessProduct, type EvidenceView } from "@cfm/catalog";
 import { assessProducts, type MarketResult } from "@cfm/scanner";
+import { renderTechnicalFile } from "@cfm/techfile";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { catalog, catalogIssues } from "./domain/catalog.ts";
+import {
+  DOCUMENT_COLUMNS,
+  evidenceByProduct,
+  EXTRACTION_COLUMNS,
+  type DocumentRow,
+  type ExtractionRow,
+  type LinkRow,
+} from "./domain/evidence.ts";
 import { factLabel, ORGANISATION_FACT_PREFIXES, subjectFacts } from "./domain/facts.ts";
+import { saveBlob } from "./lib/api.ts";
 import { MARKETS, marketName } from "./domain/markets.ts";
 import { CAN_MANAGE, PRODUCT_COLUMNS, type Organisation, type Product, type Role } from "./lib/types.ts";
 
 /**
  * Readiness per product × market: the same deterministic assessment as the public scanner
  * (`assessProducts` from @cfm/scanner, over `assessProduct` from @cfm/catalog), fed with this
- * organisation's stored facts instead of a one-off CSV. Derived in the browser and never stored —
- * a client can't write itself a "met" (D-050).
+ * organisation's stored facts instead of a one-off CSV, plus each product's evidence: documents
+ * linked to it whose extraction was accepted (D-051). Derived in the browser and never stored — the
+ * inputs that can make a cell "met" (documents, extractions) are rows no client can write.
  */
 export function Readiness({ client, organisation, role, onChanged }: {
   client: SupabaseClient;
@@ -19,16 +31,27 @@ export function Readiness({ client, organisation, role, onChanged }: {
   onChanged: () => void;
 }) {
   const [products, setProducts] = useState<readonly Product[] | null>(null);
+  const [documents, setDocuments] = useState<readonly DocumentRow[]>([]);
+  const [extractions, setExtractions] = useState<readonly ExtractionRow[]>([]);
+  const [links, setLinks] = useState<readonly LinkRow[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    const { data, error: failure } = await client
-      .from("product")
-      .select(PRODUCT_COLUMNS)
-      .eq("organisation_id", organisation.id)
-      .order("sku");
-    if (failure) setError(failure.message);
-    else setProducts((data ?? []) as Product[]);
+    const [prod, docs, ext, lnk] = await Promise.all([
+      client.from("product").select(PRODUCT_COLUMNS).eq("organisation_id", organisation.id).order("sku"),
+      client.from("document").select(DOCUMENT_COLUMNS).eq("organisation_id", organisation.id),
+      client.from("extraction").select(EXTRACTION_COLUMNS).eq("organisation_id", organisation.id),
+      client.from("document_product").select("document_id, product_id").eq("organisation_id", organisation.id),
+    ]);
+    const failure = prod.error ?? docs.error ?? ext.error ?? lnk.error;
+    if (failure) {
+      setError(failure.message);
+      return;
+    }
+    setProducts((prod.data ?? []) as Product[]);
+    setDocuments((docs.data ?? []) as DocumentRow[]);
+    setExtractions((ext.data ?? []) as ExtractionRow[]);
+    setLinks((lnk.data ?? []) as LinkRow[]);
   }, [client, organisation.id]);
 
   useEffect(() => {
@@ -38,11 +61,20 @@ export function Readiness({ client, organisation, role, onChanged }: {
   const asOf = new Date().toISOString().slice(0, 10);
   const markets = organisation.target_markets;
 
+  const evidence = useMemo(
+    () => evidenceByProduct((products ?? []).map((p) => p.id), documents, extractions, links, catalog),
+    [products, documents, extractions, links],
+  );
+
   const result = useMemo(() => {
     if (!products || markets.length === 0 || catalogIssues.length > 0) return null;
-    const items = products.map((product) => ({ product, facts: subjectFacts(organisation, product) }));
+    const items = products.map((product) => ({
+      product,
+      facts: subjectFacts(organisation, product),
+      evidence: evidence.get(product.id)!.view,
+    }));
     return assessProducts(items, { catalog, markets, asOf });
-  }, [products, organisation, markets, asOf]);
+  }, [products, organisation, markets, asOf, evidence]);
 
   if (catalogIssues.length > 0) {
     return (
@@ -110,6 +142,8 @@ export function Readiness({ client, organisation, role, onChanged }: {
                       <details>
                         <summary>{item.product.sku}</summary>
                         <CellDetails cells={cells} />
+                        <TechnicalFiles organisationName={organisation.name} product={item.product}
+                          facts={item.facts} evidence={item.evidence} markets={markets} asOf={asOf} />
                       </details>
                     </td>
                     {cells.map((cell) => <td key={cell.market}><CellSummary cell={cell} /></td>)}
@@ -208,5 +242,41 @@ function TargetMarkets({ client, organisation, role, onChanged }: {
       ))}
       {error && <p className="error" role="alert">{error}</p>}
     </fieldset>
+  );
+}
+
+/**
+ * The per-SKU, per-market technical file (@cfm/techfile, D-028) — self-contained HTML, generated
+ * here from the same assessment the table shows, so the file can't disagree with the screen.
+ */
+function TechnicalFiles({ organisationName, product, facts, evidence, markets, asOf }: {
+  organisationName: string;
+  product: Product;
+  facts: ReturnType<typeof subjectFacts>;
+  evidence: EvidenceView;
+  markets: readonly string[];
+  asOf: string;
+}) {
+  function download(market: string) {
+    const assessment = assessProduct(catalog, { facts, market: { iso_country: market } }, { asOf, evidence });
+    const html = renderTechnicalFile({
+      sku: product.sku,
+      title: product.title,
+      organisationName,
+      assessment,
+      generatedAt: new Date().toISOString(),
+    });
+    saveBlob(new Blob([html], { type: "text/html;charset=utf-8" }), `technical-file-${product.sku}-${market}.html`);
+  }
+  return (
+    <p className="small">
+      Technical file:{" "}
+      {markets.map((m, i) => (
+        <span key={m}>
+          {i > 0 && " · "}
+          <button type="button" className="link" onClick={() => download(m)}>{marketName(m)}</button>
+        </span>
+      ))}
+    </p>
   );
 }

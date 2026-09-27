@@ -2,6 +2,7 @@ import type { Session, SupabaseClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ESTABLISHMENT_COUNTRIES } from "./countries.ts";
 import { ORGANISATION_COLUMNS, type MyOrganisation } from "./lib/types.ts";
+import { Documents } from "./Documents.tsx";
 import { Members } from "./Members.tsx";
 import { OrganisationDetails } from "./OrganisationDetails.tsx";
 import { Products } from "./Products.tsx";
@@ -10,6 +11,7 @@ import { Readiness } from "./Readiness.tsx";
 const TABS = [
   ["readiness", "Readiness"],
   ["products", "Products"],
+  ["documents", "Documents"],
   ["details", "Organisation details"],
   ["members", "Members"],
 ] as const;
@@ -108,6 +110,9 @@ export function Workspace({ client, session }: { client: SupabaseClient; session
             )}
             {route.tab === "products" && (
               <Products client={client} organisationId={current.organisation.id} role={current.role} />
+            )}
+            {route.tab === "documents" && (
+              <Documents client={client} organisation={current.organisation} role={current.role} onChanged={() => void load()} />
             )}
             {route.tab === "details" && (
               <OrganisationDetails client={client} organisation={current.organisation} role={current.role} onSaved={() => void load()} />

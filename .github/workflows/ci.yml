@@ -32,6 +32,11 @@ jobs:
       - name: Typecheck web app
         run: npm run -w @cfm/web typecheck
 
+      # The web Worker (API + document queue consumer) runs on the Workers runtime, so it's checked
+      # against the Workers types rather than the browser's (D-051).
+      - name: Typecheck web Worker
+        run: npm run -w @cfm/web typecheck:worker
+
       - name: Tests
         run: npm test
 
