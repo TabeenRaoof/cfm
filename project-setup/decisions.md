@@ -1279,6 +1279,42 @@ which is what it is.
 - anything deployed. The Worker needs the Supabase project, the domain, an R2 bucket and a
   Queue, created with Tabeen's accounts, and uploads stay off until D-013 is done.
 
+---
+
+### D-052 · The EU Supabase project exists, and the migrations are applied
+**Status:** Done · **Date:** 27 September 2026 · **Builds on:** D-048
+
+Tabeen logged in to Supabase. The account already had one project, "attestacompliance@gmail.com's
+Project", created 27 September in **us-west-2 (Oregon)**. That contradicts the EU-hosting commitment
+in D-048, the plan's GDPR section and the privacy notice. A Supabase project can't change region
+after creation, so it was not linked or used.
+
+Created instead: **`cfm-web`** (ref `qsqhcithnqanqzvsfyez`), free plan, **eu-central-1
+(Frankfurt)** — the plan's region. Its database password was generated locally and written straight
+to the gitignored `.env.local` as `SUPABASE_DB_PASSWORD`, never printed. The repo is linked
+(`supabase link`). Migrations 0001–0003 were applied with `supabase db push`, after a dry run
+showed exactly those three.
+
+Checked on the hosted database: an anonymous request with the publishable key gets `permission
+denied for table organisation`. The revoked default grants hold on hosted Supabase, not only
+locally.
+
+**A process note, stated rather than hidden:** the migrations came from PRs #10–#12, which Tabeen
+hasn't reviewed yet. The live database is therefore ahead of `main` — the same gap D-047 closed for
+the scanner. Low risk: the database is empty and has no users. Any change from review becomes a
+new migration; applied migrations are never edited.
+
+**Checked while setting up (26–27 September):**
+- Cloudflare Queues is on the Workers free plan since February 2026, at 10,000 operations a day.
+- R2 needs a payment method on file to be enabled, even inside its free 10 GB tier.
+- Neither needs the $5 Workers Paid plan at this scale.
+
+**Open, and Tabeen's:**
+- Delete the empty us-west-2 project. It holds one of the free plan's two project slots, and an
+  unused US-region project is a standing chance of someone connecting to the wrong one.
+- Add a payment method so R2 can be enabled.
+- The neutral domain, and D-013's paperwork, as before.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
