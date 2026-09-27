@@ -1451,10 +1451,22 @@ the only project. R2 `cfm-documents` is in the EU jurisdiction (location EEUR, 0
   note on `eu.ppwr.producer-registration` stands. Don't repeat "no grace period" in customer copy.
   Nothing customer-facing uses it today (checked).
 
-**Confirmed, no change:** DSA Art. 30 — the catalog entry was already checked against the full
-text on 20 September. GPSR's ten-year technical-documentation duty sits with the economic
-operator (D-006), and the GDPR Art. 17(3)(b) legal-obligation exemption belongs to the
-controller, not to CFM.
+**Confirmed, no change** — resting on earlier primary checks, not re-fetched this round: DSA
+Art. 30 (checked against the full text on 20 September). GPSR's ten-year duty sits with the
+economic operator (D-006); it is Art. 9(3), with Art. 9(2) setting the content (primary text
+checked 20 September; EUR-Lex returned an empty page on 27 September). The review quotes attributed
+to `01-` exist verbatim. Supabase's DPA "forms part of" its Terms, and accepting them "shall have
+the same effect as signing the SCCs" (re-fetched 27 September), so there is nothing to sign.
+
+**A legal basis both reviews get wrong:** they ground our duty to delete in GDPR Art. 17. The
+right to erasure runs against the *controller* (the customer), and Art. 17(3)(b)'s exemption is
+a legal obligation "to which the controller is subject". CFM's own duty is Art. 28(3)(g): a
+processor deletes or returns the data at the end of the service, at the controller's choice.
+Same outcome, and DPA §8 already follows 28(3)(g), but cite 28(3)(g) for our side.
+
+**Not verified:** review 2's claim that PPWR Art. 5's PFAS limits for food-contact packaging
+apply from 12 August 2026. No catalog entry models food-contact packaging, so nothing depends on
+it; not silence as agreement.
 
 **Neither review cites a source.** They are useful as checklists, not as verification. The
 catalog's standard stays primary legal text.
