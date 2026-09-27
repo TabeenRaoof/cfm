@@ -29,6 +29,9 @@ jobs:
       - name: Typecheck scanner Functions
         run: npm run -w @cfm/scanner-app typecheck:functions
 
+      - name: Typecheck web app
+        run: npm run -w @cfm/web typecheck
+
       - name: Tests
         run: npm test
 
@@ -46,3 +49,9 @@ jobs:
       # per market, and the check that the bundle cannot transmit the visitor's file.
       - name: Scanner build
         run: npm run scanner:preview
+
+      # The web app's own gate: the build fails if anything shaped like a server secret reaches
+      # the browser bundle. The row-level security tests run in `npm test` above, against the real
+      # migrations on an in-process Postgres (apps/web/test/rls.test.ts).
+      - name: Web app build
+        run: npm run -w @cfm/web build:preview

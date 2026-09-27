@@ -168,7 +168,7 @@ marking superseded entries rather than deleting them.
 ---
 
 ### D-012 · v1 is re-cut into a Gate-2 slice and a Gate-3 slice
-**Status:** Proposed · **Date:** 2026-09-12 · **Source:** `03-plan-review.md` §S-1, §S-2, §S-4
+**Status:** Accepted (Tabeen, 26 September 2026 — see D-048) · **Date:** 2026-09-12 · **Source:** `03-plan-review.md` §S-1, §S-2, §S-4
 
 The twelve-week plan in `02-` §10.1 is roughly 3–5× the 60–100 hours available before 12 December,
 and its serial dependency chain means extra hours would not fix the date anyway. Two of its items
@@ -191,7 +191,7 @@ surface for a date that can actually be hit.
 ---
 
 ### D-013 · Privacy artefacts are due before the first real upload, not before the first charge
-**Status:** Proposed · **Date:** 2026-09-12 · **Source:** `03-plan-review.md` §S-3
+**Status:** Accepted (Tabeen, 26 September 2026 — see D-048) · **Date:** 2026-09-12 · **Source:** `03-plan-review.md` §S-3
 
 Design partners upload real documents containing third-party personal data from week 6. GDPR
 obligations attach then, not on 12 December. `02-` §15.4 has the right list against the wrong
@@ -1014,6 +1014,98 @@ Not fixed, deliberately left for later:
 - There's no rate limiting beyond the honeypot.
 - The Functions have no automated tests.
 - The consent version is a hardcoded "v1".
+
+---
+
+### D-048 · Slice B stack: Cloudflare hosting + Supabase (Postgres, Auth, RLS) + a React SPA
+**Status:** Accepted (Tabeen, 26 September 2026) · **Deviates from:** `02-` §2–§3 (not edited, per D-011)
+
+Slice B is the product sold at Gate 3: login, organisations, document upload, extraction for
+`rp_mandate` and `epr_certificate`, evidence linking, assessment recompute, technical-file export
+(D-012, accepted the same day). Every existing package imports nothing Node-only outside its
+`node.ts` entry, so any runtime could host them; the choice was about isolation, vendors and cost.
+
+1. **Hosting on Cloudflare (Pages + Functions); data and login on Supabase** — Postgres in the EU
+   region, Supabase Auth, row-level security. Chosen over the plan's Vercel + Supabase + Inngest
+   (three new vendors, ~$45/month; Vercel Hobby forbids commercial use) and over all-Cloudflare
+   with D1 (no RLS, so tenant isolation would live only in application code, and login would be
+   code we own). The product will hold other companies' compliance documents; RLS makes the
+   database itself refuse a cross-organisation read even if application code has a bug. That
+   second layer is the reason for the extra vendor. Expected cost ~$30/month: Workers Paid $5,
+   Supabase Pro $25 once design partners are real (free projects pause after 7 days of low
+   activity — checked 26 September).
+2. **Frontend: React single-page app + Pages Functions for server work**, the same deploy model
+   as the scanner. Not Next.js: a logged-in dashboard doesn't need server rendering, and Next.js
+   is a poorer fit on Cloudflare. Cost: Tabeen knows Next.js better.
+3. **Background jobs: Cloudflare Queues**, not Inngest — included in Workers Paid, no new vendor
+   or DPA. No PDF page-rendering worker in this slice: text layer first (`@cfm/documents`),
+   otherwise the PDF goes to the model directly (`@cfm/ai`'s Anthropic adapter already accepts
+   PDFs), inside the task's existing token budget.
+4. **A neutral, non-brand domain for the app and its email**, bought now. Magic-link login needs a
+   verified sending domain, and the brand is deferred (Q-6b). Tabeen buys it — a purchase and an
+   account action, not something done from here.
+5. **D-012 (Slice B scope) and D-013 (privacy artefacts before the first real upload) accepted.**
+   D-013 is the gate before any design partner uploads a real document: customer DPA,
+   design-partner agreement, written deletion procedure, and signed DPAs with Supabase,
+   Cloudflare and Anthropic.
+
+**Also carried over from `02-`:** Tailwind + shadcn/ui is deferred — the shell uses plain CSS
+until there's enough UI for a component library to earn its weight. `02-`'s "AI gateway = Vercel
+AI SDK" was already superseded by `@cfm/ai` (D-014/D-016).
+
+---
+
+### D-049 · Slice B increment 1: the tenancy schema, proven, and the app shell
+**Status:** Implemented · **Date:** 26 September 2026 · **Builds on:** D-048
+
+`apps/web` exists: a React SPA (sign-in by magic link, organisations, products) on the tenancy
+schema in `supabase/migrations/20260926000001_tenancy.sql`. What the schema guarantees, and why:
+
+- **Isolation in the database, not only in the app.** Every tenant table has RLS. Supabase's
+  default grants to `anon` and `authenticated` are revoked first and granted back per column, so
+  `organisation_id` and `user_id` can't be updated.
+- **No self-service joining.** There is no client insert path into `membership`; members arrive
+  through an invitation function (next increment).
+- **The owner role is guarded.** Only owners grant, change or remove it, and an organisation can
+  never lose its last owner. A trigger skips this for system actions, so cascades still work.
+- **No delete button.** Organisations can't be deleted from the app — deletion is D-013's
+  written procedure.
+- **The hard rule, one layer further down.** Product yes/no facts have no default; NULL means
+  unknown, and the UI's selects start at "Unknown".
+- **An audit log that stays written.** Organisation, membership and product changes are logged
+  with the actor. Only owners and admins can read it, and a trigger refuses update, delete and
+  truncate even for the database owner.
+
+Verified three ways, each shown to fail on a real violation before being trusted:
+
+1. **26 RLS tests** run the real migration on PGlite (in-process Postgres 17, Supabase's major
+   version) with a shim of Supabase's `auth` pieces, acting as owner, admin, member, viewer,
+   outsider and anonymous. Four injected breaks were each caught, then reverted: product reads
+   opened to all, owner guard removed, `has_battery default false`, and direct membership
+   inserts allowed. Runs in `npm test` and CI; no Docker, no account.
+2. **A 12-check end-to-end script** (`npm run -w @cfm/web e2e:local`) runs against a local
+   Supabase stack in Docker, using real GoTrue sign-in and real PostgREST. It makes the app's
+   exact calls: the RPC, the membership query with the organisation embedded, the product
+   insert, and a magic-link email arriving in the local mail catcher. It refuses any non-localhost
+   URL. With product reads opened, it failed on the cross-tenant check; after restoring, it
+   passed.
+3. **A build gate** refuses any bundle containing an Anthropic key, a Supabase secret key or a
+   service-role JWT. A synthetic key was injected and the build refused.
+
+Also fixed: the root README never listed `@cfm/waitlist` — documentation drift from PR #9.
+
+**Not done yet, and blocked on Tabeen:**
+- the neutral domain
+- `npx supabase login` and creating the EU project
+- Auth URLs and custom SMTP on that domain
+- D-013's paperwork before any real upload
+
+**Next increments:**
+1. invitations
+2. CSV import into `product` via `@cfm/import`
+3. assessments from `@cfm/catalog`
+4. then document upload (R2), extraction via Queues + `@cfm/ai`, evidence linking and
+   technical-file export
 
 ## Open questions
 
