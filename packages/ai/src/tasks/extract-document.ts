@@ -26,8 +26,15 @@ import type { TaskDefinition } from "../task.ts";
 export interface ExtractInput {
   readonly documentType: string;
   readonly textLayer: string;
-  /** Rendered pages, used only where there is no usable text layer. */
+  /** Rendered pages or photos, used only where there is no usable text layer. */
   readonly pages: readonly { readonly bytes: Uint8Array; readonly mime: string }[];
+  /**
+   * The original PDF, sent as-is when it has no usable text layer (a scan). Preferred over
+   * rendered pages: rendering needs a native library the Workers runtime doesn't have, and the
+   * provider reads PDFs directly where its capabilities say so (D-051). `pages` is the page count,
+   * which the provider's estimate prices per page — so the budget sees a long scan for what it is.
+   */
+  readonly pdf?: { readonly bytes: Uint8Array; readonly pages: number };
 }
 
 export interface ExtractOutput {
@@ -104,8 +111,11 @@ export const extractDocument: TaskDefinition<ExtractInput, ExtractOutput> = {
       };
     }
 
-    // No text layer: a scan. Page images are the only option and they are the expensive path,
-    // so the budget is what stops a 200-page catalogue being sent by accident.
+    // No text layer: a scan. The PDF itself when we have it, else page images — both the expensive
+    // path, so the budget is what stops a 200-page catalogue being sent by accident.
+    if (input.pdf) {
+      return { parts: [{ type: "pdf" as const, bytes: input.pdf.bytes, pages: input.pdf.pages }], omitted: [] };
+    }
     return {
       parts: input.pages.map((p) => ({ type: "image" as const, bytes: p.bytes, mime: p.mime })),
       omitted: [],

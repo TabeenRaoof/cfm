@@ -18,7 +18,7 @@
 
 import type { Catalog } from "@cfm/catalog";
 import { assessProduct, isMarketReady } from "@cfm/catalog";
-import type { Assessment, FactBag } from "@cfm/catalog";
+import type { Assessment, EvidenceView, FactBag } from "@cfm/catalog";
 import type { ImportResult } from "@cfm/import";
 import { importProducts } from "@cfm/import";
 
@@ -94,7 +94,7 @@ export interface AssessedProducts<T> {
  * the same facts by construction, not by keeping two copies in step. Still deterministic, still
  * no model: it is `assessProduct` from @cfm/catalog over each product × market.
  */
-export function assessProducts<T extends { readonly facts: FactBag }>(
+export function assessProducts<T extends { readonly facts: FactBag; readonly evidence?: EvidenceView }>(
   items: readonly T[],
   options: AssessProductsOptions,
 ): AssessedProducts<T> {
@@ -109,7 +109,9 @@ export function assessProducts<T extends { readonly facts: FactBag }>(
           market: { iso_country: market },
           ...(options.channel ? { channel: { type: options.channel } } : {}),
         },
-        { asOf: options.asOf },
+        // The scanner has no documents, so no evidence: every requirement that needs one stays
+        // outstanding. The logged-in app passes each product's linked evidence (@cfm/evidence).
+        { asOf: options.asOf, ...(item.evidence ? { evidence: item.evidence } : {}) },
       );
 
       const unresolved = result.assessments.filter((a) => a.status === "unknown");
