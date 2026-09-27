@@ -1,17 +1,29 @@
 import type { Session, SupabaseClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ESTABLISHMENT_COUNTRIES } from "./countries.ts";
-import type { MyOrganisation } from "./lib/types.ts";
+import { ORGANISATION_COLUMNS, type MyOrganisation } from "./lib/types.ts";
+import { Members } from "./Members.tsx";
+import { OrganisationDetails } from "./OrganisationDetails.tsx";
 import { Products } from "./Products.tsx";
+import { Readiness } from "./Readiness.tsx";
 
-function selectedFromHash(): string | null {
-  const match = /org=([0-9a-f-]{36})/.exec(window.location.hash);
-  return match?.[1] ?? null;
+const TABS = [
+  ["readiness", "Readiness"],
+  ["products", "Products"],
+  ["details", "Organisation details"],
+  ["members", "Members"],
+] as const;
+type Tab = (typeof TABS)[number][0];
+
+function fromHash(): { org: string | null; tab: Tab } {
+  const org = /org=([0-9a-f-]{36})/.exec(window.location.hash)?.[1] ?? null;
+  const tab = /tab=([a-z]+)/.exec(window.location.hash)?.[1] as Tab | undefined;
+  return { org, tab: TABS.some(([t]) => t === tab) ? (tab as Tab) : "readiness" };
 }
 
 export function Workspace({ client, session }: { client: SupabaseClient; session: Session }) {
   const [orgs, setOrgs] = useState<readonly MyOrganisation[] | null>(null);
-  const [selected, setSelected] = useState<string | null>(selectedFromHash);
+  const [route, setRoute] = useState(fromHash);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -19,7 +31,7 @@ export function Workspace({ client, session }: { client: SupabaseClient; session
     // the query honest about what it means rather than relying on that.
     const { data, error: failure } = await client
       .from("membership")
-      .select("role, organisation:organisation_id (id, name, establishment_country)")
+      .select(`role, organisation:organisation_id (${ORGANISATION_COLUMNS})`)
       .eq("user_id", session.user.id)
       .order("created_at");
     if (failure) {
@@ -34,12 +46,12 @@ export function Workspace({ client, session }: { client: SupabaseClient; session
   }, [load]);
 
   useEffect(() => {
-    const onHash = () => setSelected(selectedFromHash());
+    const onHash = () => setRoute(fromHash());
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
-  const current = orgs?.find((o) => o.organisation.id === selected) ?? null;
+  const current = orgs?.find((o) => o.organisation.id === route.org) ?? null;
 
   return (
     <div className="shell">
@@ -56,9 +68,13 @@ export function Workspace({ client, session }: { client: SupabaseClient; session
 
         {orgs !== null && !current && (
           <>
+            <PendingInvitations client={client} onAccepted={(id) => {
+              void load();
+              window.location.hash = `org=${id}`;
+            }} />
             <h1>Your organisations</h1>
             {orgs.length === 0 ? (
-              <p className="muted">You're not in any organisation yet. Create one to start.</p>
+              <p className="muted">You're not in any organisation yet. Create one, or ask to be invited.</p>
             ) : (
               <ul className="list">
                 {orgs.map(({ organisation, role }) => (
@@ -80,14 +96,82 @@ export function Workspace({ client, session }: { client: SupabaseClient; session
           <>
             <p><a href="#">← All organisations</a></p>
             <h1>{current.organisation.name}</h1>
-            <p className="muted">
-              Established in: {current.organisation.establishment_country ?? "not stated"} · Your role: {current.role}
-            </p>
-            <Products client={client} organisationId={current.organisation.id} role={current.role} />
+            <nav className="tabs" aria-label="Organisation">
+              {TABS.map(([tab, label]) => (
+                <a key={tab} href={`#org=${current.organisation.id}&tab=${tab}`} aria-current={route.tab === tab ? "page" : undefined}>
+                  {label}
+                </a>
+              ))}
+            </nav>
+            {route.tab === "readiness" && (
+              <Readiness client={client} organisation={current.organisation} role={current.role} onChanged={() => void load()} />
+            )}
+            {route.tab === "products" && (
+              <Products client={client} organisationId={current.organisation.id} role={current.role} />
+            )}
+            {route.tab === "details" && (
+              <OrganisationDetails client={client} organisation={current.organisation} role={current.role} onSaved={() => void load()} />
+            )}
+            {route.tab === "members" && (
+              <Members client={client} organisationId={current.organisation.id} role={current.role} selfId={session.user.id} />
+            )}
           </>
         )}
       </main>
     </div>
+  );
+}
+
+interface Invitation {
+  readonly id: string;
+  readonly organisation_name: string;
+  readonly role: string;
+  readonly expires_at: string;
+}
+
+function PendingInvitations({ client, onAccepted }: { client: SupabaseClient; onAccepted: (orgId: string) => void }) {
+  const [invitations, setInvitations] = useState<readonly Invitation[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    const { data, error: failure } = await client.rpc("my_invitations");
+    if (failure) setError(failure.message);
+    else setInvitations((data ?? []) as Invitation[]);
+  }, [client]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  async function respond(id: string, accept: boolean) {
+    setError(null);
+    const { data, error: failure } = accept
+      ? await client.rpc("accept_invitation", { p_invitation_id: id })
+      : await client.rpc("decline_invitation", { p_invitation_id: id });
+    if (failure) {
+      setError(failure.message);
+      return;
+    }
+    await load();
+    if (accept) onAccepted(data as string);
+  }
+
+  if (invitations.length === 0 && !error) return null;
+  return (
+    <section className="card notice-card">
+      <h2>You've been invited</h2>
+      {error && <p className="error" role="alert">{error}</p>}
+      <ul className="list">
+        {invitations.map((inv) => (
+          <li key={inv.id}>
+            <strong>{inv.organisation_name}</strong> as {inv.role}
+            <span className="muted"> · expires {new Date(inv.expires_at).toLocaleDateString()}</span>{" "}
+            <button onClick={() => void respond(inv.id, true)}>Accept</button>{" "}
+            <button className="link" onClick={() => void respond(inv.id, false)}>Decline</button>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 

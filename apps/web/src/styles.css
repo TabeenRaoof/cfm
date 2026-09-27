@@ -50,3 +50,25 @@ table { width: 100%; border-collapse: collapse; background: var(--panel); }
 th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
 th { font-size: 0.8125rem; color: var(--muted); font-weight: 600; }
 td.unknown { color: var(--unknown); }
+
+/* Increment 2: tabs, readiness */
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--line); margin: 8px 0 20px; }
+.tabs a { padding: 8px 12px; text-decoration: none; color: var(--muted); border-bottom: 2px solid transparent; }
+.tabs a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 16px 0; }
+.stat { padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+.stat b { display: block; font-size: 1.5rem; }
+.stat span { color: var(--muted); font-size: 0.875rem; }
+.ok { color: #2e7d4f; }
+.bad { color: var(--bad); }
+.unknown { color: var(--unknown); }
+.stat.ok b { color: #2e7d4f; } .stat.bad b { color: var(--bad); } .stat.unknown b { color: var(--unknown); }
+.choices { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+.choice { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; }
+.choice input, label.inline input { width: auto; }
+fieldset.plain { border: 0; padding: 0; margin: 0; min-width: 0; }
+.cell-details { white-space: normal; min-width: 280px; }
+.cell-details h4 { margin: 12px 0 4px; }
+.notice-card { border-color: var(--accent); }
+.small { font-size: 0.8125rem; }
+details summary { cursor: pointer; }

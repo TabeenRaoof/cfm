@@ -1107,6 +1107,75 @@ Also fixed: the root README never listed `@cfm/waitlist` — documentation drift
 4. then document upload (R2), extraction via Queues + `@cfm/ai`, evidence linking and
    technical-file export
 
+---
+
+### D-050 · Slice B increment 2: facts storage, invitations, CSV import, and readiness
+**Status:** Implemented · **Date:** 26 September 2026 · **Builds on:** D-049
+
+**Facts are stored so "unknown" and "none" stay different.** The catalog reads a flat bag of
+fact paths: an absent key means unknown, `null` means "we know there is none". Typed nullable
+columns can only hold one of those states, so migration 0002 adds `product.facts` and
+`organisation.facts` (jsonb) for everything the catalog reads beyond the typed columns. A
+`CHECK` constraint keeps each bag scoped: product, manufacturer and rp facts on products;
+organisation and packaging facts on organisations. It also refuses:
+- a key that duplicates a typed column, which stays the only source of truth for its path
+- a key the catalog derives itself, which the evaluator would silently ignore
+- nested values
+
+The one lossy case: the importer's "none" for a typed fact is stored as `NULL` and so reads as
+unknown. That's the conservative direction (unknown is never ready and never "not applicable")
+and it's tested as documented behaviour. `country_of_origin` is renamed `manufacturer_country`
+after the fact it actually holds.
+
+**Invitations.** Owners and admins invite an address with a role; the owner role is never
+invited. The invitee accepts by signing in with that address. There's no token to leak: signing
+in by magic link proves the address, and acceptance also requires `email_confirmed_at`, so it
+holds even if another sign-in method is enabled later. Invitations can't be spoofed
+(`invited_by` and `expires_at` aren't grantable) and can't change an existing member's role.
+Invitation emails wait for the mail domain; until then the inviter tells the invitee to sign in.
+
+**Import.** `import_products` runs with the caller's rights (RLS decides who can import) and is
+all-or-nothing. A blank cell never erases a known value (`COALESCE` for columns, jsonb `||` for
+facts), while a value in the sheet does replace the old one. A repeated SKU or more than 5,000
+rows refuses the whole file.
+
+**Readiness uses the scanner's own logic.** `@cfm/scanner` now exports `assessProducts` (the
+scanner's per-product, per-market assessment over facts from any source), and `scan()` calls it.
+Scanner output is unchanged; its 76 tests and the scanner's privacy check still pass. The app
+runs `assessProducts` over stored facts against the published catalog, bundled at build time with
+drafts excluded. `test/readiness.test.ts` asserts identical statuses and identical "answer these
+first" questions for every product and market from the same CSV, scanned versus imported and
+stored. Readiness is computed in the browser and never stored. The organisation-details form is
+generated from the catalog: each organisation-level fact a published requirement reads, typed by
+how the requirement uses it (a `true`/`false` match means yes/no, `gt`/`gte` means a number).
+
+**Verified:**
+- **Automated tests:** 581 in total, 74 of them for this app. Seven deliberate breaks were each
+  caught and reverted:
+  - an import that overwrites with blanks
+  - an import that replaces facts instead of merging
+  - accepting an invitation without a confirmed email
+  - accepting someone else's invitation
+  - an import that bypasses RLS
+  - facts shadowing typed columns
+  - the app dropping stored facts; three tests caught this, including the scanner-equivalence one
+- **End-to-end:** 23 checks against real local Supabase, with both migrations applied from
+  scratch:
+  - the import's exact response shape and merge behaviour
+  - organisation facts and target markets saving
+  - a derived fact refused
+  - invite → the invitee sees it → accepts → reads but, as a viewer, can't write
+  - members' email addresses visible to fellow members
+
+**Not verified:** the screens haven't been clicked through in a browser. The code typechecks, the
+production build succeeds, and the end-to-end script makes the same calls each screen makes, but
+rendering and interaction are untested until a browser session or automated UI tests exist.
+
+**Also fixed:** `apps/scanner` never declared its dependency on `@cfm/waitlist`, so the package
+wasn't linked into `node_modules` at all. It only worked because wrangler resolved it through
+tsconfig paths. It's now declared and linked, and `apps/web` declares its own workspace
+dependencies.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
