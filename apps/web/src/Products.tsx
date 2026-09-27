@@ -1,6 +1,8 @@
+import { CsvTooLargeError, importProducts, type ImportResult } from "@cfm/import";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { CAN_EDIT_PRODUCTS, type Product, type Role, type TriState } from "./lib/types.ts";
+import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { toImportRows, type PreparedImport } from "./domain/facts.ts";
+import { CAN_EDIT_PRODUCTS, PRODUCT_COLUMNS, type Product, type Role, type TriState } from "./lib/types.ts";
 
 const FACTS = [
   ["has_battery", "Contains a battery"],
@@ -10,6 +12,9 @@ const FACTS = [
 ] as const;
 
 type FactKey = (typeof FACTS)[number][0];
+
+/** Matches the database's cap in public.import_products (migration 0002). */
+const MAX_IMPORT_ROWS = 5000;
 
 function showTriState(value: TriState): string {
   if (value === null) return "Unknown";
@@ -23,11 +28,12 @@ export function Products({ client, organisationId, role }: {
 }) {
   const [products, setProducts] = useState<readonly Product[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const canEdit = CAN_EDIT_PRODUCTS.includes(role);
 
   const load = useCallback(async () => {
     const { data, error: failure } = await client
       .from("product")
-      .select("id, organisation_id, sku, title, has_battery, is_electrical, is_toy, has_packaging, country_of_origin")
+      .select(PRODUCT_COLUMNS)
       .eq("organisation_id", organisationId)
       .order("sku");
     if (failure) {
@@ -46,7 +52,7 @@ export function Products({ client, organisationId, role }: {
       <h2>Products</h2>
       {error && <p className="error" role="alert">{error}</p>}
       {products === null && !error && <p>Loading…</p>}
-      {products?.length === 0 && <p className="muted">No products yet.</p>}
+      {products?.length === 0 && <p className="muted">No products yet — import a spreadsheet or add one below.</p>}
       {products && products.length > 0 && (
         <div className="table-wrap">
           <table>
@@ -55,6 +61,7 @@ export function Products({ client, organisationId, role }: {
                 <th>SKU</th>
                 <th>Title</th>
                 {FACTS.map(([key, label]) => <th key={key}>{label}</th>)}
+                <th>Manufacturer country</th>
               </tr>
             </thead>
             <tbody>
@@ -65,14 +72,114 @@ export function Products({ client, organisationId, role }: {
                   {FACTS.map(([key]) => (
                     <td key={key} className={p[key] === null ? "unknown" : ""}>{showTriState(p[key])}</td>
                   ))}
+                  <td className={p.manufacturer_country === null ? "unknown" : ""}>{p.manufacturer_country ?? "Unknown"}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       )}
-      {CAN_EDIT_PRODUCTS.includes(role) && (
-        <AddProduct client={client} organisationId={organisationId} onAdded={() => void load()} />
+      {canEdit && (
+        <>
+          <ImportCsv client={client} organisationId={organisationId} onImported={() => void load()} />
+          <AddProduct client={client} organisationId={organisationId} onAdded={() => void load()} />
+        </>
+      )}
+    </section>
+  );
+}
+
+function ImportCsv({ client, organisationId, onImported }: {
+  client: SupabaseClient;
+  organisationId: string;
+  onImported: () => void;
+}) {
+  const [parsed, setParsed] = useState<{ result: ImportResult; prepared: PreparedImport } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [outcome, setOutcome] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function choose(event: ChangeEvent<HTMLInputElement>) {
+    setError(null);
+    setOutcome(null);
+    setParsed(null);
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      const result = importProducts(await file.text(), { maxRows: MAX_IMPORT_ROWS });
+      setParsed({ result, prepared: toImportRows(result) });
+    } catch (failure) {
+      setError(
+        failure instanceof CsvTooLargeError
+          ? `That file has more than ${MAX_IMPORT_ROWS} rows. Split it and import the parts one after another.`
+          : String(failure),
+      );
+    }
+    event.target.value = "";
+  }
+
+  async function confirm() {
+    if (!parsed) return;
+    setBusy(true);
+    setError(null);
+    const { data, error: failure } = await client.rpc("import_products", {
+      p_organisation_id: organisationId,
+      p_rows: parsed.prepared.rows,
+    });
+    setBusy(false);
+    if (failure) {
+      setError(`Nothing was imported — ${failure.message}`);
+      return;
+    }
+    const counts = (data as { inserted: number; updated: number }[])[0];
+    setOutcome(`Imported: ${counts?.inserted ?? 0} new, ${counts?.updated ?? 0} updated.`);
+    setParsed(null);
+    onImported();
+  }
+
+  const blocked = parsed && (parsed.result.duplicateSkus.length > 0 || parsed.prepared.rows.length === 0);
+
+  return (
+    <section className="card">
+      <h3>Import a spreadsheet</h3>
+      <p className="muted">
+        CSV, one row per SKU — the same file the free scanner reads. Blank cells never erase what we
+        already know about a product; a value in the sheet replaces the old one.
+      </p>
+      <input type="file" accept=".csv,text/csv" onChange={(e) => void choose(e)} />
+      {error && <p className="error" role="alert">{error}</p>}
+      {outcome && <p className="notice">{outcome}</p>}
+      {parsed && (
+        <div className="stack">
+          <p><strong>{parsed.prepared.rows.length}</strong> products ready to import.</p>
+          <p className="muted">
+            Recognised columns: {parsed.result.mapped.map((m) => m.header).join(", ") || "none"}.
+          </p>
+          {parsed.result.unmapped.length > 0 && (
+            <p className="muted">Ignored columns: {parsed.result.unmapped.join(", ")}.</p>
+          )}
+          {parsed.prepared.skippedRows.length > 0 && (
+            <p className="error">Skipped rows with no SKU: {parsed.prepared.skippedRows.join(", ")}.</p>
+          )}
+          {parsed.result.duplicateSkus.length > 0 && (
+            <p className="error">
+              These SKUs appear more than once — fix the sheet first: {parsed.result.duplicateSkus.join(", ")}.
+            </p>
+          )}
+          {parsed.result.warnings.length > 0 && (
+            <details>
+              <summary>{parsed.result.warnings.length} values were read as unknown</summary>
+              <ul className="list">
+                {parsed.result.warnings.slice(0, 50).map((w, i) => (
+                  <li key={i}>Row {w.row}, {w.column}: {w.message}</li>
+                ))}
+              </ul>
+            </details>
+          )}
+          <button disabled={busy || !!blocked} onClick={() => void confirm()}>
+            {busy ? "Importing…" : `Import ${parsed.prepared.rows.length} products`}
+          </button>
+        </div>
       )}
     </section>
   );
