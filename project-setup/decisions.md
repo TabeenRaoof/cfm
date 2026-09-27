@@ -1318,7 +1318,7 @@ new migration; applied migrations are never edited.
 ---
 
 ### D-053 · D-013's four artefacts are drafted; the audit log blocks erasure
-**Status:** Drafted — awaiting legal review and Tabeen's decision on the audit log · **Date:** 27 September 2026 · **Builds on:** D-013, D-005, D-043
+**Status:** Drafted — awaiting legal review (audit-log decision made: D-054) · **Date:** 27 September 2026 · **Builds on:** D-013, D-005, D-043
 
 The four documents D-013 requires before the first real upload are drafted, indexed in
 `legal/README.md`:
@@ -1363,6 +1363,50 @@ Also flagged for the lawyer (full list in `legal/README.md`): whether an Article
 representative is needed, since the controller is an individual outside the UK and EU; and
 whether incorporating the SCCs by reference in a click-through DPA covers the transfer that
 creates.
+
+---
+
+### D-054 · Organisation erasure: one service-role function; the audit log stays append-only otherwise
+**Status:** Accepted (Tabeen, PR #14 review, 27 September 2026) — built; not yet applied to the live database · **Date:** 27 September 2026 · **Resolves:** D-053 finding 1 · **Supersedes in part:** D-005
+
+**Decision (Tabeen):** CFM is the processor; GPSR's ten-year retention duty is the customer's, not
+ours (D-006). So on offboarding or an erasure request we must be able to wipe an organisation
+completely. Keep the audit log immutable during an organisation's life; add a privileged,
+tenant-level cascading delete for erasure.
+
+**Built** (`apps/web/supabase/migrations/20260927000001_erase_organisation.sql`):
+- `public.erase_organisation(uuid)`, executable by the service role only. In one transaction it
+  deletes the organisation (cascading to every table), then every audit row about it, then writes
+  one tombstone (`entity = 'erasure'`, no actor, no content). Returns the organisation's storage
+  keys so the operator can confirm its R2 prefix is empty.
+- The append-only trigger now allows exactly one delete: rows of an organisation **that no longer
+  exists**, with the erasure flag set for that organisation. A living organisation's history
+  still can't be deleted, updated or truncated by any role, the database owner included.
+
+**Proven** (`apps/web/test/erasure.test.ts`, 9 tests), each guard failing on a real injected
+violation: dropping the "no longer exists" condition, skipping the history delete, and leaving the
+function executable by `authenticated`. Personal data (a responsible person's name in before/after
+copies, an invitee's email) is put through the history and shown to be gone afterwards; another
+organisation's data and history are untouched.
+
+**How this differs from D-005:** D-005 wanted the log to hold "events and hashes, never content",
+and a document tombstone that survives erasure. The log keeps content copies instead, and erasure
+is whole-organisation. The trade: the history is richer while an organisation exists.
+
+**Known limit, stated on both legal pages and in the runbook:** erasing one person inside a
+*living* organisation isn't built. Deleting a document removes its file immediately, but the
+history's copy of its fields stays until the organisation is erased. Revisit if a customer
+needs per-person erasure without closing.
+
+**Also from the review:**
+- **EU region, re-checked live:** `cfm-web` (`qsqhcithnqanqzvsfyez`) is the only Supabase project,
+  in eu-central-1 (Frankfurt).
+- **The design partner agreement now says it outright:** CFM doesn't certify products, and isn't
+  the partner's Responsible Person, authorised representative, notified body or other economic
+  operator.
+
+**Next, Tabeen's:** after merge, apply the migration to the live database (`supabase db push`,
+dry run first). The live database has no customers, so nothing is at stake in the change.
 
 ## Open questions
 

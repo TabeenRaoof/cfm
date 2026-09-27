@@ -5,10 +5,10 @@ service, today Tabeen. It is the "written deletion procedure, even if manual" th
 before the first real upload, and the process behind the privacy policy's and DPA's deletion
 promises (`/privacy` "How long we keep it", `/dpa` §8).
 
-> **Blocked:** step 5 cannot be done today. The change history (`audit_log`) keeps full copies of
-> every changed row and refuses deletion, even by the service role. Until the fix in
-> [§ The audit-log blocker](#the-audit-log-blocker) lands, an organisation cannot be fully erased,
-> so uploads stay off and the legal pages stay marked draft.
+Organisation erasure is one database function, `public.erase_organisation` (D-054), which only
+the service role can run. It deletes the organisation, everything belonging to it and its change
+history, and leaves a tombstone with no content. **It must be applied to the live database
+(`supabase db push`) before this procedure can be followed.**
 
 Never keep a request register, export or query result containing personal data in this
 repository. The register lives in the contact mailbox (a labelled thread per request).
@@ -38,7 +38,7 @@ Deadline: **30 days from the request** (DPA §8). Aim for 7.
    SKU's technical file (Readiness) and each original document (Documents). If they want the
    raw records too, run the queries in [Export queries](#export-queries) and send the result
    to the owner's address only, as an attachment, then delete your local copy.
-4. **Delete the stored files first** (while the database still says where they are):
+4. **Delete the stored files** (while the database still says where they are):
 
    ```sql
    select storage_key from public.document where organisation_id = '<organisation id>';
@@ -53,24 +53,25 @@ Deadline: **30 days from the request** (DPA §8). Aim for 7.
    Then confirm in the Cloudflare dashboard (R2 → `cfm-documents`, EU jurisdiction) that no
    object remains under the `<organisation id>/` prefix. Upload failures delete their own object
    (`worker/routes.ts`), so the prefix should be empty; if anything remains, delete it too.
-5. **Delete the change history.** ⚠ *Blocked — see below.*
-6. **Delete the organisation.**
+5. **Erase the organisation and its history.**
 
    ```sql
-   delete from public.organisation where id = '<organisation id>';
+   select public.erase_organisation('<organisation id>');
    ```
 
-   This cascades to memberships, products, invitations, documents, extractions and
-   document–product links (`supabase/migrations/`). Check with
-   `select count(*) from public.<table> where organisation_id = '<organisation id>'` for each
-   table: all zero.
-7. **Delete accounts that belonged only to this organisation**, if the owner asked for account
+   One transaction: the organisation and everything cascading from it (memberships, products,
+   invitations, documents, extractions, document–product links), then every change-history row
+   about it, then a single tombstone row (`entity = 'erasure'`, no content). It returns the
+   storage keys it found — each should already be gone from step 4; delete any that are not.
+   Check: `select entity, before, after from public.audit_log where organisation_id =
+   '<organisation id>'` returns exactly the tombstone.
+6. **Delete accounts that belonged only to this organisation**, if the owner asked for account
    closure too: Supabase dashboard → Authentication → Users → delete each user with no remaining
    membership. An account that belongs to another organisation stays.
-8. **What expires on its own:** anything sent to Anthropic (within 30 days); provider backups
+7. **What expires on its own:** anything sent to Anthropic (within 30 days); provider backups
    (none on Supabase's free plan; 7 days on Pro). Nothing to do — but do not promise faster.
-9. **Confirm in writing** to the owner's address: what was deleted, on which date, and the two
-   expiries in step 8. Note the completion date on the thread.
+8. **Confirm in writing** to the owner's address: what was deleted, on which date, and the two
+   expiries in step 7. Note the completion date on the thread.
 
 ## B. A single person's data inside an organisation
 
@@ -82,7 +83,9 @@ data subject, not ours (DPA §9).
 2. If the organisation instructs deletion: an owner or admin deletes the document in the app
    (removes the file from storage immediately and the record), and edits any product facts
    that name the person.
-3. ⚠ The change history still holds copies — same blocker as A.5.
+3. ⚠ **Known limit:** the change history still holds copies of the document's fields and the
+   old product facts until the organisation itself is erased. Tell the organisation so, in
+   writing. Per-person erasure inside a living organisation is not built (D-054).
 
 ## C. Closing one user's account
 
@@ -94,37 +97,26 @@ data subject, not ours (DPA §9).
 3. They leave each organisation (Members → leave), then delete the user in the dashboard
    (Authentication → Users). `invited_by`, `uploaded_by`, `reviewed_by` and `created_by` become
    empty; the organisation's data stays, because it is the organisation's.
-4. ⚠ Their email address remains in the change history's copies of invitations — same blocker.
+4. ⚠ **Known limit:** their email address remains in the change history's copies of invitations
+   until the organisation is erased (D-054).
 
 ---
 
-## The audit-log blocker
+## The audit-log decision (D-054)
 
-**What:** `private.audit()` (`20260926000001_tenancy.sql`) writes `to_jsonb(old)` and
-`to_jsonb(new)` for every change — organisation names, product facts including responsible
-persons' names and addresses, invitation emails, document filenames and extracted fields. Its
-append-only trigger refuses update, delete and truncate for every role, including the service
-role. So the personal data outlives the organisation, forever.
+**Was:** `private.audit()` writes full `before`/`after` copies of every change, and the log refused
+deletion by every role — so an organisation's personal data outlived it, forever.
 
-**It also contradicts D-005**, which decided the audit log holds "events and hashes, never
-content". The implementation drifted from the decision.
+**Decided (Tabeen, PR #14 review):** keep the log append-only for everyone while an organisation
+exists, and let one service-role function erase a whole organisation, history included, on
+offboarding or request. The append-only trigger allows exactly one kind of delete: rows of an
+organisation that no longer exists, inside `erase_organisation`. `apps/web/test/erasure.test.ts`
+proves it: personal data put through the history is gone afterwards; another organisation is
+untouched; a living organisation's history still can't be deleted, updated or truncated, even by
+the database owner with the erasure flag set.
 
-**Options (Tabeen's decision):**
-
-1. **Bring the audit log in line with D-005 (recommended).** The trigger records who, when,
-   which entity, which action and *which columns changed* — no values. A one-off migration strips
-   `before`/`after` from existing rows (the database has no customers yet, so nothing of value is
-   lost) and visibly re-creates the append-only trigger. What remains after an organisation is
-   deleted is UUIDs and timestamps: no longer linkable to anyone once the organisation and its
-   accounts are gone, so the log can stay append-only and step A.5 disappears. Cost: the history
-   shows *that* a fact changed, not *from what to what*.
-2. **Keep full snapshots, add a service-role-only purge.** A function that deletes one
-   organisation's audit rows, allowed through the append-only trigger by a transaction-local
-   flag only it can set. Keeps rich history while an organisation exists, but B and C (erasing
-   one person inside a living organisation) would need per-row redaction as well — more code,
-   more ways to get it wrong, and it weakens "append-only".
-
-Either way the fix is a new migration plus a test that proves erasure on a real row.
+**Still open:** erasing one person's data inside a living organisation (B and C above). Their
+details stay in the history until the organisation is erased.
 
 ---
 

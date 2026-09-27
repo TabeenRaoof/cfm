@@ -48,8 +48,10 @@ paid plans, you choose whether to move to one, on terms we will send you before 
 ## 5. Early-stage software
 
 1. CFM is **an information tool, not legal advice**. It helps you organise and check your
-   compliance evidence; you remain responsible for your products' compliance and for keeping the
-   records the law requires of you (including GPSR's ten-year retention).
+   compliance evidence. It does not certify products, and we are not your Responsible Person,
+   authorised representative, notified body or other economic operator under any product law.
+   You remain responsible for your products' compliance and for keeping the records the law
+   requires of you (including GPSR's ten-year retention).
 2. It is early software. It may change, be unavailable, or contain errors. Keep your own copies
    of your original documents.
 3. *Reviewer:* warranty disclaimer wording.

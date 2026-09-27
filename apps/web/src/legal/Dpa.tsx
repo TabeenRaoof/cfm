@@ -105,7 +105,8 @@ export function Dpa() {
         data, then delete all customer personal data — files, records and change history — within
         30 days, and confirm in writing when it is done. Copies in providers' backups expire within
         7 days of deletion, and anything sent to Anthropic within 30 days. A single document
-        deleted inside the service is deleted from storage straight away.
+        deleted inside the service is deleted from storage straight away; the change history's
+        record of it, including the fields read from it, is deleted when your organisation is.
       </p>
 
       <h2>9. Helping you</h2>

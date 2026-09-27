@@ -17,9 +17,9 @@ pages do not account for.
 
 ## Before `UPLOADS_ENABLED` becomes `"true"`
 
-1. **Fix the audit-log erasure blocker** — see
-   [deletion-procedure.md § The audit-log blocker](deletion-procedure.md#the-audit-log-blocker).
-   Until then, the deletion promised by both pages cannot be carried out.
+1. **Apply the erasure migration to the live database** (`supabase db push`, after this is
+   merged). `public.erase_organisation` (D-054) is what makes the deletion both pages promise
+   possible — see [deletion-procedure.md](deletion-procedure.md#the-audit-log-decision-d-054).
 2. **Legal review** of all four, including the questions below.
 3. **A sign-in email sender that reaches customers.** Supabase's built-in email delivers only
    to members of the Supabase project's own team, at 2 messages an hour, with no SLA — design

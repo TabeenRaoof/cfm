@@ -20,7 +20,7 @@ are immutable; corrections to them are in `project-setup/03-plan-review.md`.
 
 ```bash
 npm install
-npm test               # 639 tests, including row-level security against the real migrations
+npm test               # 648 tests, including row-level security against the real migrations
 npm run typecheck
 npm run catalog:check  # the requirement publish gate
 npm run smoke          # runs the deterministic path on a bare Node, no build step

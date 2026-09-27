@@ -112,7 +112,9 @@ export function PrivacyPolicy() {
       <ul className="list">
         <li>Your account: until you or your organisation close it.</li>
         <li>An uploaded document: until someone in your organisation deletes it, or the
-          organisation is closed.</li>
+          organisation is closed. Deleting a document removes the file at once; the change
+          history's record of it, including the fields read from it, stays until the organisation
+          is closed.</li>
         <li>Everything belonging to an organisation, including its change history: deleted when
           the organisation is closed, within 30 days of the request. Ask us for an export first —
           you may need your technical file for up to ten years, and that duty is yours, not
