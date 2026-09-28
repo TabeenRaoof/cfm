@@ -1471,6 +1471,31 @@ it; not silence as agreement.
 **Neither review cites a source.** They are useful as checklists, not as verification. The
 catalog's standard stays primary legal text.
 
+---
+
+### D-056 · No upload partners before OPT; design partners start as feedback partners
+**Status:** Accepted (Tabeen, 27 September 2026) · **Builds on:** D-013, D-025, D-033, D-046
+
+Weighed: going without design partners at all. Gains: legal spend and a possible Art. 27
+representative fee move to launch; no need for the DSO's confirmation on unpaid testing; hours
+stay with forum work. Losses: the plan's first paying customers (Gate 3 from zero, ~8 weeks of
+runway), extraction never meeting a real document, no launch proof.
+
+**Decided:** uploads stay off before OPT, and design partners are still sought, in stages:
+1. **Feedback partner (now):** a call, the scanner run on their own catalogue (the file never
+   leaves their browser), short check-ins. No account, no documents, no paperwork, no payment.
+2. **Account partner (only once one commits):** that commitment triggers the sign-in email
+   provider, the lawyer review and a signed design partner agreement. The cost is incurred
+   against a real partner, not in advance.
+3. **At OPT:** a founder's price, offered only once billing is lawful. Nothing is taken before.
+
+Also: test extraction on public sample documents for an accuracy figure before launch; a
+launch list of people who will try it on day one; the lawyer review in December; and a
+deliberate look at whether Gate 3 (5 paying by 28 February 2027) still holds.
+
+**Baseline, checked live 27 September:** the scanner has recorded 0 scans and 0 waitlist
+sign-ups. The first partner comes from conversations Tabeen starts, not from inbound.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
