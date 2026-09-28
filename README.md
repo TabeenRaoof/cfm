@@ -14,12 +14,13 @@ are immutable; corrections to them are in `project-setup/03-plan-review.md`.
 | Claude-specific notes | `tabeen_CLAUDE.md` |
 | Decisions and open questions | `project-setup/decisions.md` |
 | Review of the two plans | `project-setup/03-plan-review.md` |
+| Privacy policy, DPA, design-partner agreement, deletion procedure (drafts) | `legal/README.md` |
 
 ## Running it
 
 ```bash
 npm install
-npm test               # 635 tests, including row-level security against the real migrations
+npm test               # 648 tests, including row-level security against the real migrations
 npm run typecheck
 npm run catalog:check  # the requirement publish gate
 npm run smoke          # runs the deterministic path on a bare Node, no build step

@@ -49,6 +49,10 @@ export function SignIn({ client }: { client: SupabaseClient }) {
           {error && <p className="error" role="alert">{error}</p>}
         </form>
       )}
+      <nav className="legal-footer" aria-label="Legal">
+        <a href="/privacy">Privacy policy</a>
+        <a href="/dpa">Data processing agreement</a>
+      </nav>
     </main>
   );
 }

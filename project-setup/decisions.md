@@ -369,7 +369,8 @@ parallel without competing for them. Full arithmetic in `04-capacity-replan.md`.
 Gate 1 and Gate 2 collapse into one activity: answering seller questions in forums produces the
 interviews, the scanner uses, and the catalog roadmap from the same hour. Gates move in time,
 not in ratio: 8 conversations by 2 Nov; 100 scans or 60 waitlist by 20 Dec; 5 paying by 28 Feb.
-The 12 December charging date is fixed by OPT and does not move.
+The 12 December charging date is fixed by OPT and does not move. *(Superseded by D-046: the
+I-765 requests 4 January 2027, and the real trigger is the approved EAD's start date.)*
 
 **Addendum, 19 September 2026:** no warm UK/EU contacts exist (Q-4, now closed). Forum and
 community engagement is therefore the only discovery channel available, not one of several —
@@ -1314,6 +1315,161 @@ new migration; applied migrations are never edited.
   unused US-region project is a standing chance of someone connecting to the wrong one.
 - Add a payment method so R2 can be enabled.
 - The neutral domain, and D-013's paperwork, as before.
+
+---
+
+### D-053 · D-013's four artefacts are drafted; the audit log blocks erasure
+**Status:** Drafted — awaiting legal review (audit-log decision made: D-054) · **Date:** 27 September 2026 · **Builds on:** D-013, D-005, D-043
+
+The four documents D-013 requires before the first real upload are drafted, indexed in
+`legal/README.md`:
+
+- **Privacy policy** at `/privacy` and **customer DPA** at `/dpa` — public routes in the web app,
+  chosen before the sign-in check, served by the Worker's existing SPA fallback. They share one
+  sub-processor list and one controller identity, so they cannot disagree. Both carry a "draft,
+  not yet in force" banner until `IN_FORCE` is set in `apps/web/src/legal/identity.ts`.
+- **Design partner agreement** — a template in `legal/`, with liability and governing law left
+  for the reviewer.
+- **Deletion procedure** — an internal, manual runbook in `legal/`.
+
+**Guards, each proven against a real injected violation:**
+- A production build refuses without `VITE_CONTROLLER_NAME`, `VITE_CONTACT_EMAIL` and
+  `VITE_AUTH_EMAIL_SENDER` — the scanner's "no blank where the controller belongs" rule (D-043),
+  carried over. The sender must be one `src/legal/senders.ts` has processor text for; `resend` is
+  refused today. Values (already public on the scanner) are in `.env.production`.
+- `apps/web/test/legal.test.ts` fails when a migration adds a table the privacy policy does not
+  account for (tested with an injected `supplier_contact` table), or when either page drops a
+  sub-processor (tested by removing the DPA's table).
+
+**Vendor facts re-verified today** against vendors' own documentation, as D-029 required:
+Anthropic still has no EU option (`inference_geo` is `global` or `us`; workspace data at rest is
+US-only); inputs and outputs are deleted within 30 days (two years if flagged for a usage-policy
+violation) and not used for training; its DPA includes the SCCs and UK addendum. Cloudflare's DPA
+includes the SCCs and UK addendum and gives 30 days' notice of new sub-processors. Supabase's DPA
+includes the SCCs. Supabase's free plan has no automatic backups (Pro: 7 days).
+
+**Two findings that block uploads, beyond legal review:**
+
+1. **The audit log makes erasure impossible, and contradicts D-005.** `private.audit()` stores
+   full `before`/`after` row copies — responsible persons' names and addresses, invitation
+   emails, extracted fields — and the append-only trigger refuses deletion by every role. D-005
+   decided "events and hashes, never content"; the implementation drifted. Options and a
+   recommendation (bring it in line with D-005: record which columns changed, never values) are
+   in `legal/deletion-procedure.md`. **Tabeen's decision.**
+2. **Supabase's built-in email reaches only the project's own team** (2 an hour, no SLA), so
+   design partners cannot sign in. A real sender (D-013 names Resend) must be chosen, its DPA
+   verified, and its text added to `senders.ts` before invitations go out.
+
+Also flagged for the lawyer (full list in `legal/README.md`): whether an Article 27 EU/UK
+representative is needed, since the controller is an individual outside the UK and EU; and
+whether incorporating the SCCs by reference in a click-through DPA covers the transfer that
+creates.
+
+---
+
+### D-054 · Organisation erasure: one service-role function; the audit log stays append-only otherwise
+**Status:** Accepted (Tabeen, PR #14 review, 27 September 2026) — built; not yet applied to the live database · **Date:** 27 September 2026 · **Resolves:** D-053 finding 1 · **Supersedes in part:** D-005
+
+**Decision (Tabeen):** CFM is the processor; GPSR's ten-year retention duty is the customer's, not
+ours (D-006). So on offboarding or an erasure request we must be able to wipe an organisation
+completely. Keep the audit log immutable during an organisation's life; add a privileged,
+tenant-level cascading delete for erasure.
+
+**Built** (`apps/web/supabase/migrations/20260927000001_erase_organisation.sql`):
+- `public.erase_organisation(uuid)`, executable by the service role only. In one transaction it
+  deletes the organisation (cascading to every table), then every audit row about it, then writes
+  one tombstone (`entity = 'erasure'`, no actor, no content). Returns the organisation's storage
+  keys so the operator can confirm its R2 prefix is empty.
+- The append-only trigger now allows exactly one delete: rows of an organisation **that no longer
+  exists**, with the erasure flag set for that organisation. A living organisation's history
+  still can't be deleted, updated or truncated by any role, the database owner included.
+
+**Proven** (`apps/web/test/erasure.test.ts`, 9 tests), each guard failing on a real injected
+violation: dropping the "no longer exists" condition, skipping the history delete, and leaving the
+function executable by `authenticated`. Personal data (a responsible person's name in before/after
+copies, an invitee's email) is put through the history and shown to be gone afterwards; another
+organisation's data and history are untouched.
+
+**How this differs from D-005:** D-005 wanted the log to hold "events and hashes, never content",
+and a document tombstone that survives erasure. The log keeps content copies instead, and erasure
+is whole-organisation. The trade: the history is richer while an organisation exists.
+
+**Known limit, stated on both legal pages and in the runbook:** erasing one person inside a
+*living* organisation isn't built. Deleting a document removes its file immediately, but the
+history's copy of its fields stays until the organisation is erased. Revisit if a customer
+needs per-person erasure without closing.
+
+**Also from the review:**
+- **EU region, re-checked live:** `cfm-web` (`qsqhcithnqanqzvsfyez`) is the only Supabase project,
+  in eu-central-1 (Frankfurt).
+- **The design partner agreement now says it outright:** CFM doesn't certify products, and isn't
+  the partner's Responsible Person, authorised representative, notified body or other economic
+  operator.
+
+**Next, Tabeen's:** after merge, apply the migration to the live database (`supabase db push`,
+dry run first). The live database has no customers, so nothing is at stake in the change.
+
+---
+
+### D-055 · Two external reviews of PR #14 and the catalog: what changed, what was corrected
+**Status:** Recorded · **Date:** 27 September 2026 · **Builds on:** D-053, D-054
+
+Tabeen brought back two reviews: an architecture/compliance review of PR #14, and a regulatory
+"online review" of the catalog. Each claim was checked against the repo, the live services, or
+the source before acting.
+
+**Acted on:**
+- **Design partner agreement §5.2:** readiness results, requirement lists and extracted fields
+  are aids, not determinations. The partner confirms each independently before relying on it,
+  and there's no guarantee the catalog is complete or current. (The Readiness screen already says
+  "not legal advice or certification — check it against your own situation".)
+
+**Already done:** organisation erasure (D-054). The first review's recommendation matches it.
+
+**Verified live, as the first review asked:** Supabase `cfm-web` is in eu-central-1 (Frankfurt),
+the only project. R2 `cfm-documents` is in the EU jurisdiction (location EEUR, 0 objects).
+
+**Corrected, not adopted:**
+- **OPT date.** Both reviews use `01-`'s 12 December 2026. That was superseded by D-046: the
+  I-765 requests 4 January 2027, and the real trigger is the approved EAD's start date. D-025's
+  "does not move" sentence now points to D-046.
+- **The sign-in email limit is not an immigration safeguard.** It blocks the unpaid
+  design-partner testing that *is* allowed now, and it disappears the moment a real sender is
+  configured. What keeps the project non-commercial is that no billing exists (no Paddle, no
+  invoicing). The email sender stays a pre-upload item (`legal/README.md`); when to switch it on
+  is Tabeen's call.
+- **"Product Regulation and Governance Act 2025"** — the second review's name is wrong. It is the
+  Product Regulation and Metrology Act 2025, as the catalog already says. Its substantive point
+  stands: `uk.gpsr.uk-responsible-person` is held in `draft` at low confidence, because no blanket
+  UK responsible-person duty exists for general consumer goods yet.
+- **PPWR "no grace period"** — the second review calls `01-`'s phrase "completely accurate".
+  It isn't quite. The obligation applies from 12 August 2026. But national registers under
+  Art. 44 are due 18 months after the Art. 44(14) implementing act comes into force. That act was
+  still a Commission draft on 10 August 2026 (packaging-journal.de, citing the draft's own
+  "neither adopted nor endorsed" notice), and a separate tracker reported it unadopted on
+  31 August 2026. Both are secondary sources; the adopted act, if any, is not yet on EUR-Lex. The catalog's timing-risk
+  note on `eu.ppwr.producer-registration` stands. Don't repeat "no grace period" in customer copy.
+  Nothing customer-facing uses it today (checked).
+
+**Confirmed, no change** — resting on earlier primary checks, not re-fetched this round: DSA
+Art. 30 (checked against the full text on 20 September). GPSR's ten-year duty sits with the
+economic operator (D-006); it is Art. 9(3), with Art. 9(2) setting the content (primary text
+checked 20 September; EUR-Lex returned an empty page on 27 September). The review quotes attributed
+to `01-` exist verbatim. Supabase's DPA "forms part of" its Terms, and accepting them "shall have
+the same effect as signing the SCCs" (re-fetched 27 September), so there is nothing to sign.
+
+**A legal basis both reviews get wrong:** they ground our duty to delete in GDPR Art. 17. The
+right to erasure runs against the *controller* (the customer), and Art. 17(3)(b)'s exemption is
+a legal obligation "to which the controller is subject". CFM's own duty is Art. 28(3)(g): a
+processor deletes or returns the data at the end of the service, at the controller's choice.
+Same outcome, and DPA §8 already follows 28(3)(g), but cite 28(3)(g) for our side.
+
+**Not verified:** review 2's claim that PPWR Art. 5's PFAS limits for food-contact packaging
+apply from 12 August 2026. No catalog entry models food-contact packaging, so nothing depends on
+it; not silence as agreement.
+
+**Neither review cites a source.** They are useful as checklists, not as verification. The
+catalog's standard stays primary legal text.
 
 ## Open questions
 
