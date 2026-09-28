@@ -1500,6 +1500,16 @@ while checking the counter works (it does). Removing them from the live table wa
 production write, so they stay in D1 and must be discounted by hand. Never probe that URL to
 test the counter; read D1 instead.
 
+**Channel correction (27 September):** Amazon's Seller Forums (`01-` §7's first channel) can be read
+by anyone, but only sellers with an active Seller Central account can post, and the guidelines
+prohibit external links and solicitation (sellercentral.amazon.co.uk/seller-forums/faqs and
+/guidelines). Tabeen will not register as a seller: there is no intent to sell, registration
+needs business, bank and identity verification, and an F-1 student opening a selling account is
+the wrong signal. So the forums become **read-only research**: the UK forum first (the ICP, in
+English), to learn which GPSR/EPR/PPWR questions sellers actually ask. Conversations happen
+where non-sellers can post and message: Reddit, UK seller Facebook groups, LinkedIn. Outreach
+is from Tabeen's personal accounts and email, not the Attesta-named address.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
