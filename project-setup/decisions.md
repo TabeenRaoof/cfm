@@ -1495,6 +1495,10 @@ deliberate look at whether Gate 3 (5 paying by 28 February 2027) still holds.
 
 **Baseline, checked live 27 September:** the scanner has recorded 0 scans and 0 waitlist
 sign-ups. The first partner comes from conversations Tabeen starts, not from inbound.
+**Subtract 3 from 28 September (UTC):** those are Claude's own requests to `/catalog/index.json`
+while checking the counter works (it does). Removing them from the live table was declined as a
+production write, so they stay in D1 and must be discounted by hand. Never probe that URL to
+test the counter; read D1 instead.
 
 ## Open questions
 
