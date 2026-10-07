@@ -14,7 +14,7 @@ import {
 } from "./domain/evidence.ts";
 import { factLabel, ORGANISATION_FACT_PREFIXES, subjectFacts } from "./domain/facts.ts";
 import { saveBlob } from "./lib/api.ts";
-import { MARKETS, marketName } from "./domain/markets.ts";
+import { MARKETS, marketName, SALES_CHANNEL_FACT, SALES_CHANNELS, salesChannelOf } from "./domain/markets.ts";
 import { CAN_MANAGE, PRODUCT_COLUMNS, type Organisation, type Product, type Role } from "./lib/types.ts";
 
 /**
@@ -60,6 +60,7 @@ export function Readiness({ client, organisation, role, onChanged }: {
 
   const asOf = new Date().toISOString().slice(0, 10);
   const markets = organisation.target_markets;
+  const channel = salesChannelOf(organisation.facts);
 
   const evidence = useMemo(
     () => evidenceByProduct((products ?? []).map((p) => p.id), documents, extractions, links, catalog),
@@ -73,8 +74,8 @@ export function Readiness({ client, organisation, role, onChanged }: {
       facts: subjectFacts(organisation, product),
       evidence: evidence.get(product.id)!.view,
     }));
-    return assessProducts(items, { catalog, markets, asOf });
-  }, [products, organisation, markets, asOf, evidence]);
+    return assessProducts(items, { catalog, markets, asOf, ...(channel ? { channel } : {}) });
+  }, [products, organisation, markets, channel, asOf, evidence]);
 
   if (catalogIssues.length > 0) {
     return (
@@ -89,6 +90,7 @@ export function Readiness({ client, organisation, role, onChanged }: {
     <section>
       <h2>Readiness</h2>
       <TargetMarkets client={client} organisation={organisation} role={role} onChanged={onChanged} />
+      <SalesChannel client={client} organisation={organisation} role={role} onChanged={onChanged} />
       {error && <p className="error" role="alert">{error}</p>}
       {markets.length === 0 && <p className="muted">Choose the markets you sell into to see readiness.</p>}
       {products?.length === 0 && markets.length > 0 && (
@@ -115,7 +117,9 @@ export function Readiness({ client, organisation, role, onChanged }: {
                     <li key={q.factPath}>
                       <strong>{factLabel(q.factPath, catalog)}</strong>
                       <span className="muted"> · unblocks {q.unblocks} · </span>
-                      {orgLevel || q.factPath === "organisation.establishment_country" ? (
+                      {q.factPath === "channel.type" ? (
+                        <span className="muted">choose your sales channel above</span>
+                      ) : orgLevel || q.factPath === "organisation.establishment_country" ? (
                         <a href={`#org=${organisation.id}&tab=details`}>answer in Organisation details</a>
                       ) : (
                         <span className="muted">add a column for it to your product sheet and re-import</span>
@@ -143,7 +147,7 @@ export function Readiness({ client, organisation, role, onChanged }: {
                         <summary>{item.product.sku}</summary>
                         <CellDetails cells={cells} />
                         <TechnicalFiles organisationName={organisation.name} product={item.product}
-                          facts={item.facts} evidence={item.evidence} markets={markets} asOf={asOf} />
+                          facts={item.facts} evidence={item.evidence} markets={markets} channel={channel} asOf={asOf} />
                       </details>
                     </td>
                     {cells.map((cell) => <td key={cell.market}><CellSummary cell={cell} /></td>)}
@@ -245,20 +249,56 @@ function TargetMarkets({ client, organisation, role, onChanged }: {
   );
 }
 
+function SalesChannel({ client, organisation, role, onChanged }: {
+  client: SupabaseClient;
+  organisation: Organisation;
+  role: Role;
+  onChanged: () => void;
+}) {
+  const [error, setError] = useState<string | null>(null);
+  const canEdit = CAN_MANAGE.includes(role);
+
+  async function choose(value: string) {
+    setError(null);
+    const facts = { ...organisation.facts };
+    if (value) facts[SALES_CHANNEL_FACT] = value;
+    else delete facts[SALES_CHANNEL_FACT];
+    const { error: failure } = await client.from("organisation").update({ facts }).eq("id", organisation.id);
+    if (failure) setError(failure.message);
+    else onChanged();
+  }
+
+  return (
+    <label className="field channel-field">
+      <span>Sales channel{!canEdit && " (owners and admins can change this)"}</span>
+      <select value={salesChannelOf(organisation.facts) ?? ""} disabled={!canEdit} onChange={(e) => void choose(e.target.value)}>
+        {SALES_CHANNELS.map((c) => <option key={c.value} value={c.value}>{c.name}</option>)}
+        <option value="">Not sure / several</option>
+      </select>
+      <small className="muted">
+        If you sell on any marketplace, choose it — marketplace rules apply to those listings.
+      </small>
+      {error && <p className="error" role="alert">{error}</p>}
+    </label>
+  );
+}
+
 /**
  * The per-SKU, per-market technical file (@cfm/techfile, D-028) — self-contained HTML, generated
  * here from the same assessment the table shows, so the file can't disagree with the screen.
  */
-function TechnicalFiles({ organisationName, product, facts, evidence, markets, asOf }: {
+function TechnicalFiles({ organisationName, product, facts, evidence, markets, channel, asOf }: {
   organisationName: string;
   product: Product;
   facts: ReturnType<typeof subjectFacts>;
   evidence: EvidenceView;
   markets: readonly string[];
+  channel: string | undefined;
   asOf: string;
 }) {
   function download(market: string) {
-    const assessment = assessProduct(catalog, { facts, market: { iso_country: market } }, { asOf, evidence });
+    const subject = { facts, market: { iso_country: market }, ...(channel ? { channel: { type: channel } } : {}) };
+    const assessment = assessProduct(catalog, subject, { asOf, evidence });
     const html = renderTechnicalFile({
       sku: product.sku,
       title: product.title,

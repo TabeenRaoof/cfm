@@ -326,7 +326,13 @@ function DocumentCard({ client, organisation, role, doc, extraction, linkedProdu
         <Review client={client} doc={doc} extraction={extraction} onReviewed={onChanged} />
       )}
 
-      <details>
+      {linkedProductIds.length === 0 && (
+        <p className="unknown" role="status">
+          Not linked to any product, so it doesn't count as evidence anywhere yet — choose the
+          products it covers below.
+        </p>
+      )}
+      <details open={linkedProductIds.length === 0}>
         <summary>Covers {linkedProductIds.length} product{linkedProductIds.length === 1 ? "" : "s"}</summary>
         {products.length === 0 ? <p className="muted">No products yet.</p> : (
           <fieldset className="choices plain" disabled={!canEdit}>

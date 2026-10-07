@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { importProducts } from "../src/import.ts";
+import { COLUMNS, matchColumn } from "../src/mapping.ts";
 
 const run = (csv: string) => importProducts(csv, { maxRows: 1000 });
+
+describe("column labels", () => {
+  // The app and the scanner tell a seller to "add a column" using these labels. A label the
+  // importer then reports as unrecognised would send them in a circle.
+  it.each(COLUMNS.map((c) => [c.label, c.factPath] as const))("%s is accepted as its own header", (label, factPath) => {
+    expect(matchColumn(label)?.factPath).toBe(factPath);
+  });
+});
 
 describe("importProducts", () => {
   it("maps recognised headers to fact paths", () => {
