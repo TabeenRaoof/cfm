@@ -1635,6 +1635,37 @@ tracking, document evidence) overlaps. Not a referral-partner candidate like Gro
 same channel, not a complementary role. Watch quarterly, same as Group B; the signal that would
 change this is SafeCart adding EPR/PPWR or multi-market registration tracking.
 
+### D-061 · Euverify re-assessed: touches the standing self-serve-under-$100 kill signal
+**Status:** Recorded, judgment left to Tabeen · **Date:** 8 October 2026
+
+`01-` §3.1's Group E carried Euverify as one line — "seller-founded compliance SaaS" — alongside
+listing-field scanners. Checked against euverify.com/ppwr and euverify.com/pricing (8 October):
+that undersold it. Starter is £490/year (~$52/month) and bundles GPSR, PPWR, DoC and technical-
+file generation, **and the EU or UK AR/RP role itself** — plus CE/UKCA, toys, machinery, PPE,
+cosmetics and medical-device add-ons (GDPR Art. 27 representation is a separate line). Moved to
+its own row (E′) rather than left under Group E, since a scanner and "software that also is your
+legal representative" are different categories of risk.
+
+**Why this matters more than a routine sighting:** `01-` §10's standing kill signals name "a
+Group-B platform launches self-serve under $100/month." Euverify is filed under E, not B, but it
+is functionally doing what that signal describes — a self-serve, cheap, full "compliance brain"
+that also holds the legal role, which Groups B (the brain) and D (the role) were kept separate
+in the original taxonomy precisely because no one had combined them cheaply yet.
+
+**What still distinguishes CFM**, so this is a re-assessment, not a verdict: no visible AI
+extraction from a supplier's own documents — Euverify reads as a wizard that *generates* filings
+from what you type in, not a tool that *reads* a test report or RP mandate you already have;
+"product family" counted rather than true per-SKU; no per-country EPR registration tracking
+(Germany's LUCID, France's Citeo, Italy's CONAI each modelled separately in CFM's catalog, not
+visible as a Euverify feature); no Amazon-native channel exports; and D-034's deliberate
+narrower category scope for v1 (general GPSR/EPR/PPWR, not CE/toys/machinery/medical depth).
+
+**Found the same way as D-060:** live, in the ICP's own channel, not from scheduled research.
+Not decided here whether this meets Section 10's bar — that is explicitly Tabeen's call, and the
+report's own language ("watch them quarterly... that is a kill signal") treats it as a signal to
+weigh, not an automatic stop. Revisit at the next quarterly competitor check, or sooner if more
+of CFM's open territory (multi-market EPR granularity, document AI) narrows.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
