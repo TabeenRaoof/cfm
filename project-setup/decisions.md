@@ -1531,6 +1531,54 @@ would be solving a problem that does not exist yet. The approval record is this 
 each account partner gets an entry here (or a short partners log if the volume ever outgrows
 this file) recording who, when, and which stage (feedback vs. account partner) they're at.
 
+### D-058 · D-057 switched off email sign-in for everyone; invitations now create the account
+**Status:** Built and tested locally; the production auth fix is Tabeen's to apply · **Date:** 8 October 2026 · **Corrects:** D-057
+
+**What went wrong.** D-057 set both `auth.enable_signup` and `auth.email.enable_signup` to
+`false`. Despite its name, `auth.email.enable_signup` is the email *provider* switch. Probed on
+8 October with an address on `.invalid`: production answers `email_provider_disabled` —
+"Email logins are disabled". Nobody can get a sign-in link, existing users included. Sessions
+already open keep working on their refresh tokens, which is why it went unnoticed.
+
+**Fix:** `auth.enable_signup = false` (no new accounts) with `auth.email.enable_signup = true`
+(the provider stays on). Verified on the local stack, where `supabase/config.toml` now matches
+production instead of differing from it: an existing user gets a link; a new address gets
+"Signups not allowed for this instance" and no account. `scripts/e2e-local.ts` checks both on
+every run. The one-field production change was prepared and diffed (exactly one difference) but
+the session's permission guard refused to apply it. **Tabeen:** Supabase dashboard →
+Authentication → Sign In / Providers → Email → turn the Email provider on; leave "Allow new users
+to sign up" off. Then confirm with the probe in `project-setup/design-partner-onboarding.md` §1.
+
+Also noticed: when D-057 was pushed interactively, `auth.sms.twilio.enabled` went from `true` to
+`false` in production. The app has no SMS or phone sign-in, so nothing depends on it.
+
+**Second break, same cause.** With signup off, the Members tab's invitations stranded anyone
+without an account: they were told to sign in, and sign-in refused to create them. And GoTrue
+won't send a link to an *unconfirmed* account while signup is off (checked on the local stack),
+so D-057's `admin.inviteUserByEmail` would have stranded a partner who used the sign-in page
+instead of the invitation link.
+
+**Built:**
+- `POST /api/invitations` (`worker/routes.ts`). The invitation is inserted **as the caller**, so
+  the existing policies still decide who may invite and with what role. Only then does the
+  service role create the invitee's account — confirmed, with no password. Safe because the only
+  way into a passwordless account is a link sent to that inbox; signing in still proves the
+  address, which is what `accept_invitation`'s confirmed-email check is for. If the account
+  can't be created, the invitation is removed again. Nine checks in `scripts/e2e-worker.ts`.
+- `scripts/provision-account.ts` for a design partner's first account, replacing D-057's
+  `inviteUserByEmail`. It also confirms an existing, never-confirmed account.
+- The sign-in page explains "access is by invitation" instead of GoTrue's raw error.
+- Privacy policy and `legal/deletion-procedure.md` §D: an account created by an invitation
+  nobody accepted is deleted after the invitation expires (a monthly query).
+
+**Consequence, stated plainly.** Any signed-in user can create an organisation, and so invite
+anyone. The operator's approval gates a partner's *first* account; after that, the partner can
+bring in whoever they like. Acceptable now: a new account sees only invitations addressed to it.
+Revisit if it matters — the lever is limiting `create_organisation` to approved accounts.
+
+**Known limit:** the invitation route treats an existing but unconfirmed account as fine. That
+invitee would be refused a link; `provision-account.ts` fixes such an account.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.

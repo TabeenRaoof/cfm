@@ -16,7 +16,13 @@ export function SignIn({ client }: { client: SupabaseClient }) {
       options: { emailRedirectTo: window.location.origin },
     });
     if (failure) {
-      setError(failure.message);
+      const uninvited = failure.code === "signup_disabled" || /signups not allowed/i.test(failure.message);
+      setError(
+        uninvited
+          ? "There's no account for that address. Access is by invitation for now — if you were " +
+              "invited, use the exact address the invitation went to."
+          : failure.message,
+      );
       setState("idle");
       return;
     }

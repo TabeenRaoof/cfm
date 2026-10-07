@@ -159,6 +159,50 @@ async function review(request: Request, env: Env, caller: Caller, documentId: st
   return json(200, { status: "accepted" });
 }
 
+const INVITABLE_ROLES = ["admin", "member", "viewer"] as const;
+
+/**
+ * Invitations are the only way in (D-057): self-signup is off, so the invitee's account has to
+ * exist before they can request a sign-in link. The invitation is inserted as the caller, so the
+ * invitation policies decide who may invite and with what role; only then does the service role
+ * create the account. It's created confirmed because GoTrue won't send a sign-in link to an
+ * unconfirmed account while signup is off. That's safe: the account has no password, so the
+ * only way into it is a link sent to that inbox — signing in still proves the address.
+ */
+async function invite(request: Request, env: Env, caller: Caller): Promise<Response> {
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return json(400, { error: "Expected JSON." });
+  }
+  const { organisation_id: organisationId, email: rawEmail, role } = (body ?? {}) as Record<string, unknown>;
+  if (!isUuid(organisationId)) return json(400, { error: "Missing or invalid organisation." });
+  if (typeof rawEmail !== "string" || rawEmail.trim() === "") return json(400, { error: "Enter an email address." });
+  if (!INVITABLE_ROLES.includes(role as (typeof INVITABLE_ROLES)[number])) {
+    return json(400, { error: "Choose a role: admin, member or viewer." });
+  }
+  const email = rawEmail.trim().toLowerCase();
+
+  const asCaller = callerClient(env, caller.jwt);
+  const inserted = await asCaller.from("invitation").insert({ organisation_id: organisationId, email, role }).select("id").single();
+  if (inserted.error) {
+    const code = inserted.error.code;
+    if (code === "23505") return json(409, { error: `${email} already has a pending invitation — revoke it first to re-send.` });
+    if (code === "23514") return json(400, { error: "That doesn't look like a valid email address." });
+    if (code === "42501") return json(403, { error: "Only owners and admins can invite people." });
+    return json(400, { error: inserted.error.message });
+  }
+
+  const created = await serviceClient(env).auth.admin.createUser({ email, email_confirm: true });
+  const alreadyExists = created.error?.code === "email_exists" || /already been registered/i.test(created.error?.message ?? "");
+  if (created.error && !alreadyExists) {
+    await asCaller.from("invitation").delete().eq("id", inserted.data.id);
+    return json(502, { error: "The invitation couldn't be completed — try again." });
+  }
+  return json(201, { invitationId: inserted.data.id, account: alreadyExists ? "existing" : "created" });
+}
+
 async function remove(env: Env, caller: Caller, documentId: string): Promise<Response> {
   const { data, error } = await serviceClient(env).rpc("delete_document", { p_actor: caller.userId, p_document_id: documentId });
   if (error) {
@@ -176,6 +220,7 @@ export async function handleApi(request: Request, env: Env): Promise<Response> {
   if (caller instanceof Response) return caller;
 
   if (url.pathname === "/api/documents" && request.method === "POST") return upload(request, env, caller);
+  if (url.pathname === "/api/invitations" && request.method === "POST") return invite(request, env, caller);
 
   const match = /^\/api\/documents\/([0-9a-f-]{36})(\/file|\/review)?$/.exec(url.pathname);
   if (match && isUuid(match[1])) {

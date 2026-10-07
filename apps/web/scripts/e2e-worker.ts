@@ -204,6 +204,33 @@ try {
   check("owner applies the mandate's details to the product", !applied.error, applied.error?.message);
   check("RED → GREEN: the EU responsible-person requirement is now met in Germany", statusNow(facts) === "met", String(statusNow(facts)));
 
+  // --- Invitations: with self-signup off, inviting is what creates the account (D-057) -----------
+  const invite = (token: string, email: string, role = "member") =>
+    fetch(`${BASE}/api/invitations`, {
+      method: "POST", body: JSON.stringify({ organisation_id: org, email, role }),
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    });
+  const newcomer = `newcomer-${run}@e2e.test`;
+  const invited = await invite(owner.token, newcomer.toUpperCase());
+  const invitedBody = (await invited.json()) as { account?: string };
+  check("owner invites a new address → 201, account created", invited.status === 201 && invitedBody.account === "created", JSON.stringify(invitedBody));
+  const accounts = (await admin.auth.admin.listUsers({ perPage: 1000 })).data.users;
+  const provisioned = accounts.find((u) => u.email === newcomer);
+  if (provisioned) userIds.push(provisioned.id);
+  check("…stored lowercased, and confirmed so a sign-in link can reach it", !!provisioned?.email_confirmed_at);
+  const anon = createClient(url, publishable, { auth: { persistSession: false } });
+  const newcomerLink = await anon.auth.signInWithOtp({ email: newcomer, options: { shouldCreateUser: false } });
+  check("the invitee can request a sign-in link", !newcomerLink.error, newcomerLink.error?.message);
+  check("inviting the same address again → 409", (await invite(owner.token, newcomer)).status === 409);
+  const existing = await invite(owner.token, outsider.email, "viewer");
+  check("inviting someone who already has an account → 201, no second account",
+    existing.status === 201 && ((await existing.json()) as { account?: string }).account === "existing");
+  check("a viewer can't invite → 403", (await invite(viewer.token, `v-${run}@e2e.test`)).status === 403);
+  check("an outsider can't invite into the org → 403", (await invite(outsider.token, `o-${run}@e2e.test`)).status === 403);
+  check("nobody can invite an owner → 400", (await invite(owner.token, `x-${run}@e2e.test`, "owner")).status === 400);
+  const refusedAccounts = (await admin.auth.admin.listUsers({ perPage: 1000 })).data.users.filter((u) => [`v-${run}@e2e.test`, `o-${run}@e2e.test`, `x-${run}@e2e.test`].includes(u.email ?? ""));
+  check("…and a refused invitation creates no account", refusedAccounts.length === 0, refusedAccounts.map((u) => u.email).join());
+
   // --- Delete --------------------------------------------------------------------------------------
   const del = (token: string) => fetch(`${BASE}/api/documents/${docId}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
   check("a viewer can't delete → 403", (await del(viewer.token)).status === 403);

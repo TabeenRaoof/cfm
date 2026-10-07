@@ -172,6 +172,13 @@ try {
     const messages = (await (await fetch(`${mailpit}/api/v1/search?query=${encodeURIComponent(`to:alice-${run}@e2e.test`)}`)).json()) as { messages_count?: number };
     check("the sign-in email reached the local mail catcher", (messages.messages_count ?? 0) > 0);
   }
+
+  // D-057: an address nobody invited can't create itself an account through the sign-in form
+  const stranger = `stranger-${run}@e2e.test`;
+  const selfSignup = await anon.auth.signInWithOtp({ email: stranger, options: { emailRedirectTo: "http://localhost:5173" } });
+  check("an uninvited address can't self-register by magic link", !!selfSignup.error, selfSignup.error?.message ?? "accepted — signup is open");
+  const strangers = await admin.auth.admin.listUsers({ perPage: 1000 });
+  check("…and no account was created for it", !strangers.data.users.some((u) => u.email === stranger));
 } finally {
   for (const id of orgIds) await admin.from("organisation").delete().eq("id", id);
   await admin.auth.admin.deleteUser(alice.id);
