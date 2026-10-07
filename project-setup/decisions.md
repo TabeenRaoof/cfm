@@ -1619,6 +1619,22 @@ builds), `e2e:local` 25/25 and `e2e:worker` 33/33 against the local stack.
 
 How to proceed, step by step: `project-setup/design-partner-onboarding.md`.
 
+### D-060 · SafeCart logged as a new Group G competitor; low risk today
+**Status:** Recorded · **Date:** 8 October 2026
+
+Found live, not from research: a SafeCart founder answering a GPSR question in
+r/FulfillmentByAmazon — the forum motion D-025/`01-` §7.2 prescribe, working, run by someone
+else in the exact channel this project will use. Checked against safecart.eu (8 October): Safety
+Gate/RAPEX recall monitoring is the product's core, with GPSR supported as alerting rather than a
+full requirement engine; no EPR, no PPWR, no technical file, EU-only with no per-market split.
+Free up to 100 products, Pro €29/month up to 1,000 — the same price point and "software tool, not
+your RP" stance as CFM, on a different job.
+
+Added as Group G in `01-` §3.1: low risk today, since none of CFM's core (EPR/PPWR, multi-market
+tracking, document evidence) overlaps. Not a referral-partner candidate like Group D — same ICP,
+same channel, not a complementary role. Watch quarterly, same as Group B; the signal that would
+change this is SafeCart adding EPR/PPWR or multi-market registration tracking.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
