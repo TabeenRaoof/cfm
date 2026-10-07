@@ -101,8 +101,10 @@ fits the ICP.
 **After the call:** keep notes **outside this repository** under a partner code (`P-001`,
 `P-002`…) — `legal/records-of-processing.md` C5 explains why. In the repo, record only the code,
 the date, the stage, and anything that changes the product (a catalog error found → fix it with a
-citation, as usual). Tally against the gates: Gate 1 wants ≥8 brands ranking "knowing what each
-SKU needs" or "getting supplier documents" top-3, at ≥$29/month.
+citation, as usual). Tally against the gates as D-025 revised them: **Gate 1** — 8 seller
+conversations by 2 November; passes if ≥5 rank "knowing what each SKU needs per market" or
+"getting/verifying supplier documents" in their top 3 and say ≥$29/month. **Gate 2** — 100 scans
+or 60 waitlist sign-ups by 20 December.
 
 **Reading the scanner's numbers:** read the D1 tally, and subtract 3 for 28 September (D-056).
 Never request `/catalog/index.json` to test anything — that's the counter.
@@ -166,8 +168,6 @@ founder's price only once billing is lawful.
 
 ## 5. Yours to decide
 
-- **Gate 2 vs D-056.** Gate 2 (15 November) wants partners who "upload real documents"; uploads
-  stay off until OPT. Move the gate's date, or redefine its upload limb.
-- **Gate 1.** Its 15 interviews were due 5 October; none are recorded here.
+- **Gate 1** (D-025): 8 seller conversations by 2 November — none recorded here yet.
 - **Who may create organisations** (D-058). Today any signed-in user can, so an approved partner
   can bring in anyone. Fine at this scale; tighten if it stops being.

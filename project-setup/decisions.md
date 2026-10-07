@@ -1611,9 +1611,9 @@ builds), `e2e:local` 25/25 and `e2e:worker` 33/33 against the local stack.
 4. Both Worker secrets exist; `UPLOADS_ENABLED` is `false`, as it should be.
 
 **For Tabeen to weigh** (none is decided here):
-- Gate 2 (15 November) asks for design partners who "upload real documents"; D-056 keeps uploads
-  off until OPT. One of the two has to give.
-- Gate 1's 15 interviews were due 5 October; none are recorded in the repo.
+- Gate 1, as revised by D-025: 8 seller conversations by 2 November. None are recorded in the repo
+  yet. (Gate 2, 100 scans or 60 waitlist by 20 December, has no upload limb, so it doesn't
+  conflict with D-056.)
 - The contact address is a consumer Gmail account (`legal/vendor-register.md`).
 - The test organisations made in production while signup was open are Tabeen's own data.
 
