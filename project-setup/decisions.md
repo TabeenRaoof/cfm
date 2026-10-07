@@ -1666,6 +1666,14 @@ report's own language ("watch them quarterly... that is a kill signal") treats i
 weigh, not an automatic stop. Revisit at the next quarterly competitor check, or sooner if more
 of CFM's open territory (multi-market EPR granularity, document AI) narrows.
 
+**A lead, not a finding (8 October, same thread as D-060):** a commenter reported a friend's
+Euverify-generated documents were rejected, in the same reply as an unrelated, dismissive remark
+about the team — secondhand, unverified, n=1, and from a source that also reached for an
+irrelevant jab, so recorded as a lead worth watching for a pattern, not evidence. If true, it
+would line up with the structural gap above: a wizard that generates a DoC from typed answers,
+rather than reading and verifying documents the seller already has, is more exposed to exactly
+this failure mode. Not acted on until corroborated.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
