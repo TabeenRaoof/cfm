@@ -1511,7 +1511,7 @@ where non-sellers can post and message: Reddit, UK seller Facebook groups, Linke
 is from Tabeen's personal accounts and email, not the Attesta-named address.
 
 ### D-057 · Close open self-serve signup; approval happens before an account exists
-**Status:** Accepted (Tabeen, 28 September 2026) · **Builds on:** D-056
+**Status:** Accepted (Tabeen, 28 September 2026) · **Builds on:** D-056 · **Corrected by:** D-058
 
 `compliancefilemanager.com` was live with Supabase's default open signup: any email got a working
 magic link and a fully functional account, with no approval step. That contradicts D-056's
@@ -1578,6 +1578,46 @@ Revisit if it matters — the lever is limiting `create_organisation` to approve
 
 **Known limit:** the invitation route treats an existing but unconfirmed account as fine. That
 invitee would be refused a link; `provision-account.ts` fixes such an account.
+
+### D-059 · Pre-partner review: what was fixed, what production still lacks
+**Status:** Recorded · **Date:** 8 October 2026 · **Builds on:** D-013, D-053, D-056, D-058
+
+An end-to-end review before design partners, at Tabeen's request. Every check is reproducible
+from the repo: CI's steps all pass locally (667 tests, typechecks, catalog gate, smoke, both
+builds), `e2e:local` 25/25 and `e2e:worker` 33/33 against the local stack.
+
+**Fixed on `legal-docs`:**
+- Sign-in and invitations under closed signup (D-058).
+- **Sales channel.** The DSA trader-information and GPSR listing requirements were "can't decide"
+  for every customer, because they depend on the channel and the app never had one, while the
+  page told sellers to add a spreadsheet column that no importer reads. The Readiness page now
+  offers the scanner's channel list (a test holds the two equal) and uses the choice for the
+  screen and the technical file alike.
+- **Column labels.** Five labels the app and scanner tell sellers to use — "Country of
+  manufacture" among them — were reported as unrecognised headers. All are accepted now, a test
+  holds every label, and the Products tab offers a template built from the importer's own list.
+- **Documents:** type and product required before upload; drag and drop; a warning on any
+  document linked to no product, which otherwise counts as evidence nowhere while showing
+  "accepted".
+- **Paperwork:** records of processing, a breach procedure, a DPIA screening, legitimate-interests
+  assessments and a vendor register, drafted for the same legal review as the D-013 four.
+
+**Production, checked live — Tabeen's to change:**
+1. Email sign-in is off for everyone (D-058).
+2. The deployed app predates PR #14: last deploy 27 September 05:47 UTC, before the merge. The
+   live bundle has no privacy policy or DPA page, and none of the fixes above.
+3. The erasure migration isn't applied. A dry run shows exactly one pending:
+   `20260927000001_erase_organisation.sql`.
+4. Both Worker secrets exist; `UPLOADS_ENABLED` is `false`, as it should be.
+
+**For Tabeen to weigh** (none is decided here):
+- Gate 2 (15 November) asks for design partners who "upload real documents"; D-056 keeps uploads
+  off until OPT. One of the two has to give.
+- Gate 1's 15 interviews were due 5 October; none are recorded in the repo.
+- The contact address is a consumer Gmail account (`legal/vendor-register.md`).
+- The test organisations made in production while signup was open are Tabeen's own data.
+
+How to proceed, step by step: `project-setup/design-partner-onboarding.md`.
 
 ## Open questions
 
