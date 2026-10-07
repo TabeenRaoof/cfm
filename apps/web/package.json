@@ -9,6 +9,7 @@
     "build:preview": "vite build --mode preview",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "e2e:local": "node --experimental-strip-types scripts/e2e-local.ts",
+    "provision-account": "node --experimental-strip-types scripts/provision-account.ts",
     "typecheck:worker": "tsc -p worker/tsconfig.json --noEmit",
     "e2e:worker": "vite-node scripts/e2e-worker.ts"
   },

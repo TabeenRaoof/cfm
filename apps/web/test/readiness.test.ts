@@ -11,7 +11,7 @@ import type { PGlite } from "@electric-sql/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { catalog } from "../src/domain/catalog.ts";
 import { subjectFacts, toImportRows, type ProductRow } from "../src/domain/facts.ts";
-import { MARKETS } from "../src/domain/markets.ts";
+import { MARKETS, SALES_CHANNEL_FACT, SALES_CHANNELS, salesChannelOf } from "../src/domain/markets.ts";
 import { as, createDatabase, createUser, user } from "./support/db.ts";
 
 const CSV = [
@@ -27,6 +27,36 @@ describe("markets", () => {
     const build = await readFile(new URL("../../scanner/build.ts", import.meta.url), "utf8");
     const scannerIsos = [...build.matchAll(/\{ iso: "([A-Z]{2})"/g)].map((m) => m[1]);
     expect(MARKETS.map((m) => m.iso)).toEqual(scannerIsos);
+  });
+});
+
+describe("sales channel", () => {
+  it("the app offers exactly the scanner's sales channels", async () => {
+    const html = await readFile(new URL("../../scanner/src/index.html", import.meta.url), "utf8");
+    const select = /<select id="channel">([\s\S]*?)<\/select>/.exec(html)![1]!;
+    const scannerValues = [...select.matchAll(/<option value="([^"]*)"/g)].map((m) => m[1]);
+    expect([...SALES_CHANNELS.map((c) => c.value), ""]).toEqual(scannerValues);
+  });
+
+  it("only a known channel becomes the assessment's channel", () => {
+    expect(salesChannelOf({ [SALES_CHANNEL_FACT]: "amazon" })).toBe("amazon");
+    expect(salesChannelOf({ [SALES_CHANNEL_FACT]: "myspace" })).toBeUndefined();
+    expect(salesChannelOf({})).toBeUndefined();
+  });
+
+  it("choosing one decides the marketplace requirements that were undetermined", () => {
+    const facts = { "product.has_packaging": true, "manufacturer.country": "CN" } as const;
+    const statusOf = (channel?: string) =>
+      assessProducts([{ facts }], { catalog, markets: ["DE"], asOf: ASOF, ...(channel ? { channel } : {}) })
+        .products[0]!.markets[0]!;
+    const trader = (cell: ReturnType<typeof statusOf>) =>
+      [...cell.blocking, ...cell.unresolved].find((a) => a.requirement_id === "eu.dsa.trader-information");
+
+    const unset = statusOf();
+    expect(trader(unset)?.status).toBe("unknown");
+    expect(trader(unset)?.missing_facts).toEqual(["channel.type"]);
+    expect(trader(statusOf("amazon"))?.status).not.toBe("unknown");
+    expect(trader(statusOf("shopify"))).toBeUndefined(); // own shop: doesn't apply, so not listed
   });
 });
 

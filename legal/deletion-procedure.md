@@ -100,6 +100,26 @@ data subject, not ours (DPA §9).
 4. ⚠ **Known limit:** their email address remains in the change history's copies of invitations
    until the organisation is erased (D-054).
 
+## D. Accounts left by invitations nobody accepted (monthly)
+
+Self-signup is off (D-057), so an invitation creates the invitee's account up front (D-058). The
+privacy policy promises an account from an invitation that was never accepted is deleted once the
+invitation expires. Once a month, in the SQL editor:
+
+```sql
+select u.id, u.email, u.created_at, u.last_sign_in_at
+from auth.users u
+where u.created_at < now() - interval '14 days'
+  and not exists (select 1 from public.membership m where m.user_id = u.id)
+  and not exists (select 1 from public.invitation i
+                  where i.email = lower(u.email) and i.expires_at > now());
+```
+
+Each row is an account with no organisation and no live invitation. Delete it in the dashboard
+(Authentication → Users). **Except** an account you provisioned yourself for a design partner who
+hasn't created their organisation yet (`scripts/provision-account.ts`) — it matches too; keep it
+while they're still onboarding, and check with them before deleting.
+
 ---
 
 ## The audit-log decision (D-054)

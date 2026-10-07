@@ -1,7 +1,7 @@
 import type { FactValue } from "@cfm/catalog";
 import { schemaFor, type FieldValue } from "@cfm/documents";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type DragEvent, type FormEvent } from "react";
 import { catalog } from "./domain/catalog.ts";
 import { proposeFacts } from "./domain/document-facts.ts";
 import {
@@ -122,15 +122,16 @@ function Upload({ client, organisationId, products, onUploaded }: {
   onUploaded: () => void;
 }) {
   const [file, setFile] = useState<File | null>(null);
-  const [docType, setDocType] = useState("rp_mandate");
+  const [docType, setDocType] = useState("");
   const [chosen, setChosen] = useState<ReadonlySet<string>>(new Set());
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (!file) return;
+    if (!file || !docType || chosen.size === 0) return;
     setBusy(true);
     setError(null);
     setMessage(null);
@@ -147,6 +148,7 @@ function Upload({ client, organisationId, products, onUploaded }: {
     }
     setMessage(`Uploaded ${file.name} — it's being read now.`);
     setFile(null);
+    setDocType("");
     setChosen(new Set());
     (event.target as HTMLFormElement).reset();
     onUploaded();
@@ -160,6 +162,15 @@ function Upload({ client, organisationId, products, onUploaded }: {
       return next;
     });
 
+  function onDrop(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+    setDragging(false);
+    const dropped = event.dataTransfer.files?.[0];
+    if (dropped) setFile(dropped);
+  }
+
+  const canSubmit = !busy && file !== null && docType !== "" && chosen.size > 0;
+
   return (
     <section className="card">
       <h3>Upload a document</h3>
@@ -167,17 +178,24 @@ function Upload({ client, organisationId, products, onUploaded }: {
         <div className="grid">
           <label className="field">
             <span>What is it?</span>
-            <select value={docType} onChange={(e) => setDocType(e.target.value)}>
+            <select required value={docType} onChange={(e) => setDocType(e.target.value)}>
+              <option value="" disabled>Select a document type</option>
               {Object.entries(TYPE_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </select>
           </label>
-          <label className="field">
-            <span>File (PDF, PNG or JPEG, up to 10 MB)</span>
-            <input type="file" required accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
+          <label
+            className={`field dropzone${dragging ? " dropzone-active" : ""}`}
+            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={onDrop}
+          >
+            <span>File (PDF, PNG or JPEG, up to 10 MB) — drag and drop, or choose a file</span>
+            <input type="file" accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+            {file && <small className="muted">Selected: {file.name}</small>}
           </label>
         </div>
-        {products.length > 0 && (
+        {products.length > 0 ? (
           <fieldset className="choices plain">
             <legend className="muted">Which products does it cover? (you can change this later)</legend>
             {products.map((p) => (
@@ -186,8 +204,16 @@ function Upload({ client, organisationId, products, onUploaded }: {
               </label>
             ))}
           </fieldset>
+        ) : (
+          <p className="muted">Add a product first — a document needs at least one to cover.</p>
         )}
-        <button type="submit" disabled={busy || !file}>{busy ? "Uploading…" : "Upload"}</button>
+        <button type="submit" disabled={!canSubmit}>{busy ? "Uploading…" : "Upload"}</button>
+        {!busy && file && docType !== "" && chosen.size === 0 && products.length > 0 && (
+          <p className="muted">Choose at least one product above before uploading.</p>
+        )}
+        {!busy && file && docType === "" && (
+          <p className="muted">Select what kind of document this is before uploading.</p>
+        )}
         {error && <p className="error" role="alert">{error}</p>}
         {message && <p className="notice">{message}</p>}
       </form>
@@ -300,7 +326,13 @@ function DocumentCard({ client, organisation, role, doc, extraction, linkedProdu
         <Review client={client} doc={doc} extraction={extraction} onReviewed={onChanged} />
       )}
 
-      <details>
+      {linkedProductIds.length === 0 && (
+        <p className="unknown" role="status">
+          Not linked to any product, so it doesn't count as evidence anywhere yet — choose the
+          products it covers below.
+        </p>
+      )}
+      <details open={linkedProductIds.length === 0}>
         <summary>Covers {linkedProductIds.length} product{linkedProductIds.length === 1 ? "" : "s"}</summary>
         {products.length === 0 ? <p className="muted">No products yet.</p> : (
           <fieldset className="choices plain" disabled={!canEdit}>

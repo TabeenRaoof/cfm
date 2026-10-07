@@ -1471,6 +1471,209 @@ it; not silence as agreement.
 **Neither review cites a source.** They are useful as checklists, not as verification. The
 catalog's standard stays primary legal text.
 
+---
+
+### D-056 · No upload partners before OPT; design partners start as feedback partners
+**Status:** Accepted (Tabeen, 27 September 2026) · **Builds on:** D-013, D-025, D-033, D-046
+
+Weighed: going without design partners at all. Gains: legal spend and a possible Art. 27
+representative fee move to launch; no need for the DSO's confirmation on unpaid testing; hours
+stay with forum work. Losses: the plan's first paying customers (Gate 3 from zero, ~8 weeks of
+runway), extraction never meeting a real document, no launch proof.
+
+**Decided:** uploads stay off before OPT, and design partners are still sought, in stages:
+1. **Feedback partner (now):** a call, the scanner run on their own catalogue (the file never
+   leaves their browser), short check-ins. No account, no documents, no paperwork, no payment.
+2. **Account partner (only once one commits):** that commitment triggers the sign-in email
+   provider, the lawyer review and a signed design partner agreement. The cost is incurred
+   against a real partner, not in advance.
+3. **At OPT:** a founder's price, offered only once billing is lawful. Nothing is taken before.
+
+Also: test extraction on public sample documents for an accuracy figure before launch; a
+launch list of people who will try it on day one; the lawyer review in December; and a
+deliberate look at whether Gate 3 (5 paying by 28 February 2027) still holds.
+
+**Baseline, checked live 27 September:** the scanner has recorded 0 scans and 0 waitlist
+sign-ups. The first partner comes from conversations Tabeen starts, not from inbound.
+**Subtract 3 from 28 September (UTC):** those are Claude's own requests to `/catalog/index.json`
+while checking the counter works (it does). Removing them from the live table was declined as a
+production write, so they stay in D1 and must be discounted by hand. Never probe that URL to
+test the counter; read D1 instead.
+
+**Channel correction (27 September):** Amazon's Seller Forums (`01-` §7's first channel) can be read
+by anyone, but only sellers with an active Seller Central account can post, and the guidelines
+prohibit external links and solicitation (sellercentral.amazon.co.uk/seller-forums/faqs and
+/guidelines). Tabeen will not register as a seller: there is no intent to sell, registration
+needs business, bank and identity verification, and an F-1 student opening a selling account is
+the wrong signal. So the forums become **read-only research**: the UK forum first (the ICP, in
+English), to learn which GPSR/EPR/PPWR questions sellers actually ask. Conversations happen
+where non-sellers can post and message: Reddit, UK seller Facebook groups, LinkedIn. Outreach
+is from Tabeen's personal accounts and email, not the Attesta-named address.
+
+### D-057 · Close open self-serve signup; approval happens before an account exists
+**Status:** Accepted (Tabeen, 28 September 2026) · **Builds on:** D-056 · **Corrected by:** D-058
+
+`compliancefilemanager.com` was live with Supabase's default open signup: any email got a working
+magic link and a fully functional account, with no approval step. That contradicts D-056's
+"Account partner (only once one commits)" stage, which puts the sign-in email provider, the
+lawyer review and a signed design partner agreement *before* an account exists, not after.
+
+**Decided:** disable open signup on the production Supabase project (`auth.enable_signup` and
+`auth.email.enable_signup`, both to `false`). The only way in becomes `admin.inviteUserByEmail`,
+run by hand by Tabeen for each approved partner — the same invitation-only shape already built
+for org membership (`apps/web` README: "Invitations are the only way in"), now applied one level
+up, to account creation itself.
+
+No in-app approval queue or "request access" form. Volume is one partner at a time, sourced from
+Tabeen-initiated conversations per D-056, not inbound — the 27 September baseline was 0 scans and
+0 waitlist sign-ups. A UI for a process that is still one person approving one person by hand
+would be solving a problem that does not exist yet. The approval record is this decisions log:
+each account partner gets an entry here (or a short partners log if the volume ever outgrows
+this file) recording who, when, and which stage (feedback vs. account partner) they're at.
+
+### D-058 · D-057 switched off email sign-in for everyone; invitations now create the account
+**Status:** Built and tested locally; the production auth fix is Tabeen's to apply · **Date:** 8 October 2026 · **Corrects:** D-057
+
+**What went wrong.** D-057 set both `auth.enable_signup` and `auth.email.enable_signup` to
+`false`. Despite its name, `auth.email.enable_signup` is the email *provider* switch. Probed on
+8 October with an address on `.invalid`: production answers `email_provider_disabled` —
+"Email logins are disabled". Nobody can get a sign-in link, existing users included. Sessions
+already open keep working on their refresh tokens, which is why it went unnoticed.
+
+**Fix:** `auth.enable_signup = false` (no new accounts) with `auth.email.enable_signup = true`
+(the provider stays on). Verified on the local stack, where `supabase/config.toml` now matches
+production instead of differing from it: an existing user gets a link; a new address gets
+"Signups not allowed for this instance" and no account. `scripts/e2e-local.ts` checks both on
+every run. The one-field production change was prepared and diffed (exactly one difference) but
+the session's permission guard refused to apply it. **Tabeen:** Supabase dashboard →
+Authentication → Sign In / Providers → Email → turn the Email provider on; leave "Allow new users
+to sign up" off. Then confirm with the probe in `project-setup/design-partner-onboarding.md` §1.
+
+Also noticed: when D-057 was pushed interactively, `auth.sms.twilio.enabled` went from `true` to
+`false` in production. The app has no SMS or phone sign-in, so nothing depends on it.
+
+**Second break, same cause.** With signup off, the Members tab's invitations stranded anyone
+without an account: they were told to sign in, and sign-in refused to create them. And GoTrue
+won't send a link to an *unconfirmed* account while signup is off (checked on the local stack),
+so D-057's `admin.inviteUserByEmail` would have stranded a partner who used the sign-in page
+instead of the invitation link.
+
+**Built:**
+- `POST /api/invitations` (`worker/routes.ts`). The invitation is inserted **as the caller**, so
+  the existing policies still decide who may invite and with what role. Only then does the
+  service role create the invitee's account — confirmed, with no password. Safe because the only
+  way into a passwordless account is a link sent to that inbox; signing in still proves the
+  address, which is what `accept_invitation`'s confirmed-email check is for. If the account
+  can't be created, the invitation is removed again. Nine checks in `scripts/e2e-worker.ts`.
+- `scripts/provision-account.ts` for a design partner's first account, replacing D-057's
+  `inviteUserByEmail`. It also confirms an existing, never-confirmed account.
+- The sign-in page explains "access is by invitation" instead of GoTrue's raw error.
+- Privacy policy and `legal/deletion-procedure.md` §D: an account created by an invitation
+  nobody accepted is deleted after the invitation expires (a monthly query).
+
+**Consequence, stated plainly.** Any signed-in user can create an organisation, and so invite
+anyone. The operator's approval gates a partner's *first* account; after that, the partner can
+bring in whoever they like. Acceptable now: a new account sees only invitations addressed to it.
+Revisit if it matters — the lever is limiting `create_organisation` to approved accounts.
+
+**Known limit:** the invitation route treats an existing but unconfirmed account as fine. That
+invitee would be refused a link; `provision-account.ts` fixes such an account.
+
+### D-059 · Pre-partner review: what was fixed, what production still lacks
+**Status:** Recorded · **Date:** 8 October 2026 · **Builds on:** D-013, D-053, D-056, D-058
+
+An end-to-end review before design partners, at Tabeen's request. Every check is reproducible
+from the repo: CI's steps all pass locally (667 tests, typechecks, catalog gate, smoke, both
+builds), `e2e:local` 25/25 and `e2e:worker` 33/33 against the local stack.
+
+**Fixed on `legal-docs`:**
+- Sign-in and invitations under closed signup (D-058).
+- **Sales channel.** The DSA trader-information and GPSR listing requirements were "can't decide"
+  for every customer, because they depend on the channel and the app never had one, while the
+  page told sellers to add a spreadsheet column that no importer reads. The Readiness page now
+  offers the scanner's channel list (a test holds the two equal) and uses the choice for the
+  screen and the technical file alike.
+- **Column labels.** Five labels the app and scanner tell sellers to use — "Country of
+  manufacture" among them — were reported as unrecognised headers. All are accepted now, a test
+  holds every label, and the Products tab offers a template built from the importer's own list.
+- **Documents:** type and product required before upload; drag and drop; a warning on any
+  document linked to no product, which otherwise counts as evidence nowhere while showing
+  "accepted".
+- **Paperwork:** records of processing, a breach procedure, a DPIA screening, legitimate-interests
+  assessments and a vendor register, drafted for the same legal review as the D-013 four.
+
+**Production, checked live — Tabeen's to change:**
+1. Email sign-in is off for everyone (D-058).
+2. The deployed app predates PR #14: last deploy 27 September 05:47 UTC, before the merge. The
+   live bundle has no privacy policy or DPA page, and none of the fixes above.
+3. The erasure migration isn't applied. A dry run shows exactly one pending:
+   `20260927000001_erase_organisation.sql`.
+4. Both Worker secrets exist; `UPLOADS_ENABLED` is `false`, as it should be.
+
+**For Tabeen to weigh** (none is decided here):
+- Gate 1, as revised by D-025: 8 seller conversations by 2 November. None are recorded in the repo
+  yet. (Gate 2, 100 scans or 60 waitlist by 20 December, has no upload limb, so it doesn't
+  conflict with D-056.)
+- The contact address is a consumer Gmail account (`legal/vendor-register.md`).
+- The test organisations made in production while signup was open are Tabeen's own data.
+
+How to proceed, step by step: `project-setup/design-partner-onboarding.md`.
+
+### D-060 · SafeCart logged as a new Group G competitor; low risk today
+**Status:** Recorded · **Date:** 8 October 2026
+
+Found live, not from research: a SafeCart founder answering a GPSR question in
+r/FulfillmentByAmazon — the forum motion D-025/`01-` §7.2 prescribe, working, run by someone
+else in the exact channel this project will use. Checked against safecart.eu (8 October): Safety
+Gate/RAPEX recall monitoring is the product's core, with GPSR supported as alerting rather than a
+full requirement engine; no EPR, no PPWR, no technical file, EU-only with no per-market split.
+Free up to 100 products, Pro €29/month up to 1,000 — the same price point and "software tool, not
+your RP" stance as CFM, on a different job.
+
+Added as Group G in `01-` §3.1: low risk today, since none of CFM's core (EPR/PPWR, multi-market
+tracking, document evidence) overlaps. Not a referral-partner candidate like Group D — same ICP,
+same channel, not a complementary role. Watch quarterly, same as Group B; the signal that would
+change this is SafeCart adding EPR/PPWR or multi-market registration tracking.
+
+### D-061 · Euverify re-assessed: touches the standing self-serve-under-$100 kill signal
+**Status:** Recorded, judgment left to Tabeen · **Date:** 8 October 2026
+
+`01-` §3.1's Group E carried Euverify as one line — "seller-founded compliance SaaS" — alongside
+listing-field scanners. Checked against euverify.com/ppwr and euverify.com/pricing (8 October):
+that undersold it. Starter is £490/year (~$52/month) and bundles GPSR, PPWR, DoC and technical-
+file generation, **and the EU or UK AR/RP role itself** — plus CE/UKCA, toys, machinery, PPE,
+cosmetics and medical-device add-ons (GDPR Art. 27 representation is a separate line). Moved to
+its own row (E′) rather than left under Group E, since a scanner and "software that also is your
+legal representative" are different categories of risk.
+
+**Why this matters more than a routine sighting:** `01-` §10's standing kill signals name "a
+Group-B platform launches self-serve under $100/month." Euverify is filed under E, not B, but it
+is functionally doing what that signal describes — a self-serve, cheap, full "compliance brain"
+that also holds the legal role, which Groups B (the brain) and D (the role) were kept separate
+in the original taxonomy precisely because no one had combined them cheaply yet.
+
+**What still distinguishes CFM**, so this is a re-assessment, not a verdict: no visible AI
+extraction from a supplier's own documents — Euverify reads as a wizard that *generates* filings
+from what you type in, not a tool that *reads* a test report or RP mandate you already have;
+"product family" counted rather than true per-SKU; no per-country EPR registration tracking
+(Germany's LUCID, France's Citeo, Italy's CONAI each modelled separately in CFM's catalog, not
+visible as a Euverify feature); no Amazon-native channel exports; and D-034's deliberate
+narrower category scope for v1 (general GPSR/EPR/PPWR, not CE/toys/machinery/medical depth).
+
+**Found the same way as D-060:** live, in the ICP's own channel, not from scheduled research.
+Not decided here whether this meets Section 10's bar — that is explicitly Tabeen's call, and the
+report's own language ("watch them quarterly... that is a kill signal") treats it as a signal to
+weigh, not an automatic stop. Revisit at the next quarterly competitor check, or sooner if more
+of CFM's open territory (multi-market EPR granularity, document AI) narrows.
+
+**A lead, not a finding (8 October, same thread as D-060):** a commenter reported a friend's
+Euverify-generated documents were rejected, in the same reply as an unrelated, dismissive remark
+about the team — secondhand, unverified, n=1, and from a source that also reached for an
+irrelevant jab, so recorded as a lead worth watching for a pattern, not evidence. If true, it
+would line up with the structural gap above: a wizard that generates a DoC from typed answers,
+rather than reading and verifying documents the seller already has, is more exposed to exactly
+this failure mode. Not acted on until corroborated.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.

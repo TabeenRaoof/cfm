@@ -37,7 +37,7 @@ export const COLUMNS: readonly ColumnDefinition[] = [
   {
     factPath: "product.gtin",
     label: "Barcode (GTIN/EAN/UPC)",
-    aliases: ["gtin", "ean", "upc", "barcode", "productid", "externalproductid", "eancode"],
+    aliases: ["gtin", "ean", "upc", "barcode", "productid", "externalproductid", "eancode", "barcodegtineanupc"],
     coerce: coerceGtin,
   },
   {
@@ -67,19 +67,19 @@ export const COLUMNS: readonly ColumnDefinition[] = [
   {
     factPath: "manufacturer.country",
     label: "Country of manufacture",
-    aliases: ["countryoforigin", "manufacturercountry", "madein", "origin", "originecountry", "herkunftsland", "paysdorigine", "country"],
+    aliases: ["countryoforigin", "countryofmanufacture", "manufacturercountry", "madein", "origin", "originecountry", "herkunftsland", "paysdorigine", "country"],
     coerce: coerceCountry,
   },
   {
     factPath: "product.has_battery",
     label: "Contains a battery",
-    aliases: ["battery", "hasbattery", "containsbattery", "batteries", "batterieincluded", "batterie", "akku"],
+    aliases: ["battery", "hasbattery", "containsbattery", "containsabattery", "batteries", "batterieincluded", "batterie", "akku"],
     coerce: coerceBoolean,
   },
   {
     factPath: "product.is_toy",
     label: "Is a toy",
-    aliases: ["istoy", "toy", "spielzeug", "jouet"],
+    aliases: ["istoy", "isatoy", "toy", "spielzeug", "jouet"],
     coerce: coerceBoolean,
   },
   {
@@ -109,13 +109,19 @@ export const COLUMNS: readonly ColumnDefinition[] = [
   {
     factPath: "rp.contact",
     label: "EU responsible person contact",
-    aliases: ["responsiblepersonemail", "rpcontact", "rpemail", "responsiblepersoncontact"],
+    aliases: ["responsiblepersonemail", "rpcontact", "rpemail", "responsiblepersoncontact", "euresponsiblepersoncontact"],
     coerce: coerceText,
   },
 ];
 
+/** A header row with every column the importer reads, in its own words — a blank template. */
+export function templateCsv(): string {
+  const cell = (s: string) => (/[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s);
+  return `${COLUMNS.map((c) => cell(c.label)).join(",")}\n`;
+}
+
 export function normaliseHeader(header: string): string {
-  return header.toLowerCase().replace(/[\s_\-().]/g, "");
+  return header.toLowerCase().replace(/[\s_\-()./]/g, "");
 }
 
 const BY_ALIAS: ReadonlyMap<string, ColumnDefinition> = new Map(
