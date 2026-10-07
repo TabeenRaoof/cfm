@@ -114,6 +114,12 @@ export const COLUMNS: readonly ColumnDefinition[] = [
   },
 ];
 
+/** A header row with every column the importer reads, in its own words — a blank template. */
+export function templateCsv(): string {
+  const cell = (s: string) => (/[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s);
+  return `${COLUMNS.map((c) => cell(c.label)).join(",")}\n`;
+}
+
 export function normaliseHeader(header: string): string {
   return header.toLowerCase().replace(/[\s_\-()./]/g, "");
 }

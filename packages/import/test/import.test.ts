@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { importProducts } from "../src/import.ts";
-import { COLUMNS, matchColumn } from "../src/mapping.ts";
+import { COLUMNS, matchColumn, templateCsv } from "../src/mapping.ts";
 
 const run = (csv: string) => importProducts(csv, { maxRows: 1000 });
 
@@ -9,6 +9,12 @@ describe("column labels", () => {
   // importer then reports as unrecognised would send them in a circle.
   it.each(COLUMNS.map((c) => [c.label, c.factPath] as const))("%s is accepted as its own header", (label, factPath) => {
     expect(matchColumn(label)?.factPath).toBe(factPath);
+  });
+
+  it("the downloadable template is read back in full, with nothing ignored", () => {
+    const result = run(`${templateCsv()}A1,,,,,,,,,,,,,,\n`);
+    expect(result.unmapped).toEqual([]);
+    expect(result.mapped.map((m) => m.factPath).sort()).toEqual(COLUMNS.map((c) => c.factPath).sort());
   });
 });
 
