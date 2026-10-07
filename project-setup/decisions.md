@@ -1510,6 +1510,27 @@ English), to learn which GPSR/EPR/PPWR questions sellers actually ask. Conversat
 where non-sellers can post and message: Reddit, UK seller Facebook groups, LinkedIn. Outreach
 is from Tabeen's personal accounts and email, not the Attesta-named address.
 
+### D-057 · Close open self-serve signup; approval happens before an account exists
+**Status:** Accepted (Tabeen, 28 September 2026) · **Builds on:** D-056
+
+`compliancefilemanager.com` was live with Supabase's default open signup: any email got a working
+magic link and a fully functional account, with no approval step. That contradicts D-056's
+"Account partner (only once one commits)" stage, which puts the sign-in email provider, the
+lawyer review and a signed design partner agreement *before* an account exists, not after.
+
+**Decided:** disable open signup on the production Supabase project (`auth.enable_signup` and
+`auth.email.enable_signup`, both to `false`). The only way in becomes `admin.inviteUserByEmail`,
+run by hand by Tabeen for each approved partner — the same invitation-only shape already built
+for org membership (`apps/web` README: "Invitations are the only way in"), now applied one level
+up, to account creation itself.
+
+No in-app approval queue or "request access" form. Volume is one partner at a time, sourced from
+Tabeen-initiated conversations per D-056, not inbound — the 27 September baseline was 0 scans and
+0 waitlist sign-ups. A UI for a process that is still one person approving one person by hand
+would be solving a problem that does not exist yet. The approval record is this decisions log:
+each account partner gets an entry here (or a short partners log if the volume ever outgrows
+this file) recording who, when, and which stage (feedback vs. account partner) they're at.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
