@@ -23,7 +23,7 @@
 
 import type { Catalog } from "./catalog.ts";
 import { evaluateCondition } from "./dsl.ts";
-import type { EvaluationSubject } from "./facts.ts";
+import { EU_MEMBER_STATES, type EvaluationSubject } from "./facts.ts";
 import type { Requirement } from "./types.ts";
 
 /**
@@ -42,6 +42,31 @@ export function couldApplyIn(requirement: Requirement, isoCountry: string): bool
   // the seller or the channel resolves to unknown, which keeps the requirement in.
   const marketOnly: EvaluationSubject = { facts: {}, market: { iso_country: isoCountry } };
   return evaluateCondition(requirement.applies_when, marketOnly).truth !== "false";
+}
+
+/**
+ * Requirements specific to this market: ones that could apply here but not in every other
+ * country of the same jurisdiction. EU-wide rules (GPSR, PPWR, DSA) apply in all 27 member
+ * states, so they never count.
+ *
+ * Why it exists: a market's slice is never empty once EU-wide rules are published, so "the slice
+ * is non-empty" can't tell a researched market from one whose national rules (its packaging
+ * register, its scheme, its representative) were never written. Offering that market would show
+ * a seller only the EU layer — a false all-clear on everything national. A market is only offered
+ * once this returns something (apps/scanner/build.ts, apps/scanner/test/markets.test.ts).
+ *
+ * Decided by the evaluator, like the slice itself, not by reading condition text: a requirement
+ * written as `{"market.iso_country": {"in": ["AT", "DE"]}}` is national to both.
+ */
+export function marketSpecificRequirements(catalog: Catalog, isoCountry: string): readonly Requirement[] {
+  const inEu = EU_MEMBER_STATES.has(isoCountry);
+  const peers = inEu ? [...EU_MEMBER_STATES].filter((iso) => iso !== isoCountry) : [];
+  return catalog.requirements.filter((requirement) => {
+    if (!couldApplyIn(requirement, isoCountry)) return false;
+    if (peers.length > 0) return peers.some((peer) => !couldApplyIn(requirement, peer));
+    // A one-country jurisdiction (the UK): national unless it also applies across the EU.
+    return ![...EU_MEMBER_STATES].every((iso) => couldApplyIn(requirement, iso));
+  });
 }
 
 /** Markets a slice is worth building for. */

@@ -151,6 +151,7 @@ describe("the requirement files in this repository", () => {
         "eu.ppwr.producer-registration",
         "fr.epr.packaging-citeo",
         "fr.epr.packaging-triman-marking",
+        "ie.epr.packaging-repak",
         "it.epr.packaging-conai",
         "nl.epr.packaging-verpact",
         "uk.batteries.producer-registration",
@@ -162,6 +163,6 @@ describe("the requirement files in this repository", () => {
         "uk.weee.producer-registration",
       ].sort(),
     );
-    expect(withheldDrafts.length).toBe(1);
+    expect(withheldDrafts).toEqual(["uk.gpsr.uk-responsible-person"]);
   });
 });

@@ -19,24 +19,14 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 
-import { sliceForMarket } from "@cfm/catalog";
+import { marketSpecificRequirements, sliceForMarket } from "@cfm/catalog";
 import { loadCatalogFromDir } from "@cfm/catalog/node";
+import { MARKETS } from "./markets.ts";
 
 const appRoot = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(appRoot, "..", "..");
 const dist = join(appRoot, "dist");
 
-/** Markets offered at launch: the v1 EPR scope from 02- §5.2, plus the UK. */
-export const MARKETS = [
-  { iso: "DE", name: "Germany" },
-  { iso: "FR", name: "France" },
-  { iso: "ES", name: "Spain" },
-  { iso: "IT", name: "Italy" },
-  { iso: "NL", name: "Netherlands" },
-  { iso: "AT", name: "Austria" },
-  { iso: "BE", name: "Belgium" },
-  { iso: "GB", name: "United Kingdom" },
-] as const;
 
 const includeDrafts = process.argv.includes("--include-drafts");
 
@@ -157,6 +147,18 @@ if (catalog.requirements.length === 0) {
   );
 }
 
+// Before anything is deleted: a market with no national research would show only the EU-wide
+// rules, a false all-clear on everything national. Its slice can't catch that — it is never empty.
+for (const market of MARKETS) {
+  if (marketSpecificRequirements(catalog, market.iso).length === 0) {
+    throw new Error(
+      `${market.name} (${market.iso}) has no ${includeDrafts ? "" : "published "}national requirement, so a ` +
+        `seller would see only the EU-wide rules and miss everything national — publish its national ` +
+        `requirements before offering it (packages/catalog/src/slice.ts marketSpecificRequirements).`,
+    );
+  }
+}
+
 await rm(dist, { recursive: true, force: true });
 await mkdir(join(dist, "catalog"), { recursive: true });
 
@@ -194,9 +196,16 @@ const html = (await readFile(join(appRoot, "src/index.html"), "utf8"))
   .replace("__CATALOG_VERSION__", catalog.version);
 await writeFile(join(dist, "index.html"), html);
 
+/**
+ * The date the privacy notice's *content* last changed: src/privacy.html, the controller statement
+ * or a processor section below. Not the build date — a redeploy that only adds a market must not
+ * tell visitors the notice changed. Update it in the same commit as any change to that content.
+ */
+const PRIVACY_UPDATED = "2026-09-26";
+
 let privacy = (await readFile(join(appRoot, "src/privacy.html"), "utf8")).replace(
   "__PRIVACY_UPDATED__",
-  new Date().toISOString().slice(0, 10),
+  PRIVACY_UPDATED,
 );
 
 const missingRequired = CONTROLLER_REQUIRED.filter((token) => CONTROLLER[token] === "");

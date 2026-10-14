@@ -6,12 +6,12 @@
 
 import { describe, expect, it } from "vitest";
 import { assessProduct } from "../src/evaluate.ts";
-import { sliceForMarket } from "../src/slice.ts";
+import { marketSpecificRequirements, sliceForMarket } from "../src/slice.ts";
 import { AS_OF, FULLY_KNOWN, loadRealCatalog, without } from "./fixtures.ts";
 
 const { catalog } = await loadRealCatalog(true);
 
-const MARKETS = ["DE", "FR", "ES", "IT", "NL", "AT", "BE", "GB"] as const;
+const MARKETS = ["DE", "FR", "ES", "IT", "NL", "AT", "BE", "IE", "GB"] as const;
 
 /** Fact bags spanning the interesting shapes, including the ones that are mostly unknown. */
 const SUBJECTS = [
@@ -74,5 +74,46 @@ describe("what each market actually drops", () => {
     const gb = sliceForMarket(catalog, "GB").requirements.map((r) => r.id);
     expect(gb).toContain("uk.gpsr.uk-responsible-person");
     expect(gb).not.toContain("eu.gpsr.responsible-economic-operator");
+  });
+});
+
+describe("marketSpecificRequirements", () => {
+  const ids = (iso: string, from = catalog) => marketSpecificRequirements(from, iso).map((r) => r.id);
+
+  it("finds a market's national rules and never counts EU-wide ones", () => {
+    expect(ids("DE")).toContain("de.epr.packaging-lucid");
+    expect(ids("ES")).toEqual(expect.arrayContaining(["es.epr.packaging-rpp", "es.epr.authorised-representative"]));
+    for (const iso of ["DE", "FR", "IE"]) {
+      expect(ids(iso).filter((id) => id.startsWith("eu."))).toEqual([]);
+    }
+  });
+
+  it("treats the UK's own rules as national to GB", () => {
+    expect(ids("GB")).toContain("uk.epr.packaging-registration");
+    expect(ids("GB").every((id) => id.startsWith("uk."))).toBe(true);
+  });
+
+  it("finds nothing for a market with no national rules, even though its slice is not empty", async () => {
+    // Poland: EU-wide rules apply there, but no Polish requirement has been written.
+    const { catalog: published } = await loadRealCatalog(false);
+    expect(sliceForMarket(published, "PL").requirements.length).toBeGreaterThan(0);
+    expect(ids("PL", published)).toEqual([]);
+  });
+
+  it("finds Ireland's national rule once it is published", async () => {
+    const { catalog: published } = await loadRealCatalog(false);
+    expect(ids("IE", published)).toEqual(["ie.epr.packaging-repak"]);
+  });
+
+  it("counts a rule written for several named countries as national to each", () => {
+    const shared = {
+      ...catalog.requirements[0]!,
+      id: "test.shared",
+      applies_when: { "market.iso_country": { in: ["AT", "DE"] } },
+    } as (typeof catalog.requirements)[number];
+    const synthetic = { version: catalog.version, requirements: [shared] };
+    expect(ids("AT", synthetic)).toEqual(["test.shared"]);
+    expect(ids("DE", synthetic)).toEqual(["test.shared"]);
+    expect(ids("FR", synthetic)).toEqual([]);
   });
 });

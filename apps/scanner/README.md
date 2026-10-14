@@ -33,7 +33,7 @@ the snapshot.
 
 A requirement is dropped from a slice only when the evaluator, given the market and nothing
 else, returns a decided `false`. Anything merely undecidable stays in every slice.
-`packages/catalog/test/slice.test.ts` asserts across eight markets and six fact profiles that a
+`packages/catalog/test/slice.test.ts` asserts across nine markets and six fact profiles that a
 slice never changes an answer — narrowing has to be invisible, or the build step becomes a
 place obligations quietly disappear.
 
@@ -138,12 +138,13 @@ already knows about — never printed by these scripts or anywhere else.
 
 ## Building for production
 
-Four gates must pass, each verified against a real failing case before being trusted:
+Six gates must pass, each verified against a real failing case before being trusted:
 
 | Gate | Refuses when |
 |---|---|
 | Catalog | no requirement is published — the scanner would tell every seller they are fine |
 | Slices | any offered market resolves to zero requirements |
+| National rules | any offered market has no published national requirement — its slice would hold only EU-wide rules, a false all-clear on everything national (D-062) |
 | Privacy notice | controller name or contact email is still a placeholder (`CONTROLLER_ADDRESS` is optional — see D-043) |
 | Waitlist processor | `WAITLIST_ACTION` is set but `WAITLIST_PROCESSOR` isn't `cloudflare` or `mailerlite` |
 | Bundle | `app.js` contains any way to transmit the visitor's file |
