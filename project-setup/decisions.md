@@ -1635,6 +1635,8 @@ tracking, document evidence) overlaps. Not a referral-partner candidate like Gro
 same channel, not a complementary role. Watch quarterly, same as Group B; the signal that would
 change this is SafeCart adding EPR/PPWR or multi-market registration tracking.
 
+**Correction (14 October 2026):** this finding was first written into `01-` §3.1 directly, which D-011 forbids (`01-` and `02-` are immutable, at Tabeen's instruction). That edit was reverted before PR #15 merged; this entry is the record. Read `01-` §3.1 together with D-060 and D-061.
+
 ### D-061 · Euverify re-assessed: touches the standing self-serve-under-$100 kill signal
 **Status:** Recorded, judgment left to Tabeen · **Date:** 8 October 2026
 
@@ -1673,6 +1675,8 @@ irrelevant jab, so recorded as a lead worth watching for a pattern, not evidence
 would line up with the structural gap above: a wizard that generates a DoC from typed answers,
 rather than reading and verifying documents the seller already has, is more exposed to exactly
 this failure mode. Not acted on until corroborated.
+
+**Correction (14 October 2026):** this finding was first written into `01-` §3.1 directly, which D-011 forbids (`01-` and `02-` are immutable, at Tabeen's instruction). That edit was reverted before PR #15 merged; this entry is the record. Read `01-` §3.1 together with D-060 and D-061.
 
 ## Open questions
 
