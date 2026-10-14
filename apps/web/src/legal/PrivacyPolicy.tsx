@@ -49,8 +49,10 @@ export function PrivacyPolicy() {
       </p>
       <p>
         <strong>Invitations.</strong> When a colleague invites you, we hold your email address and
-        the role offered until you accept or the invitation expires after 14 days. Lawful basis:
-        the inviting organisation's legitimate interest in adding its own staff.
+        the role offered until you accept or the invitation expires after 14 days, and we create an
+        account for that address so you can sign in. If you never accept, the account holds
+        nothing but your address; we delete it once the invitation has expired, or sooner if you
+        ask. Lawful basis: the inviting organisation's legitimate interest in adding its own staff.
       </p>
       <p>
         <strong>Your organisation and products.</strong> Organisation name, country, target
@@ -111,6 +113,8 @@ export function PrivacyPolicy() {
       <h2>How long we keep it</h2>
       <ul className="list">
         <li>Your account: until you or your organisation close it.</li>
+        <li>An account created by an invitation you never accepted: deleted after the invitation
+          expires.</li>
         <li>An uploaded document: until someone in your organisation deletes it, or the
           organisation is closed. Deleting a document removes the file at once; the change
           history's record of it, including the fields read from it, stays until the organisation

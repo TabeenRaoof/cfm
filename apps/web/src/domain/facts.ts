@@ -155,7 +155,13 @@ function collectConditionPaths(condition: Condition, into: Map<string, FactKind>
 
 const IMPORT_LABELS: ReadonlyMap<string, string> = new Map(COLUMNS.map((c) => [c.factPath, c.label]));
 
+/** Paths the catalog reads but no requirement or import column names. */
+const OWN_LABELS: Readonly<Record<string, string>> = {
+  "channel.type": "Sales channel",
+};
+
 export function factLabel(path: string, catalog: Catalog): string {
+  if (OWN_LABELS[path]) return OWN_LABELS[path];
   for (const requirement of catalog.requirements) {
     const match = requirement.required_data.find((d) => d.key === path);
     if (match) return match.label;

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { api, apiError } from "./lib/api.ts";
 import { CAN_MANAGE, type Role } from "./lib/types.ts";
 
 interface Member {
@@ -129,17 +130,22 @@ function Invite({ client, organisationId, onInvited }: {
   const [role, setRole] = useState("member");
   const [sent, setSent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
     setError(null);
     setSent(null);
+    setBusy(true);
     const address = email.trim().toLowerCase();
-    const { error: failure } = await client
-      .from("invitation")
-      .insert({ organisation_id: organisationId, email: address, role });
-    if (failure) {
-      setError(failure.code === "23505" ? `${address} already has a pending invitation — revoke it first to re-send.` : failure.message);
+    const response = await api(client, "/api/invitations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ organisation_id: organisationId, email: address, role }),
+    });
+    setBusy(false);
+    if (!response.ok) {
+      setError(await apiError(response));
       return;
     }
     setSent(address);
@@ -165,13 +171,13 @@ function Invite({ client, organisationId, onInvited }: {
             </select>
           </label>
         </div>
-        <button type="submit">Invite</button>
+        <button type="submit" disabled={busy}>{busy ? "Inviting…" : "Invite"}</button>
         {error && <p className="error" role="alert">{error}</p>}
         {sent && (
           <p className="notice">
-            Invitation created for <strong>{sent}</strong>. They accept it by signing in to this app
-            with that address — the invitation is waiting for them there. (An invitation email is
-            sent once the app's mail domain is set up; until then, let them know.)
+            Invitation created for <strong>{sent}</strong>. Let them know: they sign in to this app
+            with that address, and the invitation is waiting for them there. We don't email them
+            about it yet.
           </p>
         )}
       </form>

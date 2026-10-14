@@ -16,3 +16,6 @@ coverage/
 golden-set/documents/
 /uploads/
 *.pdf
+
+# Scratch synthetic test documents (local pipeline testing, not product content).
+/test-docs/

@@ -1,7 +1,8 @@
-import { CsvTooLargeError, importProducts, type ImportResult } from "@cfm/import";
+import { CsvTooLargeError, importProducts, templateCsv, type ImportResult } from "@cfm/import";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { toImportRows, type PreparedImport } from "./domain/facts.ts";
+import { saveBlob } from "./lib/api.ts";
 import { CAN_EDIT_PRODUCTS, PRODUCT_COLUMNS, type Product, type Role, type TriState } from "./lib/types.ts";
 
 const FACTS = [
@@ -15,6 +16,9 @@ type FactKey = (typeof FACTS)[number][0];
 
 /** Matches the database's cap in public.import_products (migration 0002). */
 const MAX_IMPORT_ROWS = 5000;
+
+const downloadTemplate = () =>
+  saveBlob(new Blob([templateCsv()], { type: "text/csv;charset=utf-8" }), "products-template.csv");
 
 function showTriState(value: TriState): string {
   if (value === null) return "Unknown";
@@ -145,6 +149,11 @@ function ImportCsv({ client, organisationId, onImported }: {
       <p className="muted">
         CSV, one row per SKU — the same file the free scanner reads. Blank cells never erase what we
         already know about a product; a value in the sheet replaces the old one.
+      </p>
+      <p className="small">
+        <button type="button" className="link" onClick={downloadTemplate}>Download a template</button>
+        <span className="muted"> — every column we read. Use yes/no for the yes/no columns and a
+          two-letter country code (CN, DE…) for countries; leave a cell blank if you don't know.</span>
       </p>
       <input type="file" accept=".csv,text/csv" onChange={(e) => void choose(e)} />
       {error && <p className="error" role="alert">{error}</p>}

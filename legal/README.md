@@ -10,6 +10,16 @@ legal review; none is in force.
 | Design partner agreement | [design-partner-agreement.md](design-partner-agreement.md) | Each design partner, signed |
 | Deletion procedure | [deletion-procedure.md](deletion-procedure.md) | Internal — the operator |
 
+Supporting records, drafted 8 October 2026 (D-059) — internal, also for legal review:
+
+| Record | Where | Why |
+|---|---|---|
+| Records of processing activities | [records-of-processing.md](records-of-processing.md) | GDPR / UK GDPR Art. 30 |
+| Breach procedure | [breach-procedure.md](breach-procedure.md) | What happens inside the DPA's 48-hour promise |
+| DPIA screening | [dpia-screening.md](dpia-screening.md) | Question 7 below, with our view |
+| Legitimate interests assessments | [legitimate-interests-assessment.md](legitimate-interests-assessment.md) | Question 4 below, with our view |
+| Vendor register | [vendor-register.md](vendor-register.md) | Step 4 below: each DPA, how accepted, copy saved |
+
 The two public pages share their sub-processor list (`subprocessors.ts`) and controller identity
 (`identity.ts`, from build-time variables the production build refuses to go without).
 `apps/web/test/legal.test.ts` fails if a new database table or sub-processor appears that the
@@ -28,8 +38,13 @@ pages do not account for.
    in Supabase.
 4. **Vendor DPAs in place.** Supabase and Cloudflare incorporate theirs into their terms, and
    Anthropic's is part of its Commercial Terms — accepted by using each service; keep a dated
-   copy of each with the register. The email provider's, once chosen.
-5. Set `IN_FORCE = true` and update `LAST_UPDATED` in `identity.ts`; deploy.
+   copy of each with the [register](vendor-register.md). The email provider's, once chosen.
+5. **A contact mailbox covered by a DPA**, if the reviewer agrees a consumer Gmail address isn't
+   ([vendor register](vendor-register.md), "To decide" 2).
+6. Set `IN_FORCE = true` and update `LAST_UPDATED` in `identity.ts`; deploy.
+
+Sign-in itself must work first: production's email provider was switched off by D-057 and must be
+switched back on (D-058). That blocks *any* account partner, uploads or not.
 
 ## Questions for the reviewing lawyer
 
