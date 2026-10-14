@@ -1677,7 +1677,7 @@ this failure mode. Not acted on until corroborated.
 ---
 
 ### D-062 · Ireland drafted; a market is offered only once its national rules are published
-**Status:** Drafted — awaiting Tabeen's review of `ie.epr.packaging-repak` · **Date:** 14 October 2026 · **Builds on:** D-008, D-020
+**Status:** Done — Ireland published 14 October 2026 (D-064) · **Date:** 14 October 2026 · **Builds on:** D-008, D-020
 
 Ireland first (over Poland and Sweden): English-language law, relevant to UK sellers, and live
 seller pain since its small-producer threshold stopped protecting anyone on 12 August 2026.
@@ -1770,6 +1770,37 @@ of the published requirements against one recorded beside the version. Not built
 
 **Corrected outward claim:** the annual 31 January renewal (reg. 13) belongs to the premises-based
 route, so it isn't what a distance seller pays for. Don't use it in the Reddit thread.
+
+---
+
+### D-064 · Ireland published and offered; the privacy date no longer moves on redeploy
+**Status:** Done in PR #16; not yet deployed · **Date:** 14 October 2026 · **Builds on:** D-062, D-063, D-010
+
+**Published:** `ie.epr.packaging-repak` at `medium`, reviewer Tabeen Raoof, after Tabeen confirmed
+that PPWR Arts. 44–47 match the packet ("ok, they match", read as the PPWR articles, since those
+were the plural option offered). Recorded with `catalog:publish --read 1`, the PPWR source.
+
+**Catalog version bumped** `2026.09.0` → `2026.10.0` in the same commit, as D-063 said. The first
+bump since the initial commit.
+
+**Ireland offered:** added to `apps/scanner/markets.ts` and `apps/web/src/domain/markets.ts`.
+Production scanner build (real controller values, Cloudflare waitlist) passes: IE slice has 11
+requirements, one of them national; `index.json` reports `2026.10.0`.
+
+**Tests:**
+- `slice.test.ts` now covers nine markets.
+- The "unpublished market has no national rules" check moved from Ireland to **Poland**: EU-wide
+  rules apply there, but no Polish requirement exists.
+- A new test asserts Ireland's published national rule.
+- 690 tests pass.
+
+**Found while preparing the deploy:** the scanner's privacy notice took its "Last updated" date
+from the build date, so any redeploy (this one only adds a market) would have told visitors the
+notice had changed. It's now a constant, `PRIVACY_UPDATED = "2026-09-26"`: the last commit that
+touched `privacy.html`, the controller statement or the processor sections (0de69f5). It must be
+updated by hand in the same commit as any change to that content. No test enforces this yet.
+
+**Next:** merge PR #15, then #16, then redeploy the scanner from `main`.
 
 ## Open questions
 

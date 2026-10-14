@@ -38,3 +38,5 @@ requirements have gone stale.
 
 Amazon and bol.com help pages are secondary sources: fine for channel mappings, never for what
 the law requires.
+
+| 2026-10-14 | `ie.epr.packaging-repak` | [Regulation (EU) 2025/40 on packaging and packaging waste (PPWR), Articles 44, 45, 46, 47 — Official Journal text](https://eur-lex.europa.eu/eli/reg/2025/40/oj) | Tabeen Raoof | Published at confidence medium. |

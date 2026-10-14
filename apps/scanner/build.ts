@@ -196,9 +196,16 @@ const html = (await readFile(join(appRoot, "src/index.html"), "utf8"))
   .replace("__CATALOG_VERSION__", catalog.version);
 await writeFile(join(dist, "index.html"), html);
 
+/**
+ * The date the privacy notice's *content* last changed: src/privacy.html, the controller statement
+ * or a processor section below. Not the build date — a redeploy that only adds a market must not
+ * tell visitors the notice changed. Update it in the same commit as any change to that content.
+ */
+const PRIVACY_UPDATED = "2026-09-26";
+
 let privacy = (await readFile(join(appRoot, "src/privacy.html"), "utf8")).replace(
   "__PRIVACY_UPDATED__",
-  new Date().toISOString().slice(0, 10),
+  PRIVACY_UPDATED,
 );
 
 const missingRequired = CONTROLLER_REQUIRED.filter((token) => CONTROLLER[token] === "");

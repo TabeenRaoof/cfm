@@ -11,7 +11,7 @@ import { AS_OF, FULLY_KNOWN, loadRealCatalog, without } from "./fixtures.ts";
 
 const { catalog } = await loadRealCatalog(true);
 
-const MARKETS = ["DE", "FR", "ES", "IT", "NL", "AT", "BE", "GB"] as const;
+const MARKETS = ["DE", "FR", "ES", "IT", "NL", "AT", "BE", "IE", "GB"] as const;
 
 /** Fact bags spanning the interesting shapes, including the ones that are mostly unknown. */
 const SUBJECTS = [
@@ -93,11 +93,16 @@ describe("marketSpecificRequirements", () => {
     expect(ids("GB").every((id) => id.startsWith("uk."))).toBe(true);
   });
 
-  it("finds nothing for a market whose national rules are unpublished, even though its slice is not empty", async () => {
+  it("finds nothing for a market with no national rules, even though its slice is not empty", async () => {
+    // Poland: EU-wide rules apply there, but no Polish requirement has been written.
     const { catalog: published } = await loadRealCatalog(false);
-    expect(sliceForMarket(published, "IE").requirements.length).toBeGreaterThan(0);
-    expect(ids("IE", published)).toEqual([]);
-    expect(ids("IE")).toContain("ie.epr.packaging-repak"); // drafts included
+    expect(sliceForMarket(published, "PL").requirements.length).toBeGreaterThan(0);
+    expect(ids("PL", published)).toEqual([]);
+  });
+
+  it("finds Ireland's national rule once it is published", async () => {
+    const { catalog: published } = await loadRealCatalog(false);
+    expect(ids("IE", published)).toEqual(["ie.epr.packaging-repak"]);
   });
 
   it("counts a rule written for several named countries as national to each", () => {

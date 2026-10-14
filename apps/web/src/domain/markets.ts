@@ -1,6 +1,6 @@
 /**
  * Markets offered for readiness — the same set the public scanner offers (apps/scanner/markets.ts):
- * the v1 EPR scope from `02-` §5.2, plus the UK. apps/scanner/test/markets.test.ts fails if the two
+ * the v1 EPR scope from `02-` §5.2, Ireland (D-062), and the UK. apps/scanner/test/markets.test.ts fails if the two
  * lists diverge, or if either offers a market with no published national requirement.
  */
 export const MARKETS: readonly { readonly iso: string; readonly name: string }[] = [
@@ -11,6 +11,7 @@ export const MARKETS: readonly { readonly iso: string; readonly name: string }[]
   { iso: "NL", name: "Netherlands" },
   { iso: "AT", name: "Austria" },
   { iso: "BE", name: "Belgium" },
+  { iso: "IE", name: "Ireland" },
   { iso: "GB", name: "United Kingdom" },
 ];
 

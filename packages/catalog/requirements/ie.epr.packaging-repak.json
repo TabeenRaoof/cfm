@@ -1,7 +1,7 @@
 {
   "id": "ie.epr.packaging-repak",
   "version": "2026.10",
-  "state": "draft",
+  "state": "published",
   "jurisdiction": "EU",
   "regulation": "European Union (Packaging) Regulations 2014 (S.I. No. 282/2014); Regulation (EU) 2025/40 (PPWR)",
   "article_ref": "S.I. No. 282/2014, regs. 10, 13, 17; PPWR Arts. 44(2), 44(8), 46(1), 47(1)",
@@ -45,7 +45,7 @@
       "title": "Regulation (EU) 2025/40 on packaging and packaging waste (PPWR), Articles 44, 45, 46, 47 — Official Journal text",
       "url": "https://eur-lex.europa.eu/eli/reg/2025/40/oj",
       "retrieved_at": "2026-10-14",
-      "verified": false,
+      "verified": true,
       "note": "Read on 14 October 2026 from the Official Journal text served by the EU Publications Office (publications.europa.eu/resource/celex/32025R0040; EUR-Lex itself returned an empty bot-check page). Art. 44(1): each Member State shall 'within 18 months of the date of entry into force of first implementing act adopted pursuant to paragraph 14, establish a national register'. Art. 44(2): 'Producers shall be obliged to register in the register … in each Member State where they make packaging or packaged products available on the territory of the Member State for the first time' — no threshold; and 'Where a producer has entrusted a producer responsibility organisation with carrying out the extended producer responsibility obligations on its behalf pursuant to Article 46(1), the obligations set out in this Article shall be met by that organisation, unless otherwise specified by the Member State'. Art. 44(8): a producer placing 'less than 10 tonnes during one calendar year' submits only the Part B, point 2 information of Annex IX — a lighter reporting tier, not a registration exemption. Art. 46(1): 'Producers may entrust a producer responsibility organisation … Member States may adopt measures to make entrusting the extended producer responsibility obligations to a producer responsibility organisation mandatory.' No Irish measure making it mandatory was found. Art. 47(1): 'The producer, in the case of individual fulfilment …, or the producer responsibility organisation …, in the case of collective fulfilment …, shall apply for an authorisation on fulfilment of extended producer responsibility from the competent authority'; Art. 47(2): Member States 'shall establish the requirements and details of the authorisation procedure'."
     },
     {
@@ -78,6 +78,6 @@
     }
   ],
   "confidence": "medium",
-  "last_reviewed_at": null,
-  "reviewer": null
+  "last_reviewed_at": "2026-10-14",
+  "reviewer": "Tabeen Raoof"
 }
