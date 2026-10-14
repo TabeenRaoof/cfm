@@ -1,0 +1,76 @@
+{
+  "id": "ie.epr.packaging-repak",
+  "version": "2026.10",
+  "state": "draft",
+  "jurisdiction": "EU",
+  "regulation": "European Union (Packaging) Regulations 2014 (S.I. No. 282/2014); Regulation (EU) 2025/40 (PPWR)",
+  "article_ref": "S.I. No. 282/2014, regs. 13, 17; PPWR Art. 44, 45",
+  "title": "Ireland: packaging producer responsibility (Repak or self-compliance)",
+  "summary": "A business placing packaging on the Irish market meets its producer-responsibility duty either by joining Repak, the only approved compliance scheme, or by self-complying: registering with each relevant local authority, renewing every year by 31 January, and meeting the take-back and recovery duties itself. Until 12 August 2026 these duties applied only to 'major producers' (over 10 tonnes of packaging a year and over €1 million turnover); PPWR's registration and producer-responsibility duties have no threshold. Ireland's national producer register under PPWR was not yet operating when this was checked, so in practice a Repak membership number is what marketplaces accept.",
+  "applies_when": {
+    "all": [
+      {
+        "market.iso_country": "IE"
+      },
+      {
+        "product.has_packaging": true
+      }
+    ]
+  },
+  "required_data": [
+    {
+      "key": "packaging.ie_repak_number",
+      "label": "Repak membership number (or local-authority registration, if self-complying)"
+    }
+  ],
+  "required_evidence": [
+    {
+      "type": "epr_certificate",
+      "label": "Repak certificate of participation, or local-authority registration",
+      "expires": true
+    }
+  ],
+  "channel_mappings": {},
+  "effective_from": "2026-08-12",
+  "effective_to": null,
+  "sources": [
+    {
+      "title": "S.I. No. 282/2014 — European Union (Packaging) Regulations 2014 (as made)",
+      "url": "https://www.irishstatutebook.ie/eli/2014/si/282/made/en/print",
+      "retrieved_at": "2026-10-14",
+      "verified": false,
+      "note": "Fetched the as-made text directly. Reg. 3(3)(a): '“major producer” means a producer who— (i) … sells or otherwise supplies to other persons packaging material, packaging or packaged products, where the aggregate weight of packaging material and packaging supplied by such major producer exceeds or may be expected to exceed 10 tonnes in a calendar year, and (ii) has an annual turnover of more than €1million'. Reg. 13(1): a major producer shall '(a) apply for registration to the local authority in whose functional area the premises is situate … and (b) apply for renewal of such registration to the relevant local authority, not later than the 31st day of January in each year following initial registration'. Reg. 17(1): 'A producer to whom is granted a certificate by an approved body stating that such producer is participating, in a satisfactory manner, in a scheme for the recovery of packaging and packaging waste shall be exempt from the requirements of regulations 10 to 16 and 25'. Reg. 19(2): an approval 'shall be for a period of not less than four years and not more than ten years'. NOT CHECKED: the revised (consolidated) text — amendments since 2014 could change regulation numbers or thresholds; the as-made version is what was read."
+    },
+    {
+      "title": "Regulation (EU) 2025/40 on packaging and packaging waste (PPWR), Articles 44 and 45",
+      "url": "https://eur-lex.europa.eu/eli/reg/2025/40/oj",
+      "retrieved_at": null,
+      "verified": false,
+      "note": "Not re-read for this entry. Arts. 44 (register of producers) and 45 (extended producer responsibility, incl. 45(3) authorised representative) are already modelled EU-wide by eu.ppwr.producer-registration and eu.ppwr.authorised-representative, both verified against the full text on 20 September 2026. Relied on here for one claim only: that PPWR's registration and EPR duties carry no tonnage or turnover threshold. The reviewer should confirm that against the text."
+    },
+    {
+      "title": "S.I. No. 541/2025 — European Union (Packaging and Packaging Waste) (Designation of Competent Authorities) Regulations 2025",
+      "url": "https://www.irishstatutebook.ie/eli/2025/si/541/made/en/print",
+      "retrieved_at": "2026-10-14",
+      "verified": false,
+      "note": "Fetched directly. Reg. 3(2): 'The Minister is designated as competent authority responsible for implementation and enforcement of the obligations set out in Articles 6(10), 29(1) to (7) and (9), 30, 31, 34, 44, 45, 46, 47, 49 and 55 of the EU Regulation.' Designates authorities only; it does not itself set or remove any threshold, or say how producers register."
+    },
+    {
+      "title": "Repak — PPWR Hub",
+      "url": "https://repak.ie/ppwr/",
+      "retrieved_at": "2026-10-14",
+      "verified": false,
+      "note": "The approved scheme's own page, so an interested party, not law: 'Businesses that place packaging on the Irish market are required under PPWR to register with Repak and will be subject to the relevant EPR fee.' Cites no Irish instrument, says nothing on thresholds, fees, or the authorised-representative duty."
+    },
+    {
+      "title": "KontorBund — Country desk Ireland, packaging EPR (last checked 4 October 2026)",
+      "url": "https://kontorbund.com/desks/kontorbund-ireland-desk.pdf",
+      "retrieved_at": null,
+      "verified": false,
+      "note": "Secondary (a compliance provider), seen only via search summary, not opened. Reported that the PPWR producer register is not running in Ireland yet and that the operational route had not been published. Used only for the summary's 'not yet operating' caveat; re-check before publishing."
+    }
+  ],
+  "confidence": "medium",
+  "last_reviewed_at": null,
+  "reviewer": null
+}

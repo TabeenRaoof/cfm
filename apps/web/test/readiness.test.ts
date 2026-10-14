@@ -22,14 +22,6 @@ const CSV = [
 ].join("\n");
 const ASOF = "2026-09-26";
 
-describe("markets", () => {
-  it("the app offers exactly the scanner's markets", async () => {
-    const build = await readFile(new URL("../../scanner/build.ts", import.meta.url), "utf8");
-    const scannerIsos = [...build.matchAll(/\{ iso: "([A-Z]{2})"/g)].map((m) => m[1]);
-    expect(MARKETS.map((m) => m.iso)).toEqual(scannerIsos);
-  });
-});
-
 describe("sales channel", () => {
   it("the app offers exactly the scanner's sales channels", async () => {
     const html = await readFile(new URL("../../scanner/src/index.html", import.meta.url), "utf8");

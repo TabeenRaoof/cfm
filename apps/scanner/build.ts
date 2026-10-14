@@ -19,24 +19,14 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 
-import { sliceForMarket } from "@cfm/catalog";
+import { marketSpecificRequirements, sliceForMarket } from "@cfm/catalog";
 import { loadCatalogFromDir } from "@cfm/catalog/node";
+import { MARKETS } from "./markets.ts";
 
 const appRoot = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(appRoot, "..", "..");
 const dist = join(appRoot, "dist");
 
-/** Markets offered at launch: the v1 EPR scope from 02- §5.2, plus the UK. */
-export const MARKETS = [
-  { iso: "DE", name: "Germany" },
-  { iso: "FR", name: "France" },
-  { iso: "ES", name: "Spain" },
-  { iso: "IT", name: "Italy" },
-  { iso: "NL", name: "Netherlands" },
-  { iso: "AT", name: "Austria" },
-  { iso: "BE", name: "Belgium" },
-  { iso: "GB", name: "United Kingdom" },
-] as const;
 
 const includeDrafts = process.argv.includes("--include-drafts");
 
@@ -155,6 +145,18 @@ if (catalog.requirements.length === 0) {
         `their primary sources first — see packages/catalog/sources.md — or use ` +
         `\`npm run build:preview\` for a clearly-marked draft build.`,
   );
+}
+
+// Before anything is deleted: a market with no national research would show only the EU-wide
+// rules, a false all-clear on everything national. Its slice can't catch that — it is never empty.
+for (const market of MARKETS) {
+  if (marketSpecificRequirements(catalog, market.iso).length === 0) {
+    throw new Error(
+      `${market.name} (${market.iso}) has no ${includeDrafts ? "" : "published "}national requirement, so a ` +
+        `seller would see only the EU-wide rules and miss everything national — publish its national ` +
+        `requirements before offering it (packages/catalog/src/slice.ts marketSpecificRequirements).`,
+    );
+  }
 }
 
 await rm(dist, { recursive: true, force: true });

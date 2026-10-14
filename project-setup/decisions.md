@@ -1674,6 +1674,41 @@ would line up with the structural gap above: a wizard that generates a DoC from 
 rather than reading and verifying documents the seller already has, is more exposed to exactly
 this failure mode. Not acted on until corroborated.
 
+---
+
+### D-062 · Ireland drafted; a market is offered only once its national rules are published
+**Status:** Drafted — awaiting Tabeen's review of `ie.epr.packaging-repak` · **Date:** 14 October 2026 · **Builds on:** D-008, D-020
+
+Ireland first (over Poland and Sweden): English-language law, relevant to UK sellers, and live
+seller pain since its small-producer threshold stopped protecting anyone on 12 August 2026.
+
+**Drafted, not published:** `ie.epr.packaging-repak`, with a review packet. The EU-wide PPWR
+entries already cover registration and the authorised representative for Ireland; this adds the
+Irish layer — join Repak (S.I. No. 282/2014, reg. 17) or self-comply with local-authority
+registration renewed every 31 January (reg. 13). Read from primary text: S.I. No. 282/2014 (as
+made) and S.I. No. 541/2025. The one claim to check before publishing: that PPWR Arts. 44–45 set
+no threshold — no Irish instrument removing the 2014 threshold was found. Ireland's PPWR producer
+register isn't running yet (secondary source, 4 October 2026), so the summary says marketplaces
+accept a Repak number in practice.
+
+**New guard, proven against injected violations:** `marketSpecificRequirements` (catalog
+`slice.ts`) finds a market's national rules by evaluation, not text matching — a rule that can
+apply there but not in every other country of its jurisdiction. A market's slice is never empty
+once EU-wide rules are published, so the existing empty-slice check couldn't tell a researched
+market from an unresearched one; offering Ireland now would have shown sellers only the EU layer,
+a false all-clear on everything national. The scanner build now refuses such a market before
+deleting the previous build, and `apps/scanner/test/markets.test.ts` refuses it too and fails if
+the scanner's and web app's market lists drift apart (they were "kept in step by hand"). Tested by
+adding Ireland to both lists (test and build refused; previous build output intact) and to the web
+list alone (drift caught).
+
+**Also, for the Reddit thread:** Irish self-compliers renew their local-authority registration
+every year by law (reg. 13), so annual "renewals" in Ireland are real, not only a provider's
+contract.
+
+**Next:** Tabeen reviews the packet and publishes; then Ireland is added to both market lists
+and the scanner is redeployed.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.

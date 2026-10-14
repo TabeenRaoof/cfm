@@ -162,6 +162,6 @@ describe("the requirement files in this repository", () => {
         "uk.weee.producer-registration",
       ].sort(),
     );
-    expect(withheldDrafts.length).toBe(1);
+    expect([...withheldDrafts].sort()).toEqual(["ie.epr.packaging-repak", "uk.gpsr.uk-responsible-person"]);
   });
 });

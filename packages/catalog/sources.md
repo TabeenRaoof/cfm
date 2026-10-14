@@ -15,6 +15,9 @@ requirements have gone stale.
 | Retrieved | Requirement(s) | Source | Read by | Notes |
 |---|---|---|---|---|
 | — | — | — | — | *Nothing verified yet. Every requirement in `requirements/` is a draft whose article reference was carried over from `02-technical-plan` §5.1/§5.2, which states those numbers must be checked against EUR-Lex before publishing.* |
+| 2026-10-14 | `ie.epr.packaging-repak` (draft) | [S.I. No. 282/2014, European Union (Packaging) Regulations 2014, as made](https://www.irishstatutebook.ie/eli/2014/si/282/made/en/print) | Claude (drafting; not verification) | Regs. 3(3)(a), 13(1), 17(1), 19(2) quoted in the requirement. Revised (consolidated) text not checked. |
+| 2026-10-14 | `ie.epr.packaging-repak` (draft) | [S.I. No. 541/2025, PPWR competent authorities](https://www.irishstatutebook.ie/eli/2025/si/541/made/en/print) | Claude (drafting; not verification) | Reg. 3(2): the Minister is competent for PPWR Arts. 44 and 45. |
+| 2026-10-14 | `ie.epr.packaging-repak` (draft) | [Repak, PPWR Hub](https://repak.ie/ppwr/) | Claude (drafting; not verification) | Scheme's own page, not law. |
 
 ## To verify, in rough priority order
 
