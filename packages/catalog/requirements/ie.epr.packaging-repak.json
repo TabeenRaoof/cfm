@@ -4,9 +4,9 @@
   "state": "draft",
   "jurisdiction": "EU",
   "regulation": "European Union (Packaging) Regulations 2014 (S.I. No. 282/2014); Regulation (EU) 2025/40 (PPWR)",
-  "article_ref": "S.I. No. 282/2014, regs. 13, 17; PPWR Art. 44, 45",
-  "title": "Ireland: packaging producer responsibility (Repak or self-compliance)",
-  "summary": "A business placing packaging on the Irish market meets its producer-responsibility duty either by joining Repak, the only approved compliance scheme, or by self-complying: registering with each relevant local authority, renewing every year by 31 January, and meeting the take-back and recovery duties itself. Until 12 August 2026 these duties applied only to 'major producers' (over 10 tonnes of packaging a year and over €1 million turnover); PPWR's registration and producer-responsibility duties have no threshold. Ireland's national producer register under PPWR was not yet operating when this was checked, so in practice a Repak membership number is what marketplaces accept.",
+  "article_ref": "S.I. No. 282/2014, regs. 10, 13, 17; PPWR Arts. 44(2), 44(8), 46(1), 47(1)",
+  "title": "Ireland: packaging producer responsibility (in practice, Repak)",
+  "summary": "A business placing packaging on the Irish market must meet extended producer responsibility there. For a seller without Irish premises, that in practice means joining Repak, an approved compliance scheme. Ireland's own self-compliance route is built around Irish premises: registering with the local authority for each premises, renewing every year by 31 January, and taking back packaging waste at each premises. PPWR also allows a producer to fulfil the duty individually, but only with an authorisation whose procedure each member state must set up, and Ireland has not published one. Joining a scheme can also cover PPWR registration, which the scheme then carries out for its members unless the member state says otherwise. Registration has no threshold since 12 August 2026; producers placing under 10 tonnes a year report less data, but must still register. Ireland's PPWR producer register does not have to exist until 18 months after an EU implementing act that was still in draft in August 2026.",
   "applies_when": {
     "all": [
       {
@@ -20,13 +20,13 @@
   "required_data": [
     {
       "key": "packaging.ie_repak_number",
-      "label": "Repak membership number (or local-authority registration, if self-complying)"
+      "label": "Repak membership number (or local-authority registration, if self-complying from Irish premises)"
     }
   ],
   "required_evidence": [
     {
       "type": "epr_certificate",
-      "label": "Repak certificate of participation, or local-authority registration",
+      "label": "Repak certificate of participation (or local-authority Certificate of Registration)",
       "expires": true
     }
   ],
@@ -39,14 +39,21 @@
       "url": "https://www.irishstatutebook.ie/eli/2014/si/282/made/en/print",
       "retrieved_at": "2026-10-14",
       "verified": false,
-      "note": "Fetched the as-made text directly. Reg. 3(3)(a): '“major producer” means a producer who— (i) … sells or otherwise supplies to other persons packaging material, packaging or packaged products, where the aggregate weight of packaging material and packaging supplied by such major producer exceeds or may be expected to exceed 10 tonnes in a calendar year, and (ii) has an annual turnover of more than €1million'. Reg. 13(1): a major producer shall '(a) apply for registration to the local authority in whose functional area the premises is situate … and (b) apply for renewal of such registration to the relevant local authority, not later than the 31st day of January in each year following initial registration'. Reg. 17(1): 'A producer to whom is granted a certificate by an approved body stating that such producer is participating, in a satisfactory manner, in a scheme for the recovery of packaging and packaging waste shall be exempt from the requirements of regulations 10 to 16 and 25'. Reg. 19(2): an approval 'shall be for a period of not less than four years and not more than ten years'. NOT CHECKED: the revised (consolidated) text — amendments since 2014 could change regulation numbers or thresholds; the as-made version is what was read."
+      "note": "Fetched the as-made text directly. Reg. 3(3)(a): '“major producer” means a producer who— (i) … sells or otherwise supplies to other persons packaging material, packaging or packaged products, where the aggregate weight of packaging material and packaging supplied by such major producer exceeds or may be expected to exceed 10 tonnes in a calendar year, and (ii) has an annual turnover of more than €1million'. Reg. 13(1): a major producer shall '(a) apply for registration to the local authority in whose functional area the premises is situate … and (b) apply for renewal of such registration to the relevant local authority, not later than the 31st day of January in each year following initial registration'. Reg. 17(1): 'A producer to whom is granted a certificate by an approved body stating that such producer is participating, in a satisfactory manner, in a scheme for the recovery of packaging and packaging waste shall be exempt from the requirements of regulations 10 to 16 and 25'. Reg. 19(2): an approval 'shall be for a period of not less than four years and not more than ten years'. Reg. 13(1) applies 'in respect of each premises specified in regulation 10(1)(a)', and reg. 10(1) requires, at each premises, a public notice within one metre of each entrance, facilities to accept and segregate packaging waste, and free acceptance of packaging waste 9.30–5.30 Monday to Friday: a route built around Irish premises. Amendments checked 14 October 2026 by sweeping every 2025 and 2026 S.I. title and every 2026 Act: the only amendment is S.I. No. 167/2025 (adds a definition of 'Minister'; no change to thresholds or duties). No revised (consolidated) text was read."
     },
     {
-      "title": "Regulation (EU) 2025/40 on packaging and packaging waste (PPWR), Articles 44 and 45",
+      "title": "Regulation (EU) 2025/40 on packaging and packaging waste (PPWR), Articles 44, 45, 46, 47 — Official Journal text",
       "url": "https://eur-lex.europa.eu/eli/reg/2025/40/oj",
-      "retrieved_at": null,
+      "retrieved_at": "2026-10-14",
       "verified": false,
-      "note": "Not re-read for this entry. Arts. 44 (register of producers) and 45 (extended producer responsibility, incl. 45(3) authorised representative) are already modelled EU-wide by eu.ppwr.producer-registration and eu.ppwr.authorised-representative, both verified against the full text on 20 September 2026. Relied on here for one claim only: that PPWR's registration and EPR duties carry no tonnage or turnover threshold. The reviewer should confirm that against the text."
+      "note": "Read on 14 October 2026 from the Official Journal text served by the EU Publications Office (publications.europa.eu/resource/celex/32025R0040; EUR-Lex itself returned an empty bot-check page). Art. 44(1): each Member State shall 'within 18 months of the date of entry into force of first implementing act adopted pursuant to paragraph 14, establish a national register'. Art. 44(2): 'Producers shall be obliged to register in the register … in each Member State where they make packaging or packaged products available on the territory of the Member State for the first time' — no threshold; and 'Where a producer has entrusted a producer responsibility organisation with carrying out the extended producer responsibility obligations on its behalf pursuant to Article 46(1), the obligations set out in this Article shall be met by that organisation, unless otherwise specified by the Member State'. Art. 44(8): a producer placing 'less than 10 tonnes during one calendar year' submits only the Part B, point 2 information of Annex IX — a lighter reporting tier, not a registration exemption. Art. 46(1): 'Producers may entrust a producer responsibility organisation … Member States may adopt measures to make entrusting the extended producer responsibility obligations to a producer responsibility organisation mandatory.' No Irish measure making it mandatory was found. Art. 47(1): 'The producer, in the case of individual fulfilment …, or the producer responsibility organisation …, in the case of collective fulfilment …, shall apply for an authorisation on fulfilment of extended producer responsibility from the competent authority'; Art. 47(2): Member States 'shall establish the requirements and details of the authorisation procedure'."
+    },
+    {
+      "title": "S.I. No. 167/2025 — European Union (Packaging) (Amendment) Regulations 2025",
+      "url": "https://www.irishstatutebook.ie/eli/2025/si/167/made/en/print",
+      "retrieved_at": "2026-10-14",
+      "verified": false,
+      "note": "Fetched directly. Its only operative provision, reg. 3: 'Regulation 4(1) of the Principal Regulations is amended by inserting the following: “Minister” means the Minister for the Environment, Climate and Communications.' Made 1 May 2025. Confirms the 2014 Regulations were amended, not revoked, as of May 2025; no change to thresholds or duties."
     },
     {
       "title": "S.I. No. 541/2025 — European Union (Packaging and Packaging Waste) (Designation of Competent Authorities) Regulations 2025",
@@ -67,7 +74,7 @@
       "url": "https://kontorbund.com/desks/kontorbund-ireland-desk.pdf",
       "retrieved_at": null,
       "verified": false,
-      "note": "Secondary (a compliance provider), seen only via search summary, not opened. Reported that the PPWR producer register is not running in Ireland yet and that the operational route had not been published. Used only for the summary's 'not yet operating' caveat; re-check before publishing."
+      "note": "Secondary (a compliance provider), seen only via search summary, not opened. Reported the PPWR producer register not running in Ireland and the operational route unpublished. Now corroboration only: the summary's register statement rests on PPWR Art. 44(1) and the Art. 44(14) implementing act still being a Commission draft in August 2026 (D-055)."
     }
   ],
   "confidence": "medium",

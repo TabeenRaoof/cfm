@@ -1709,6 +1709,68 @@ contract.
 **Next:** Tabeen reviews the packet and publishes; then Ireland is added to both market lists
 and the scanner is redeployed.
 
+---
+
+### D-063 · An external review of the Ireland draft, checked claim by claim
+**Status:** Recorded · **Date:** 14 October 2026 · **Builds on:** D-062, D-010, D-055
+
+Tabeen brought back a review of PR #16 that read S.I. No. 282/2014 and parsed the 2026
+statutory-instrument list. Every recommendation was checked against primary text before acting.
+
+**Adopted, with the wording corrected:** the self-compliance route doesn't fit sellers without
+Irish premises. Reg. 13(1) applies "in respect of each premises specified in regulation
+10(1)(a)", and reg. 10(1) requires, at each premises, a public notice, waste-acceptance
+facilities, and free acceptance of packaging waste on weekdays. The entry now says that for such
+a seller, **in practice**, the route is Repak. The review's "Repak is their *only legal* route"
+was not adopted: PPWR Art. 46(1) makes a scheme optional unless a member state mandates it (no
+Irish measure found), and Art. 47 provides individual fulfilment by authorisation, a procedure
+Ireland hasn't published. So "only practical route" is supported; "only legal route" is not.
+
+**PPWR read from the Official Journal text** (via the Publications Office; EUR-Lex returned a
+bot-check page), closing D-062's open question:
+- **Art. 44(2):** registration has no threshold.
+- **Art. 44(8):** the 10-tonne line survives only as a lighter annual report, not an exemption.
+- **Art. 44(2):** a scheme the producer has entrusted meets the registration duty for it, unless
+  the member state says otherwise.
+- **Art. 44(1):** registers are due 18 months after the Art. 44(14) implementing act, still a
+  draft in August (D-055). This replaces reliance on a secondary source for "Ireland's register
+  isn't running".
+
+**"No 2026 packaging instruments": the conclusion holds, but the review's check didn't
+establish it.** The review counted 571 links (not instruments) on the 2026 page and didn't look
+at 2025. A full sweep found:
+- **S.I. No. 167/2025, which amends the 2014 Regulations.** Both the review and D-062's research
+  missed it. Read: it only adds a definition of "Minister".
+- 2026 S.I.s 1–505 are listed; numbers 72, 459 and 496 aren't published.
+- The 2025 page omitted 1–63; those were fetched one by one.
+- Neither the 36 Acts of 2026 nor the commencement orders for the Circular Economy Act 2022
+  (ss. 7 and 36) nor the Environment (Miscellaneous Provisions) Act 2026 concern producer
+  registration.
+
+So: no Irish instrument changes the 2014 thresholds, mandates a scheme, or sets up the PPWR
+register, as of 14 October 2026.
+
+**Not adopted, for reasons:**
+- **"Change the requirement's `version` to 2026.09."** Nothing sorts or filters on it; the code
+  only checks it's a string (`validate.ts`), so the review's "sorting/filtering bugs" can't occur.
+  Its meaning is undefined: `02-` §5.1 shows `"version": "2026.09"` in the example schema, and
+  its "every change bumps `version`" may mean the catalog's version rather than the entry's. If
+  it's a date-style revision label, "2026.10" is accurate for an entry written in October and
+  "2026.09" would misdate it. Left as is; defining it is a small open item.
+- **"Bump `catalog.json` now."** Its version feeds `assessment.catalog_version`, and under D-010 a
+  bump signals that what customers are assessed against has changed. A withheld draft changes
+  nothing they see, so a bump now would record a change that didn't happen. **Bump it in the
+  commit that publishes Ireland** — the review packet now says so.
+
+**A finding the review didn't make:** `catalog.json` has never been bumped. It's been `2026.09.0`
+since the initial commit (19 September), although 27 requirements were published after it, so
+every published-catalog change so far went unversioned. No re-evaluation job exists yet (D-010 is
+still Proposed), so nothing has broken, but the rule isn't enforced. A test could compare a hash
+of the published requirements against one recorded beside the version. Not built; Tabeen's call.
+
+**Corrected outward claim:** the annual 31 January renewal (reg. 13) belongs to the premises-based
+route, so it isn't what a distance seller pays for. Don't use it in the Reddit thread.
+
 ## Open questions
 
 Genuinely undecided. Kept here so they do not silently harden into assumptions.
