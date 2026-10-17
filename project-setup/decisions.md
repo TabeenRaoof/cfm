@@ -1368,7 +1368,7 @@ creates.
 ---
 
 ### D-054 · Organisation erasure: one service-role function; the audit log stays append-only otherwise
-**Status:** Accepted (Tabeen, PR #14 review, 27 September 2026) — built; not yet applied to the live database · **Date:** 27 September 2026 · **Resolves:** D-053 finding 1 · **Supersedes in part:** D-005
+**Status:** Accepted (Tabeen, PR #14 review, 27 September 2026) — built; applied to the live database 17 October 2026 (D-065) · **Date:** 27 September 2026 · **Resolves:** D-053 finding 1 · **Supersedes in part:** D-005
 
 **Decision (Tabeen):** CFM is the processor; GPSR's ten-year retention duty is the customer's, not
 ours (D-006). So on offboarding or an erasure request we must be able to wipe an organisation
@@ -1580,7 +1580,7 @@ Revisit if it matters — the lever is limiting `create_organisation` to approve
 invitee would be refused a link; `provision-account.ts` fixes such an account.
 
 ### D-059 · Pre-partner review: what was fixed, what production still lacks
-**Status:** Recorded · **Date:** 8 October 2026 · **Builds on:** D-013, D-053, D-056, D-058
+**Status:** Recorded; production items 2 and 3 done 17 October 2026, item 1 still open (D-065) · **Date:** 8 October 2026 · **Builds on:** D-013, D-053, D-056, D-058
 
 An end-to-end review before design partners, at Tabeen's request. Every check is reproducible
 from the repo: CI's steps all pass locally (667 tests, typechecks, catalog gate, smoke, both
@@ -1778,7 +1778,7 @@ route, so it isn't what a distance seller pays for. Don't use it in the Reddit t
 ---
 
 ### D-064 · Ireland published and offered; the privacy date no longer moves on redeploy
-**Status:** Done in PR #16; scanner deployed, web app not yet (see the correction below) · **Date:** 14 October 2026 · **Builds on:** D-062, D-063, D-010
+**Status:** Done in PR #16; deployed to the scanner, and to the web app on 17 October (see the correction below) · **Date:** 14 October 2026 · **Builds on:** D-062, D-063, D-010
 
 **Published:** `ie.epr.packaging-repak` at `medium`, reviewer Tabeen Raoof, after Tabeen confirmed
 that PPWR Arts. 44–47 match the packet ("ok, they match", read as the PPWR articles, since those
@@ -1812,11 +1812,38 @@ Checked live on 17 October, on uncounted URLs only (`/` and `/privacy`, never `/
 Ireland is in the market list, the page shows catalog version `2026.10.0`, and the privacy notice
 still says "Last updated 2026-09-26".
 
-The web app is **not** redeployed. Ireland is on `main` for it, but its last deploy is still
-27 September 05:47 UTC, and a redeploy also ships PRs #14 and #15, so it waits on D-059's
-production items. Checked on 17 October, both still outstanding: email sign-in is off
-(`/auth/v1/settings` reports `"email": false`, `disable_signup: true`), and a dry run still shows
-exactly one pending migration, `20260927000001_erase_organisation.sql`.
+The web app was redeployed later the same day, offering Ireland. That deploy also shipped PRs #14
+and #15. See D-065.
+
+### D-065 · The web app is redeployed and the erasure migration applied; email sign-in still off
+**Status:** Done, except D-058's email switch (Tabeen's, still off) · **Date:** 17 October 2026 · **Builds on:** D-054, D-058, D-059, D-064
+
+Two of D-059's production items are closed. Tabeen ran both commands: the session's permission
+guard refused `supabase db push` as a production deploy, as it refused D-058's auth change.
+
+**Erasure migration applied** (D-054). Beforehand, a dry run showed exactly one pending,
+`20260927000001_erase_organisation.sql`. Afterwards, the dry run reports "Remote database is up to
+date". The migration only replaces the audit log's append-only trigger function and adds
+`erase_organisation`. It touches no rows, and nothing in the app or Worker calls it.
+
+**Web app deployed** from `main` at `89d0cec`, at 07:15 UTC: Worker version `cd33d2c3`. The
+previous deploy was 27 September 05:47 UTC, before PR #14 merged. The deploy shipped PRs #14–#17:
+the privacy policy and DPA pages (still marked "draft, not yet in force"), closed signup with
+invitations creating accounts (D-058), D-059's fixes, and Ireland (D-064). Checked live:
+- The page loads `assets/index-B57iyRJG.js`, the same file as a local production build of
+  `89d0cec`.
+- That bundle contains Ireland, catalog `2026.10.0`, the "not yet in force" banner and the "by
+  invitation" sign-in text. The build's own guard (`vite.config.ts`) confirms it holds no secret
+  key.
+- `/`, `/privacy` and `/dpa` all return 200.
+- `UPLOADS_ENABLED` is still `"false"`.
+
+**Still open: email sign-in.** At 07:16 UTC, `/auth/v1/settings` still reports
+`"email": false` (`disable_signup: true`). Nobody can get a sign-in link until the Email provider
+is turned on in the dashboard (D-058; `design-partner-onboarding.md` §0 step 1).
+
+**Also still open, and Tabeen's:** rotate the two secrets printed on 28 September (§0 step 5).
+Nothing in the repo records that this has been done.
 
 ## Open questions
 
