@@ -1778,7 +1778,7 @@ route, so it isn't what a distance seller pays for. Don't use it in the Reddit t
 ---
 
 ### D-064 · Ireland published and offered; the privacy date no longer moves on redeploy
-**Status:** Done in PR #16; not yet deployed · **Date:** 14 October 2026 · **Builds on:** D-062, D-063, D-010
+**Status:** Done in PR #16; scanner deployed, web app not yet (see the correction below) · **Date:** 14 October 2026 · **Builds on:** D-062, D-063, D-010
 
 **Published:** `ie.epr.packaging-repak` at `medium`, reviewer Tabeen Raoof, after Tabeen confirmed
 that PPWR Arts. 44–47 match the packet ("ok, they match", read as the PPWR articles, since those
@@ -1805,6 +1805,18 @@ touched `privacy.html`, the controller statement or the processor sections (0de6
 updated by hand in the same commit as any change to that content. No test enforces this yet.
 
 **Next:** merge PR #15, then #16, then redeploy the scanner from `main`.
+
+**Correction (17 October 2026):** this entry merged saying "not yet deployed". PRs #15 and #16
+merged on 14 October, and the scanner was then redeployed from `256e23c`, the PR #16 merge.
+Checked live on 17 October, on uncounted URLs only (`/` and `/privacy`, never `/catalog/`):
+Ireland is in the market list, the page shows catalog version `2026.10.0`, and the privacy notice
+still says "Last updated 2026-09-26".
+
+The web app is **not** redeployed. Ireland is on `main` for it, but its last deploy is still
+27 September 05:47 UTC, and a redeploy also ships PRs #14 and #15, so it waits on D-059's
+production items. Checked on 17 October, both still outstanding: email sign-in is off
+(`/auth/v1/settings` reports `"email": false`, `disable_signup: true`), and a dry run still shows
+exactly one pending migration, `20260927000001_erase_organisation.sql`.
 
 ## Open questions
 
