@@ -57,8 +57,9 @@ Read the current model ids, prices and API shapes from the vendor's live documen
 write the adapter. Do not carry them over from memory or from the technical plan — see
 `tabeen_CLAUDE.md`.
 
-**No adapter exists yet, deliberately.** The seam and its tests are what needed to exist before
-any feature code could leak a vendor into itself.
+**One adapter exists: Anthropic** (`src/providers/anthropic.ts`, live since D-037). The seam and
+its tests came first, before any feature code could leak a vendor into itself. Decisions, structure
+and trade-offs of the API calls: `project-setup/07-ai-api-decisions.md`.
 
 ## Spending less
 
