@@ -1532,7 +1532,7 @@ each account partner gets an entry here (or a short partners log if the volume e
 this file) recording who, when, and which stage (feedback vs. account partner) they're at.
 
 ### D-058 · D-057 switched off email sign-in for everyone; invitations now create the account
-**Status:** Built and tested locally; the production auth fix is Tabeen's to apply · **Date:** 8 October 2026 · **Corrects:** D-057
+**Status:** Built and tested locally; production auth fixed 17 October 2026 (D-065) · **Date:** 8 October 2026 · **Corrects:** D-057
 
 **What went wrong.** D-057 set both `auth.enable_signup` and `auth.email.enable_signup` to
 `false`. Despite its name, `auth.email.enable_signup` is the email *provider* switch. Probed on
@@ -1580,7 +1580,7 @@ Revisit if it matters — the lever is limiting `create_organisation` to approve
 invitee would be refused a link; `provision-account.ts` fixes such an account.
 
 ### D-059 · Pre-partner review: what was fixed, what production still lacks
-**Status:** Recorded; production items 2 and 3 done 17 October 2026, item 1 still open (D-065) · **Date:** 8 October 2026 · **Builds on:** D-013, D-053, D-056, D-058
+**Status:** Recorded; production items 1–3 done 17 October 2026 (D-065) · **Date:** 8 October 2026 · **Builds on:** D-013, D-053, D-056, D-058
 
 An end-to-end review before design partners, at Tabeen's request. Every check is reproducible
 from the repo: CI's steps all pass locally (667 tests, typechecks, catalog gate, smoke, both
@@ -1815,11 +1815,11 @@ still says "Last updated 2026-09-26".
 The web app was redeployed later the same day, offering Ireland. That deploy also shipped PRs #14
 and #15. See D-065.
 
-### D-065 · The web app is redeployed and the erasure migration applied; email sign-in still off
-**Status:** Done, except D-058's email switch (Tabeen's, still off) · **Date:** 17 October 2026 · **Builds on:** D-054, D-058, D-059, D-064
+### D-065 · The web app is redeployed, the erasure migration applied, and email sign-in back on
+**Status:** Done · **Date:** 17 October 2026 · **Builds on:** D-054, D-058, D-059, D-064
 
-Two of D-059's production items are closed. Tabeen ran both commands: the session's permission
-guard refused `supabase db push` as a production deploy, as it refused D-058's auth change.
+D-059's three production items are closed. Tabeen did all three: the session's permission guard
+refused `supabase db push` as a production deploy, as it had refused D-058's auth change.
 
 **Erasure migration applied** (D-054). Beforehand, a dry run showed exactly one pending,
 `20260927000001_erase_organisation.sql`. Afterwards, the dry run reports "Remote database is up to
@@ -1838,9 +1838,12 @@ invitations creating accounts (D-058), D-059's fixes, and Ireland (D-064). Check
 - `/`, `/privacy` and `/dpa` all return 200.
 - `UPLOADS_ENABLED` is still `"false"`.
 
-**Still open: email sign-in.** At 07:16 UTC, `/auth/v1/settings` still reports
-`"email": false` (`disable_signup: true`). Nobody can get a sign-in link until the Email provider
-is turned on in the dashboard (D-058; `design-partner-onboarding.md` §0 step 1).
+**Email sign-in back on** (D-058). At 07:16 UTC the provider was still off. Tabeen then turned on
+the dashboard's "Enable email provider" and left "Allow new users to sign up" off. At 07:33 UTC,
+`/auth/v1/settings` reports `"email": true` and `disable_signup: true`: existing accounts can
+get a link, and a new address can't create an account. This was checked with a GET of the
+settings, not the runbook's POST probe, which the guard refused because it asks production to
+create a user.
 
 **Also still open, and Tabeen's:** rotate the two secrets printed on 28 September (§0 step 5).
 Nothing in the repo records that this has been done.
